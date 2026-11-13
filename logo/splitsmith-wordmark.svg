@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="520" height="160">
+  <title>Splitsmith — wordmark</title>
+  <g transform="translate(4 4) scale(0.72)">
+
+    <g stroke-linejoin="round" stroke-width="1.5">
+      <polygon points="104,126 38,150 58,98"   fill="#464C4E" stroke="#464C4E"/>
+      <polygon points="104,126 58,98 102,76"   fill="#5A6163" stroke="#5A6163"/>
+      <polygon points="104,126 102,76 150,92"  fill="#464C4E" stroke="#464C4E"/>
+      <polygon points="104,126 150,92 166,146" fill="#363A3C" stroke="#363A3C"/>
+      <polygon points="104,126 166,146 122,170" fill="#2B2E2F" stroke="#2B2E2F"/>
+      <polygon points="104,126 122,170 66,168" fill="#2B2E2F" stroke="#2B2E2F"/>
+      <polygon points="104,126 66,168 38,150"  fill="#363A3C" stroke="#363A3C"/>
+    </g>
+    <g stroke="#E0662A" stroke-width="6" stroke-linecap="round">
+      <line x1="134" y1="66" x2="142" y2="44"/>
+      <line x1="146" y1="72" x2="164" y2="56"/>
+      <line x1="153" y1="84" x2="174" y2="80"/>
+    </g>
+  </g>
+  <text x="158" y="98" font-family="Avenir Next, Futura, Helvetica Neue, Arial, sans-serif" font-size="64" font-weight="600" letter-spacing="0.5" fill="#2B2E2F">Splitsmith</text>
+  <text x="161" y="128" font-family="Avenir Next, Futura, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="600" letter-spacing="4.2" fill="#E0662A">FORGE YOUR FITNESS</text>
+</svg>

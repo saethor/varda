@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>Splitsmith — app icon</title>
+  <rect width="512" height="512" rx="112" fill="#2B2E2F"/>
+  <g transform="translate(52 6) scale(2)">
+
+    <g stroke-linejoin="round" stroke-width="1.5">
+      <polygon points="104,126 38,150 58,98"   fill="#E6E2D9" stroke="#E6E2D9"/>
+      <polygon points="104,126 58,98 102,76"   fill="#FFFFFF" stroke="#FFFFFF"/>
+      <polygon points="104,126 102,76 150,92"  fill="#E6E2D9" stroke="#E6E2D9"/>
+      <polygon points="104,126 150,92 166,146" fill="#CCC7BB" stroke="#CCC7BB"/>
+      <polygon points="104,126 166,146 122,170" fill="#B3AD9F" stroke="#B3AD9F"/>
+      <polygon points="104,126 122,170 66,168" fill="#B3AD9F" stroke="#B3AD9F"/>
+      <polygon points="104,126 66,168 38,150"  fill="#CCC7BB" stroke="#CCC7BB"/>
+    </g>
+    <g stroke="#E0662A" stroke-width="6" stroke-linecap="round">
+      <line x1="134" y1="66" x2="142" y2="44"/>
+      <line x1="146" y1="72" x2="164" y2="56"/>
+      <line x1="153" y1="84" x2="174" y2="80"/>
+    </g>
+  </g>
+</svg>

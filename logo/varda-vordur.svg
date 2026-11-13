@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 170" width="300" height="170">
+  <title>Varða — vörður, cairns marking the route</title>
+  <defs>
+    <g id="cairn">
+      <rect x="-40" y="-18" width="80" height="18" rx="8"/>
+      <rect x="-30" y="-37" width="60" height="16" rx="7"/>
+      <rect x="-18" y="-53" width="36" height="13" rx="6"/>
+    </g>
+  </defs>
+  <path d="M10 158 Q 110 150 165 124 T 292 92" fill="none" stroke="#5E7A4E" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 9"/>
+  <g fill="#2B2E2F">
+    <use href="#cairn" transform="translate(62 150)"/>
+    <use href="#cairn" transform="translate(168 120) scale(0.68)"/>
+  </g>
+  <use href="#cairn" fill="#5E7A4E" transform="translate(250 98) scale(0.45)"/>
+</svg>

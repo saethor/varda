@@ -2,7 +2,10 @@
   "extends": "@varda/config/tsconfig.base.json",
   "compilerOptions": {
     "lib": ["es2024", "dom", "dom.iterable"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@varda/ui/*": ["./src/*"]
+    }
   },
   "include": ["src"]
 }

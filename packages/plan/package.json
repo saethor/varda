@@ -12,7 +12,7 @@
   "dependencies": {
     "@orpc/contract": "1.16.2",
     "@varda/shared": "workspace:*",
-    "zod": "4.3.5"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@varda/config": "workspace:*"

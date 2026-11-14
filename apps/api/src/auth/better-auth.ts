@@ -2,10 +2,9 @@
 // place that word may appear (ADR 0006). Everything outside speaks of persons.
 import { resolvePerson, type SharedAdapters } from '@varda/shared';
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Auth } from '../adapters.ts';
-import * as schema from './schema.ts';
+import { loginOptions } from './options.ts';
 
 export type BetterAuthInfra = {
   db: NodePgDatabase;
@@ -21,9 +20,7 @@ export function createBetterAuthAdapter({ db, secret, baseURL, shared }: BetterA
   const betterAuthInstance = betterAuth({
     secret,
     baseURL,
-    // The tables come from `schema`; `schemaName` only steers Better Auth's CLI.
-    database: drizzleAdapter(db, { provider: 'pg', schema, schemaName: 'auth' }),
-    emailAndPassword: { enabled: true },
+    ...loginOptions(db),
     databaseHooks: {
       user: {
         create: {

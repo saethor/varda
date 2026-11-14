@@ -30,8 +30,10 @@ _Avoid_: Activity type, discipline
 The athlete's personal heart-rate, pace and power ranges, set by the athlete or a coach, each version valid from a date. A stone is always judged against the zones valid on its day.
 _Avoid_: Thresholds, settings
 
-**Exercise**:
-A single strength movement within a workout or stone, made up of sets.
+**Strength exercise**:
+A single strength movement within a workout or stone, made up of strength sets.
+_Avoid_: Exercise (unprefixed), movement, lift
 
-**Set**:
-One round of an exercise, given as reps × weight or as a duration.
+**Strength set**:
+One round of a strength exercise, given as reps × weight or as a duration.
+_Avoid_: Set (unprefixed), round

@@ -13,11 +13,11 @@ The athlete's training on the way to a destination: "the Journey to X". An athle
 _Avoid_: Season, plan, programme
 
 **Destination**:
-The written goal a journey leads to. It may have a date and a target (a goal race, "sub-40 10k") or be open ("a strong base").
+The written goal a journey leads to. It may have a date and a measurable aim (a goal race, "sub-40 10k") or be open ("a strong base").
 _Avoid_: Goal race, target, markið (in English)
 
 **Open journey**:
-A journey whose destination has no date or target yet. It ends when closed or when a new journey starts, and can later be given a date and target.
+A journey whose destination has no date or measurable aim yet. It ends when closed or when a new journey starts, and can later be given both.
 _Avoid_: Off-season, unstructured training
 
 **Waypoint**:
@@ -38,17 +38,17 @@ _Avoid_: Microcycle
 A session planned for a specific day. A workout is always planned, never something already done. Workouts belong to the athlete and fall within a journey and stage only by their date. Anyone in the coaching relationship can change one, and every change is kept in its history.
 _Avoid_: Session, training (for planned work)
 
-**Step**:
-One part of a running workout (warm-up, work, recovery, cool-down) with a length given as distance, time or open, and an optional target.
-_Avoid_: Segment, interval, phase
+**Workout step**:
+One part of a running workout (warm-up, work, recovery, cool-down) with a length given as distance, time or open, and an optional step target.
+_Avoid_: Step (unprefixed), segment, interval, phase
 
-**Repeat**:
-A group of steps done a set number of times.
-_Avoid_: Set (reserved for strength), block, loop
+**Repeat block**:
+A group of workout steps done a given number of times, e.g. 6 × (1 km work + 90 s jog).
+_Avoid_: Repeat (unprefixed), step repeats, loop, set
 
-**Target**:
-The intensity a step aims for: a pace range, heart-rate zone, power range or perceived effort.
-_Avoid_: Goal, intensity
+**Step target**:
+The intensity a workout step aims for: a pace range, heart-rate zone, power range or perceived effort.
+_Avoid_: Target (unprefixed), goal, intensity
 
 **Rest stop**:
 A day deliberately planned for rest. A day with nothing planned and nothing done is not a rest stop.

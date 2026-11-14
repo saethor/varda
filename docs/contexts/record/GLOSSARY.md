@@ -25,7 +25,7 @@ A change the athlete makes to a stone's distance, pace or laps when the recordin
 _Avoid_: Edit, override
 
 **Lap**:
-A recorded section of a stone. Laps are matched to the steps of the workout the stone fulfils; the match can be corrected by hand.
+A recorded section of a stone. Laps are matched to the workout steps of the workout the stone fulfils; the match can be corrected by hand.
 _Avoid_: Split (except for automatic per-kilometre splits)
 
 **Training load**:
@@ -42,9 +42,9 @@ _Avoid_: Wellness, readiness, daily log
 
 ### Against the plan
 
-**Outcome**:
-How a workout turned out: _completed_, _partial_ or _missed_. Doing a workout on another day is not an outcome; it is the same workout on a different date.
-_Avoid_: Status, compliance
+**Workout outcome**:
+How a workout turned out: _completed_, _partial_ or _missed_. Doing a workout on another day is not a workout outcome; it is the same workout on a different date.
+_Avoid_: Outcome (unprefixed), status, compliance
 
 **Deviation reason**:
 The athlete's chosen reason a workout was partial or missed (e.g. illness, niggle, fatigue, weather, time).
@@ -61,7 +61,7 @@ _Avoid_: Collection, history
 
 **Journey result**:
 How a journey ended: _reached_, _fell short_ or _abandoned_. An open journey cannot fall short.
-_Avoid_: Outcome (reserved for workouts)
+_Avoid_: Outcome
 
 ### Journal
 
@@ -76,13 +76,13 @@ _Avoid_: Note, comment, log entry
 **Private journal entry**:
 A journal entry the athlete has hidden from their coaches.
 
-**Comment**:
-A message by the athlete or a coach on a stone or a journal entry, forming a discussion.
-_Avoid_: Reply, message, note
+**Journal comment**:
+A message by the athlete or a coach on a stone or a journal entry, forming a discussion shown in the journal.
+_Avoid_: Comment (unprefixed), journal entry comment, reply, message
 
-**Reaction**:
+**Journal reaction**:
 An emoji placed on a single stone or journal entry.
-_Avoid_: Like, kudos
+_Avoid_: Reaction (unprefixed), like, kudos
 
 ### Looking back
 

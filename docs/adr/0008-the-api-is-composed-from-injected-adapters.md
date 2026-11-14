@@ -4,7 +4,7 @@
 
 ## Consequences
 
-- Each context ships its in-memory fakes from a `./testing` subpath, used only by test files (checked by dependency-cruiser). Every port with a real adapter has one behaviour suite, also exported from `./testing`, that runs against the fake in `pnpm test` and against Postgres in `pnpm test:adapters`, so a fake can't quietly drift from the real adapter.
+- Each context ships its in-memory fakes from a `./testing` subpath, used only by test files (checked by dependency-cruiser). Every port with a real adapter has one behaviour suite, also exported from `./testing`, that runs against the fake in `pnpm test` and against Postgres in `pnpm test:adapters`, so a fake can't quietly drift from the real adapter. These suites stay minimal, about one case per port method (ADR 0007).
 - Each context tests its own part of the contract in-process, through oRPC's `createRouterClient(createXRouter(fakes), { context })`, with no Hono and no apps/api. Assertions go through the client only; setup goes through the client too, and fakes are seeded directly only for state the contract can't create (e.g. a recording that arrived by sync).
 - API tests only check how the app is put together (health, each context mounted, auth wired into the per-request context). They use `createTestApp({ as, overrides })`, which returns the typed oRPC client and the fakes.
 - Ports a context reads from another context are ports like any other. Record's `PlannedWorkouts` lives in `RecordAdapters`, with its fake in `@varda/record/testing`, and `createApp` fills it with the reader Plan exports. Likewise Shared exports a `CoachingAccess` reader interface and its fake; Plan and Record list it as a port, and `createApp` fills it with Shared's real reader.

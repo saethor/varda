@@ -101,7 +101,7 @@ A mix of Icelandic and English: Icelandic for the journey parts, English for the
 
 ## Visual identity
 
-**Varða logo:** a cairn of stacked stones in different widths. Turned on its side, the stack reads as a **split chart**, so the logo is also a data visualization.
+**Varða logo (final):** a cairn of five stacked stones that is also a **negative-split chart**: each stone is a kilometer, each one shorter (faster) than the one below, with the fastest on top in the accent color. The wordmark is custom capitals, **VARÐA**, where the Ð's crossbar is that same accent stone. See [`logo/final/`](logo/final/) for the files and the [concept write-up](logo/final/README.md).
 
 **Splitsmith icon:** a hammer striking a stone, or a single stone with clean chiseled facets.
 
@@ -117,12 +117,12 @@ A mix of Icelandic and English: Icelandic for the journey parts, English for the
 
 Varða should feel calm, earthy, and reflective, and Splitsmith adds the heat of the forge.
 
-Logo mockups are in [`logo/`](logo/). Open [`logo/preview.html`](logo/preview.html) to see them all together.
+The final logo is in [`logo/final/`](logo/final/) (open `index.html`). The first round of mockups, including the Splitsmith icon, is in [`logo/preview.html`](logo/preview.html).
 
 ---
 
 ## Next steps
 
 1. Check that the domains are available: varda.run, varda.app, splitsmith.app
-2. Pick a logo direction from the mockups
+2. ~~Pick a logo direction from the mockups~~ Done: see [`logo/final/`](logo/final/). Splitsmith's icon still needs updating to match.
 3. Plan the data model (stones, dagbók entries, áfangar and so on) so the theme carries into the code

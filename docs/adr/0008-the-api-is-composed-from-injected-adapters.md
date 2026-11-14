@@ -1,6 +1,6 @@
 # The API is composed from injected adapters; fakes live with their context
 
-`apps/api` builds the whole application with `createApp(adapters)`, the only place where contexts are wired to adapters. Its input has one group per context, each typed by that context's own list of ports, plus the cross-cutting adapters `auth` (request → person or nobody), `clock` and `ids`. `main.ts` is the only code that reads the environment and opens connections; it builds the real adapters with a factory exported from each context's `index.ts`. Tests build the same app with in-memory fakes. We chose this so that ADR 0007 holds by construction: the first repository can't pull Postgres into the default suite, and no test needs module mocking.
+`apps/api` builds the whole application with `createApp(adapters)`, the only place where contexts are wired to adapters. Its input has one group per context, each typed by that context's own list of ports, plus the cross-cutting `auth` adapter (request → person or nobody). The cross-cutting `clock` and `ids` adapters sit inside each context's group that uses them. `main.ts` is the only code that reads the environment and opens connections; it builds the real adapters with a factory exported from each context's `index.ts`. Tests build the same app with in-memory fakes. We chose this so that ADR 0007 holds by construction: the first repository can't pull Postgres into the default suite, and no test needs module mocking.
 
 ## Consequences
 

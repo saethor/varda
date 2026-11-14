@@ -6,7 +6,16 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/routeTree.gen.ts", "!**/*.md", "!logo", "!docs/diagrams", "!.claude", "!.agents"]
+    "includes": [
+      "**",
+      "!**/routeTree.gen.ts",
+      "!**/migrations/meta",
+      "!**/*.md",
+      "!logo",
+      "!docs/diagrams",
+      "!.claude",
+      "!.agents"
+    ]
   },
   "formatter": {
     "indentStyle": "space",

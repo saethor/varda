@@ -7,6 +7,10 @@
     },
     "typecheck": {},
     "test": {},
+    "test:adapters": {
+      "cache": false,
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

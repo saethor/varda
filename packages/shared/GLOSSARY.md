@@ -9,7 +9,7 @@ The English words here are canonical in code and docs; the Icelandic UI translat
 ### People
 
 **Person**:
-Someone who uses Varða, as an athlete, a coach or both. A person signs in with a login account, which is not part of the domain.
+Someone who uses Varða, as an athlete, a coach or both. A person signs in with exactly one login account, which is not part of the domain, and exists from the moment that login account is created; there is no person who cannot sign in. A person is known by their name; their email address belongs to the login account.
 _Avoid_: User, account, member, profile
 
 **Athlete**:
@@ -21,7 +21,7 @@ A person who plans training for an athlete and sees all of that athlete's traini
 _Avoid_: Trainer, planner, self-coached athlete
 
 **Coaching relationship**:
-The link between one athlete and one coach, started by an invitation from either side and ended by either side at any time. When it ends the coach loses access, but everything they contributed stays with the athlete.
+The link between one athlete and one coach, started by an invitation from either side and ended by either side at any time. An invitation is addressed to an email address, not a person, so the person invited may not exist yet. When it ends the coach loses access, but everything they contributed stays with the athlete.
 _Avoid_: Subscription, connection, follow
 
 ### Training

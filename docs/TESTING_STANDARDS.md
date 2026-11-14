@@ -53,8 +53,9 @@ tests by cost:
    `createTestApp`.
 2. **`pnpm test:adapters`**, run in CI. Each port's behaviour suite (exported
    from `./testing`) run against Postgres, so a fake can't drift from its real
-   adapter. Written only where the SQL is non-trivial. Never "improve coverage"
-   by moving a default test here; add a fake instead.
+   adapter. Kept to an absolute minimum: about one case per port method,
+   showing the real adapter agrees with its fake. Edge cases are tested through
+   the fakes in the default suite, never here.
 3. **Playwright end-to-end flows**, run in CI. A handful only: sign in, plan a
    workout, place a stone from a FIT file. The only runtime test across two
    contexts is the stone flow.

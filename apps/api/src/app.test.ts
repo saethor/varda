@@ -12,11 +12,6 @@ describe('api', () => {
     expect(await response.json()).toEqual({ ok: true });
   });
 
-  it('mounts the shared router under /rpc', async () => {
-    const { client } = createTestApp();
-    expect(await client.shared.sports.list()).not.toHaveLength(0);
-  });
-
   it('mounts the login endpoints under /api/auth', async () => {
     const { app } = createTestApp();
     const signIn = await app.request('/api/auth/sign-in/email', { method: 'POST' });
@@ -24,6 +19,7 @@ describe('api', () => {
     expect([signIn.status, session.status]).toEqual([200, 200]);
   });
 
+  // These two also show the shared router is mounted under /rpc.
   it('passes the signed-in person into the request context', async () => {
     const { client } = createTestApp({ as: guðrún });
     expect(await client.shared.persons.me()).toEqual(guðrún);

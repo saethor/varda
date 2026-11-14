@@ -8,3 +8,7 @@ dist/
 
 # Lingui compiles the catalogs at build time (`lingui compile --strict` only checks them).
 apps/web/src/locales/*.js
+
+# Playwright
+apps/e2e/test-results/
+apps/e2e/playwright-report/

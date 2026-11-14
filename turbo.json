@@ -11,6 +11,10 @@
       "cache": false,
       "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL"]
     },
+    "test:e2e": {
+      "cache": false,
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "CI"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

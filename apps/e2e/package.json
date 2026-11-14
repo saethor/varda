@@ -1,0 +1,14 @@
+{
+  "name": "@varda/e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "24.19.2",
+    "@varda/config": "workspace:*"
+  }
+}

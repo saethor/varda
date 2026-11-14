@@ -10,7 +10,8 @@ export function createApp(adapters: AppAdapters): Hono {
   app.get('/health', (c) => c.json({ ok: true }));
 
   app.use('/rpc/*', async (c, next) => {
-    const { matched, response } = await rpc.handle(c.req.raw, { prefix: '/rpc', context: {} });
+    const person = await adapters.auth.personFor(c.req.raw);
+    const { matched, response } = await rpc.handle(c.req.raw, { prefix: '/rpc', context: { person } });
     if (matched) {
       return c.newResponse(response.body, response);
     }

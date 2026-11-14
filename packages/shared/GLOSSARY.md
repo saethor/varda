@@ -12,6 +12,10 @@ The English words here are canonical in code and docs; the Icelandic UI translat
 Someone who uses Varða, as an athlete, a coach or both. A person signs in with exactly one login account, which is not part of the domain, and exists from the moment that login account is created; there is no person who cannot sign in. A person is known by their name; their email address belongs to the login account.
 _Avoid_: User, account, member, profile
 
+**Login account**:
+What a person signs in with: an email address and a password. It is not part of the domain; it belongs to login, and the person refers to it by identity only. Each login account has exactly one person, created with it.
+_Avoid_: User, account (unprefixed), credentials
+
 **Athlete**:
 The person whose training is planned, recorded and analysed.
 _Avoid_: User, runner, Athletic

@@ -55,3 +55,41 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:migrate
       - run: pnpm test:adapters
+
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: varda
+          POSTGRES_PASSWORD: varda
+          POSTGRES_DB: varda
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U varda"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://varda:varda@localhost:5432/varda
+      BETTER_AUTH_SECRET: ci-only-secret-of-at-least-32-characters
+      BETTER_AUTH_URL: http://127.0.0.1:4174
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate
+      - run: pnpm --filter @varda/e2e exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: playwright-traces
+          path: apps/e2e/test-results/
+          retention-days: 7

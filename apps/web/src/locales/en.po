@@ -7,63 +7,67 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/routes/index.tsx:77
+#: src/routes/index.tsx:86
 msgid "Cross-training"
 msgstr "Cross-training"
 
-#: src/routes/index.tsx:56
+#: src/routes/index.tsx:65
 msgid "Cycling"
 msgstr "Cycling"
 
-#: src/routes/index.tsx:62
+#: src/routes/index.tsx:71
 msgid "Hiking"
 msgstr "Hiking"
 
-#: src/routes/index.tsx:24
+#: src/routes/index.tsx:27
 msgid "One stone at a time."
 msgstr "One stone at a time."
 
-#: src/routes/index.tsx:66
+#: src/routes/index.tsx:75
 msgid "Other"
 msgstr "Other"
 
-#: src/routes/index.tsx:46
+#: src/routes/index.tsx:45
+msgid "Refresh"
+msgstr "Refresh"
+
+#: src/routes/index.tsx:55
 msgid "Road running"
 msgstr "Road running"
 
-#: src/routes/index.tsx:73
+#: src/routes/index.tsx:82
 msgid "Running"
 msgstr "Running"
 
-#: src/routes/index.tsx:60
+#: src/routes/index.tsx:69
 msgid "Skiing"
 msgstr "Skiing"
 
-#: src/routes/index.tsx:27
+#: src/routes/index.tsx:32
 msgid "Sports"
 msgstr "Sports"
 
-#: src/routes/index.tsx:54
-#: src/routes/index.tsx:75
+#: src/routes/index.tsx:63
+#: src/routes/index.tsx:84
 msgid "Strength"
 msgstr "Strength"
 
-#: src/routes/index.tsx:58
+#: src/routes/index.tsx:67
 msgid "Swimming"
 msgstr "Swimming"
 
-#: src/routes/index.tsx:50
+#: src/routes/index.tsx:59
 msgid "Track running"
 msgstr "Track running"
 
-#: src/routes/index.tsx:48
+#: src/routes/index.tsx:57
 msgid "Trail running"
 msgstr "Trail running"
 
-#: src/routes/index.tsx:52
+#: src/routes/index.tsx:61
 msgid "Treadmill running"
 msgstr "Treadmill running"
 
-#: src/routes/index.tsx:64
+#: src/routes/index.tsx:73
 msgid "Walking"
 msgstr "Walking"

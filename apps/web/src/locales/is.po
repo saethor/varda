@@ -7,63 +7,67 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: is\n"
 
-#: src/routes/index.tsx:77
+#: src/routes/index.tsx:86
 msgid "Cross-training"
 msgstr "Önnur þjálfun"
 
-#: src/routes/index.tsx:56
+#: src/routes/index.tsx:65
 msgid "Cycling"
 msgstr "Hjólreiðar"
 
-#: src/routes/index.tsx:62
+#: src/routes/index.tsx:71
 msgid "Hiking"
 msgstr "Fjallganga"
 
-#: src/routes/index.tsx:24
+#: src/routes/index.tsx:27
 msgid "One stone at a time."
 msgstr "Einn steinn í einu."
 
-#: src/routes/index.tsx:66
+#: src/routes/index.tsx:75
 msgid "Other"
 msgstr "Annað"
 
-#: src/routes/index.tsx:46
+#: src/routes/index.tsx:45
+msgid "Refresh"
+msgstr "Uppfæra"
+
+#: src/routes/index.tsx:55
 msgid "Road running"
 msgstr "Götuhlaup"
 
-#: src/routes/index.tsx:73
+#: src/routes/index.tsx:82
 msgid "Running"
 msgstr "Hlaup"
 
-#: src/routes/index.tsx:60
+#: src/routes/index.tsx:69
 msgid "Skiing"
 msgstr "Skíði"
 
-#: src/routes/index.tsx:27
+#: src/routes/index.tsx:32
 msgid "Sports"
 msgstr "Íþróttir"
 
-#: src/routes/index.tsx:54
-#: src/routes/index.tsx:75
+#: src/routes/index.tsx:63
+#: src/routes/index.tsx:84
 msgid "Strength"
 msgstr "Styrktarþjálfun"
 
-#: src/routes/index.tsx:58
+#: src/routes/index.tsx:67
 msgid "Swimming"
 msgstr "Sund"
 
-#: src/routes/index.tsx:50
+#: src/routes/index.tsx:59
 msgid "Track running"
 msgstr "Brautarhlaup"
 
-#: src/routes/index.tsx:48
+#: src/routes/index.tsx:57
 msgid "Trail running"
 msgstr "Utanvegahlaup"
 
-#: src/routes/index.tsx:52
+#: src/routes/index.tsx:61
 msgid "Treadmill running"
 msgstr "Hlaup á bretti"
 
-#: src/routes/index.tsx:64
+#: src/routes/index.tsx:73
 msgid "Walking"
 msgstr "Ganga"

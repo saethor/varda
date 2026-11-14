@@ -17,6 +17,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec biome ci .
+      - run: pnpm lint:vocabulary
       - run: pnpm depcruise
       - run: pnpm typecheck
       - run: pnpm test
@@ -40,6 +41,8 @@ jobs:
           --health-retries 10
     env:
       DATABASE_URL: postgres://varda:varda@localhost:5432/varda
+      BETTER_AUTH_SECRET: ci-only-secret-of-at-least-32-characters
+      BETTER_AUTH_URL: http://localhost:4000
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4

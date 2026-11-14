@@ -9,6 +9,9 @@ export function createApp(adapters: AppAdapters): Hono {
 
   app.get('/health', (c) => c.json({ ok: true }));
 
+  // Signing up, in and out (Better Auth's endpoints in main.ts).
+  app.on(['GET', 'POST'], '/api/auth/*', (c) => adapters.auth.handle(c.req.raw));
+
   app.use('/rpc/*', async (c, next) => {
     const person = await adapters.auth.personFor(c.req.raw);
     const { matched, response } = await rpc.handle(c.req.raw, { prefix: '/rpc', context: { person } });

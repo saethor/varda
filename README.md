@@ -49,7 +49,7 @@ cp .env.example .env
 pnpm db:up        # Postgres + MinIO (docker-compose.yml)
 pnpm db:migrate   # every context's migrations; safe to re-run
 pnpm dev          # api on :4000, web on :5173 (proxies /rpc to the api)
-pnpm check        # lint, boundaries, typecheck, tests; never touches Postgres
+pnpm check        # lint, "user" check, boundaries, typecheck, tests; never touches Postgres
 pnpm test:adapters # ports' behaviour suites against Postgres (CI runs it too)
 ```
 

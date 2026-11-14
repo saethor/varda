@@ -3,11 +3,12 @@ import { sharedMigrations } from '@varda/shared/migrations';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Pool } from 'pg';
+import { authMigrations } from './auth/migrations.ts';
 
-// One entry per migrations folder: each context's, and auth's once Better Auth arrives.
+// One entry per migrations folder: each context's, and auth's (Better Auth's tables).
 // Each folder gets its own table in the `drizzle` schema, because the migrator
 // skips every migration older than the newest one recorded in its table.
-const folders: { name: string; folder: string }[] = [sharedMigrations];
+const folders: { name: string; folder: string }[] = [sharedMigrations, authMigrations];
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) throw new Error('DATABASE_URL is not set (see .env.example).');

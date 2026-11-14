@@ -25,7 +25,8 @@ export type TestAppOptions = {
 export function createTestApp({ as, overrides = {} }: TestAppOptions = {}): TestApp {
   const fakes: AppAdapters = {
     shared: { persons: createInMemoryPersons() },
-    auth: { personFor: async () => as ?? null },
+    // Login endpoints answer with an empty 200, so tests can tell they are mounted.
+    auth: { personFor: async () => as ?? null, handle: async () => new Response(null, { status: 200 }) },
     ids: createSequentialIds(),
     ...overrides,
   };

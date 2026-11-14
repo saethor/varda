@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Varða — final logo</title>
+<style>
+  :root { --basalt:#2B2E2F; --moss:#5E7A4E; --lichen:#B5C26A; --snow:#F3F1EC; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:48px; background:#E8E5DE; color:var(--basalt);
+    font-family:"Avenir Next", Futura, "Helvetica Neue", Arial, sans-serif; }
+  h1 { font-weight:600; font-size:34px; margin:0 0 4px; }
+  h2 { font-weight:600; font-size:20px; margin:44px 0 14px; }
+  .sub { color:var(--moss); letter-spacing:3px; font-size:12px; font-weight:600; }
+  p { max-width:760px; font-size:14px; line-height:1.6; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .card { background:var(--snow); border-radius:18px; padding:32px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px; min-height:220px; }
+  .card.dark { background:var(--basalt); color:var(--snow); }
+  .label { font-size:12px; letter-spacing:1px; opacity:.6; }
+  .row { display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap; justify-content:center; }
+  .sw { display:flex; gap:12px; }
+  .sw div { width:120px; border-radius:12px; overflow:hidden; background:var(--snow); font-size:12px; }
+  .sw i { display:block; height:64px; }
+  .sw span { display:block; margin:8px 10px; }
+</style>
+</head>
+<body>
+  <h1>Varða</h1>
+  <div class="sub">FINAL LOGO</div>
+  <p>A cairn that is also a run: five stones, five kilometers, each one faster than the last. The top stone, the fastest km, is the accent. In the wordmark, the Ð's crossbar is that same stone.</p>
+
+  <h2>Primary logo</h2>
+  <div class="grid">
+    <div class="card"><img src="varda-logo.svg" width="460"><div class="label">varda-logo.svg</div></div>
+    <div class="card dark"><img src="varda-logo-dark.svg" width="460"><div class="label">varda-logo-dark.svg</div></div>
+  </div>
+
+  <h2>Stacked</h2>
+  <div class="grid">
+    <div class="card"><img src="varda-logo-stacked.svg" width="260"><div class="label">varda-logo-stacked.svg</div></div>
+    <div class="card dark"><img src="varda-logo-stacked-dark.svg" width="260"><div class="label">varda-logo-stacked-dark.svg</div></div>
+  </div>
+
+  <h2>Wordmark</h2>
+  <div class="grid">
+    <div class="card"><img src="varda-wordmark.svg" width="360"><div class="label">varda-wordmark.svg</div>
+      <img src="varda-wordmark-tagline.svg" width="320"><div class="label">varda-wordmark-tagline.svg</div></div>
+    <div class="card dark"><img src="varda-wordmark-dark.svg" width="360"><div class="label">varda-wordmark-dark.svg</div>
+      <img src="varda-wordmark-tagline-dark.svg" width="320"><div class="label">varda-wordmark-tagline-dark.svg</div></div>
+  </div>
+
+  <h2>Mark and app icon</h2>
+  <div class="grid">
+    <div class="card"><div class="row"><img src="varda-mark.svg" width="160"><img src="varda-mark.svg" width="48"><img src="varda-mark.svg" width="24"></div><div class="label">varda-mark.svg · 160 / 48 / 24 px</div></div>
+    <div class="card" style="background:transparent"><div class="row"><img src="varda-app-icon.svg" width="160"><img src="varda-app-icon.svg" width="64"><img src="varda-app-icon.svg" width="32"></div><div class="label">varda-app-icon.svg · 160 / 64 / 32 px</div></div>
+  </div>
+
+  <h2>Small sizes</h2>
+  <div class="card"><div class="row">
+    <img src="varda-wordmark.svg" height="40"><img src="varda-wordmark.svg" height="24"><img src="varda-wordmark.svg" height="16">
+    <img src="varda-logo.svg" height="40"><img src="varda-logo.svg" height="24">
+  </div></div>
+
+  <h2>Colors</h2>
+  <div class="sw">
+    <div><i style="background:#2B2E2F"></i><span><b>Basalt</b><br>#2B2E2F</span></div>
+    <div><i style="background:#5E7A4E"></i><span><b>Moss</b><br>#5E7A4E</span></div>
+    <div><i style="background:#B5C26A"></i><span><b>Lichen</b><br>#B5C26A</span></div>
+    <div><i style="background:#F3F1EC;border-bottom:1px solid #ddd"></i><span><b>Snow</b><br>#F3F1EC</span></div>
+  </div>
+</body>
+</html>

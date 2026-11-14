@@ -1,5 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@varda/ui/components/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@varda/ui/components/card';
 import { orpc } from '../lib/orpc.ts';
 
 const sportsQuery = orpc.shared.sports.list.queryOptions();
@@ -10,20 +12,27 @@ export const Route = createFileRoute('/')({
 });
 
 function Home() {
-  const { data: sports } = useSuspenseQuery(sportsQuery);
+  const { data: sports, refetch, isFetching } = useSuspenseQuery(sportsQuery);
 
   return (
-    <>
-      <h1 className="text-3xl font-semibold tracking-widest">VARÐA</h1>
-      <p className="mt-1 text-primary">One stone at a time.</p>
-      <h2 className="mt-8 font-medium">Sports</h2>
-      <ul className="mt-2 grid grid-cols-2 gap-1 text-sm">
-        {sports.map(({ sport, group }) => (
-          <li key={sport}>
-            {sport} <span className="text-primary">· {group}</span>
-          </li>
-        ))}
-      </ul>
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-3xl tracking-widest">VARÐA</CardTitle>
+        <CardDescription>One stone at a time.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <h2 className="font-medium">Sports</h2>
+        <ul className="mt-2 grid grid-cols-2 gap-1 text-sm">
+          {sports.map(({ sport, group }) => (
+            <li key={sport}>
+              {sport} <span className="text-primary">· {group}</span>
+            </li>
+          ))}
+        </ul>
+        <Button className="mt-6" disabled={isFetching} onClick={() => void refetch()}>
+          Refresh
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

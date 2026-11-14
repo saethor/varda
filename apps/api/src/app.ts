@@ -1,17 +1,21 @@
 import { RPCHandler } from '@orpc/server/fetch';
 import { Hono } from 'hono';
-import { router } from './router.ts';
+import type { AppAdapters } from './adapters.ts';
+import { createRouter } from './router.ts';
 
-const rpc = new RPCHandler(router);
+export function createApp(adapters: AppAdapters): Hono {
+  const rpc = new RPCHandler(createRouter(adapters));
+  const app = new Hono();
 
-export const app = new Hono();
+  app.get('/health', (c) => c.json({ ok: true }));
 
-app.get('/health', (c) => c.json({ ok: true }));
+  app.use('/rpc/*', async (c, next) => {
+    const { matched, response } = await rpc.handle(c.req.raw, { prefix: '/rpc', context: {} });
+    if (matched) {
+      return c.newResponse(response.body, response);
+    }
+    await next();
+  });
 
-app.use('/rpc/*', async (c, next) => {
-  const { matched, response } = await rpc.handle(c.req.raw, { prefix: '/rpc', context: {} });
-  if (matched) {
-    return c.newResponse(response.body, response);
-  }
-  await next();
-});
+  return app;
+}

@@ -84,6 +84,13 @@ module.exports = {
       },
     },
     {
+      name: 'testing-code-only-in-tests',
+      severity: 'error',
+      comment: 'In-memory fakes and createTestApp are for tests only (ADR 0008).',
+      from: { pathNot: ['\\.test\\.tsx?$', '^packages/[^/]+/src/testing(/|\\.ts$)', '^apps/api/src/testing\\.ts$'] },
+      to: { path: ['^packages/[^/]+/src/testing(/|\\.ts$)', '^apps/api/src/testing\\.ts$'] },
+    },
+    {
       name: 'packages-do-not-import-apps',
       severity: 'error',
       from: { path: '^packages/' },

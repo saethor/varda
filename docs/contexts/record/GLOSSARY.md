@@ -1,0 +1,107 @@
+# Record
+
+Looking back: what the athlete actually did, how it went, and what it adds up to. Shown in the product as **Varða**.
+
+The English words here are canonical in code and docs; the Icelandic UI translates them (stone → steinn, journal → dagbók, milestones → vörður, the path → leiðin).
+
+## Language
+
+### Stones
+
+**Stone**:
+A training session the athlete actually did, of any sport. Stones belong to the athlete, are dated by the local date where they started, and fall within a journey only by that date. A session is placed as a stone only once, whatever its sources.
+_Avoid_: Activity, workout (for completed work), run (unless it is one)
+
+**Placing a stone**:
+Adding a completed session to the athlete's record, whether from a watch file, a synced platform or manual entry.
+_Avoid_: Uploading, logging, syncing (as domain verbs)
+
+**Recording**:
+The raw data a stone was placed from (a watch file, a synced platform). It is never changed.
+_Avoid_: Activity file, raw data
+
+**Correction**:
+A change the athlete makes to a stone's distance, pace or laps when the recording was wrong (e.g. treadmill). Corrections sit on top of the recording, are marked as such, and can be reverted. Only the athlete can correct a stone.
+_Avoid_: Edit, override
+
+**Lap**:
+A recorded section of a stone. Laps are matched to the steps of the workout the stone fulfils; the match can be corrected by hand.
+_Avoid_: Split (except for automatic per-kilometre splits)
+
+**Training load**:
+Varða's own measure of how much strain a stone put on the athlete, calculated the same way whatever its source.
+_Avoid_: TSS, training stress, Garmin load
+
+**Effort**:
+The athlete's rating of how hard a stone felt, from 1 to 10.
+_Avoid_: RPE (in the UI), difficulty, feel
+
+**Day check-in**:
+The athlete's optional once-a-day record of sleep, soreness, mood and illness.
+_Avoid_: Wellness, readiness, daily log
+
+### Against the plan
+
+**Outcome**:
+How a workout turned out: _completed_, _partial_ or _missed_. Doing a workout on another day is not an outcome; it is the same workout on a different date.
+_Avoid_: Status, compliance
+
+**Deviation reason**:
+The athlete's chosen reason a workout was partial or missed (e.g. illness, niggle, fatigue, weather, time).
+_Avoid_: Excuse
+
+**Unplanned stone**:
+A stone that did not fulfil any workout.
+
+### The journey, looking back
+
+**Cairn**:
+The stones placed during one journey.
+_Avoid_: Collection, history
+
+**Journey result**:
+How a journey ended: _reached_, _fell short_ or _abandoned_. An open journey cannot fall short.
+_Avoid_: Outcome (reserved for workouts)
+
+### Journal
+
+**Journal**:
+The athlete's diary: every journal entry, in date order.
+_Avoid_: Diary, log, logbook, notes
+
+**Journal entry**:
+A written reflection belonging to a day, optionally about one stone. The athlete's explanation of a partial or missed workout lives here.
+_Avoid_: Note, comment, log entry
+
+**Private journal entry**:
+A journal entry the athlete has hidden from their coaches.
+
+**Comment**:
+A message by the athlete or a coach on a stone or a journal entry, forming a discussion.
+_Avoid_: Reply, message, note
+
+**Reaction**:
+An emoji placed on a single stone or journal entry.
+_Avoid_: Like, kudos
+
+### Looking back
+
+**Milestone**:
+A notable achievement, either calculated (a personal best, a longest run) or added by the athlete ("first ultra").
+_Avoid_: PR, record, achievement, cairn, vörður (in English)
+
+**Best effort**:
+The athlete's fastest time over a standard distance within any part of any stone, including corrected ones. The athlete can exclude any single stone from best efforts.
+_Avoid_: PR (ambiguous between this and race result)
+
+**Race result**:
+The time of a stone run as a waypoint or destination race.
+_Avoid_: PR, official time
+
+**The Path**:
+The athlete's long-term trends and progress.
+_Avoid_: Trends, history, leiðin (in English)
+
+**Odometer**:
+The athlete's lifetime totals: distance, time and number of stones.
+_Avoid_: Totals, lifetime stats

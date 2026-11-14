@@ -144,6 +144,7 @@ A mix of Icelandic and English: Icelandic for the journey parts, English for the
 | Primary | Moss green | `#5E7A4E` |
 | Accent | Lichen yellow-green | `#B5C26A` |
 | Splitsmith accent | Ember orange (the forge) | `#E0662A` |
+| Errors | Lava red | `#8C2F39` |
 | Background | Snow / pale ash | `#F3F1EC` |
 
 Varða should feel calm, earthy, and reflective, and Splitsmith adds the heat of the forge.

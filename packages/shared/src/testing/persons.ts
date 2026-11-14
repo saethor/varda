@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Ids, Persons } from '../application/ports.ts';
 
-const uuidV7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
-
 export type PersonsSetup = {
   persons: Persons;
   ids: Ids;
@@ -21,11 +19,12 @@ export function describePersons(name: string, setup: () => Promise<PersonsSetup>
       const { persons, ids, newLoginAccount } = await setup();
       const loginAccount = newLoginAccount();
 
-      const created = await persons.createFor({ id: ids.next(), loginAccount, name: 'Guðrún' });
+      const id = ids.next();
+
+      const created = await persons.createFor({ id, loginAccount, name: 'Guðrún' });
       const again = await persons.createFor({ id: ids.next(), loginAccount, name: 'Someone else' });
 
-      expect(created.id).toMatch(uuidV7);
-      expect(created.name).toBe('Guðrún');
+      expect(created).toEqual({ id, name: 'Guðrún' });
       expect(again).toEqual(created);
     });
 
@@ -36,6 +35,14 @@ export function describePersons(name: string, setup: () => Promise<PersonsSetup>
 
       expect(await persons.findFor(loginAccount)).toEqual(created);
       expect(await persons.findFor(newLoginAccount())).toBeNull();
+    });
+
+    it('finds a person by their ID, or nobody', async () => {
+      const { persons, ids, newLoginAccount } = await setup();
+      const created = await persons.createFor({ id: ids.next(), loginAccount: newLoginAccount(), name: 'Sigga' });
+
+      expect(await persons.byId(created.id)).toEqual(created);
+      expect(await persons.byId(ids.next())).toBeNull();
     });
   });
 }

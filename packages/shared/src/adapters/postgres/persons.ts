@@ -25,5 +25,9 @@ export function createPostgresPersons(db: NodePgDatabase): Persons {
       return existing;
     },
     findFor,
+    async byId(id) {
+      const [found] = await db.select(columns).from(persons).where(eq(persons.id, id));
+      return found ?? null;
+    },
   };
 }

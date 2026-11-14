@@ -9,8 +9,7 @@ import { createUuidV7Ids } from './ids.ts';
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 afterAll(async () => await pool.end());
 
-const ids = createUuidV7Ids();
-const { persons } = createSharedAdapters({ db: drizzle({ client: pool }) });
+const { persons, ids } = createSharedAdapters({ db: drizzle({ client: pool }), ids: createUuidV7Ids() });
 
 // Every case uses fresh login accounts, so cases never see each other's rows.
 describePersons('Postgres', async () => ({ persons, ids, newLoginAccount: () => ids.next() }));

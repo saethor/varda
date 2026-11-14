@@ -8,7 +8,7 @@ const os = implement(contract).$context<SharedContext>();
 // Combines each context's part of the contract and wires in its adapters (ADR 0006, ADR 0008).
 export function createRouter(adapters: AppAdapters) {
   return os.router({
-    shared: createSharedRouter({ ...adapters.shared, ids: adapters.ids }),
+    shared: createSharedRouter(adapters.shared),
     plan: {},
     record: {},
   });

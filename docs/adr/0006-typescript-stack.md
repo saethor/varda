@@ -1,6 +1,6 @@
 # TypeScript end to end: Hono + oRPC, Drizzle on Postgres, and a Vite SPA
 
-The whole system is TypeScript on Node.js LTS, in a pnpm + Turborepo monorepo. The web app is a React single-page app built with Vite, using TanStack Router and TanStack Query. The API (`apps/api`) is Hono, serving **oRPC procedures defined contract-first**: each context package exports its oRPC contract and Zod schemas from a `contract` subpath, `apps/api` implements it, and `apps/web` may import only the contracts, never server code. Data lives in PostgreSQL through Drizzle, with one schema per context (ADR 0005) plus an `auth` schema; background work runs on pg-boss in the same database; login is self-hosted with Better Auth. Everything is hosted in the EU. We chose one language so the compiler is the contract between web and API, and Postgres-backed jobs and auth so there is one database to run and back up, and so health data stays in our own database in the EU.
+The whole system is TypeScript on Node.js LTS, in a pnpm + Turborepo monorepo. The web app is a React single-page app built with Vite, using TanStack Router and TanStack Query. The API (`apps/api`) is Hono, serving **oRPC procedures defined contract-first**: each context package exports its oRPC contract and Zod schemas from a `contract` subpath and implements that contract itself, `apps/api` only combines the contexts' implementations, and `apps/web` may import only the contracts, never server code. Data lives in PostgreSQL through Drizzle, with one schema per context (ADR 0005) plus an `auth` schema; background work runs on pg-boss in the same database; login is self-hosted with Better Auth. Everything is hosted in the EU. We chose one language so the compiler is the contract between web and API, and Postgres-backed jobs and auth so there is one database to run and back up, and so health data stays in our own database in the EU.
 
 ## Considered Options
 
@@ -15,6 +15,10 @@ The whole system is TypeScript on Node.js LTS, in a pnpm + Turborepo monorepo. T
 
 ## Consequences
 
+- **Each context implements its own part of the contract**, in `src/adapters/rpc` (a driving adapter, the only layer allowed `@orpc/server`). A context's `index.ts` exports only its router factory `createXRouter(adapters)`, its real-adapter factory `createXAdapters(infra)`, the `XAdapters` type, and readers it offers to other contexts. Use cases are not exported. We chose this over implementing everything in `apps/api` so that the contract and its handlers change together, and so apps/api doesn't grow per-procedure glue and domain mapping (the gateway problem ADR 0005 rejected).
+- Handlers call `application/` use cases. They may call `domain/` directly only when no ports are involved (e.g. listing sports); a use case that only reshapes domain data is a pass-through and shouldn't exist.
+- Procedures declare their expected failures as oRPC typed errors in the contract. Use cases return or throw domain errors, and `adapters/rpc` translates them, so domain code never imports oRPC and the web app gets typed failures.
+- Shared owns the per-request context (the signed-in person) and the middleware that requires one, so all three contexts implement their contracts on the same base.
 - The login account (Better Auth's "user") stays outside the domain; the Shared context maps it to a **person**. "User" appears only inside the auth adapter.
 - Each context package owns its Drizzle schema and its own migrations folder; one command runs them all.
 - IDs are UUIDv7, generated in application code: references across schemas are identity-only, so IDs must be globally unique.

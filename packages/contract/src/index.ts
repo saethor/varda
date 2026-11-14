@@ -1,5 +1,5 @@
 // The whole API contract: each context's contract under its own key.
-// apps/api implements it; apps/web calls it.
+// Each context implements its part; apps/api combines them; apps/web calls it.
 import { planContract } from '@varda/plan/contract';
 import { recordContract } from '@varda/record/contract';
 import { sharedContract } from '@varda/shared/contract';

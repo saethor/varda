@@ -1,3 +1,4 @@
+// Checks how the app is put together. Each context tests its own part of the contract (ADR 0008).
 import { describe, expect, it } from 'vitest';
 import { createTestApp } from './testing.ts';
 
@@ -8,9 +9,8 @@ describe('api', () => {
     expect(await response.json()).toEqual({ ok: true });
   });
 
-  it('serves the shared contract over oRPC', async () => {
+  it('mounts the shared router under /rpc', async () => {
     const { client } = createTestApp();
-    const sports = await client.shared.sports.list();
-    expect(sports).toContainEqual({ sport: 'treadmill-running', group: 'running' });
+    expect(await client.shared.sports.list()).not.toHaveLength(0);
   });
 });

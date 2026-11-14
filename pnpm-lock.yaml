@@ -171,6 +171,9 @@ importers:
       '@orpc/contract':
         specifier: 1.16.2
         version: 1.16.2
+      '@orpc/server':
+        specifier: 1.16.2
+        version: 1.16.2
       zod:
         specifier: 4.3.5
         version: 4.3.5

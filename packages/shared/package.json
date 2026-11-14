@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@orpc/contract": "1.16.2",
+    "@orpc/server": "1.16.2",
     "zod": "4.3.5"
   },
   "devDependencies": {

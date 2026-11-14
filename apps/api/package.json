@@ -6,6 +6,8 @@
     "dev": "node --env-file-if-exists=../../.env --watch src/main.ts",
     "start": "node src/main.ts",
     "db:migrate": "node --env-file-if-exists=../../.env src/migrate.ts",
+    "auth:generate": "pnpm dlx auth@1.7.25 generate --config src/auth/cli-config.ts --output src/auth/schema.ts --yes",
+    "db:generate": "drizzle-kit generate",
     "typecheck": "tsc",
     "test": "vitest run",
     "test:adapters": "vitest run --config vitest.adapters.config.ts"
@@ -17,6 +19,7 @@
     "@varda/plan": "workspace:*",
     "@varda/record": "workspace:*",
     "@varda/shared": "workspace:*",
+    "better-auth": "1.7.25",
     "drizzle-orm": "0.45.4",
     "hono": "4.13.18",
     "pg": "8.23.1",
@@ -27,6 +30,7 @@
     "@orpc/contract": "1.16.2",
     "@types/node": "24.19.2",
     "@types/pg": "8.23.1",
-    "@varda/config": "workspace:*"
+    "@varda/config": "workspace:*",
+    "drizzle-kit": "0.31.11"
   }
 }

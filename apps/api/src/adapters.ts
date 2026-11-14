@@ -1,8 +1,11 @@
 import type { Ids, Person, SharedAdapters } from '@varda/shared';
 
-/** Who is asking: the signed-in person behind a request, or nobody (null). */
+/** Login: who is asking, and the HTTP endpoints for signing up, in and out. */
 export type Auth = {
+  /** The signed-in person behind a request, or nobody (null). */
   personFor(request: Request): Promise<Person | null>;
+  /** Answers a request to the login endpoints under /api/auth. */
+  handle(request: Request): Promise<Response>;
 };
 
 // Everything the application needs from the outside world (ADR 0008).

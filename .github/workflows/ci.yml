@@ -20,6 +20,7 @@ jobs:
       - run: pnpm lint:vocabulary
       - run: sh scripts/check-vocabulary.test.sh
       - run: pnpm depcruise
+      - run: pnpm i18n:compile
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build

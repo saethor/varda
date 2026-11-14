@@ -4,11 +4,11 @@ Varða models training as a **journey**: stones are placed one at a time on the 
 
 ## Contexts
 
-- [Shared](./docs/contexts/shared/GLOSSARY.md): athletes, coaches, sports, zones, strength exercises and strength sets, used identically by both contexts
+- [Shared](./docs/contexts/shared/GLOSSARY.md): people, athletes, coaches, sports, zones, strength exercises and strength sets, used identically by both contexts
 - [Plan](./docs/contexts/plan/GLOSSARY.md): looking ahead: journeys, stages, workouts and the workout library (product area: **Splitsmith**)
 - [Record](./docs/contexts/record/GLOSSARY.md): looking back: stones, workout outcomes, the journal, milestones and the cairn (product area: **Varða**)
 
-Glossaries live under `docs/contexts/` until packages exist; each then moves into its package.
+Glossaries live under `docs/contexts/` until the packages exist; each then moves into its package (`packages/shared`, `packages/plan`, `packages/record`).
 
 ## Relationships
 

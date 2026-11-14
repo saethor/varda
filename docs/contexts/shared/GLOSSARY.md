@@ -8,6 +8,10 @@ The English words here are canonical in code and docs; the Icelandic UI translat
 
 ### People
 
+**Person**:
+Someone who uses Varða, as an athlete, a coach or both. A person signs in with a login account, which is not part of the domain.
+_Avoid_: User, account, member, profile
+
 **Athlete**:
 The person whose training is planned, recorded and analysed.
 _Avoid_: User, runner, Athletic

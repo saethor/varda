@@ -2,13 +2,13 @@
 
 How the engineering skills should consume this repo's domain documentation when exploring the codebase.
 
-This repo is a **multi-context monorepo**. The package structure and tech stack haven't been chosen yet, so package paths below are placeholders (`<pkg>` = wherever packages end up living, e.g. `apps/*` or `packages/*`).
+This repo is a **multi-context monorepo** (ADR 0005, ADR 0006). Each context is a package: `packages/shared`, `packages/plan` and `packages/record`. Until those packages are created, their glossaries live in `docs/contexts/{shared,plan,record}/`.
 
 ## Before exploring, read these
 
 - **`GLOSSARY-MAP.md`** at the repo root, if it exists: it points at one `GLOSSARY.md` per context (package). Read each one relevant to the topic.
 - **`GLOSSARY.md`** at the repo root, if there's no map yet (early, pre-package phase).
-- **`docs/adr/`**: system-wide ADRs. Read the ones that touch the area you're about to work in. Also check `<pkg>/docs/adr/` for context-specific decisions.
+- **`docs/adr/`**: system-wide ADRs. Read the ones that touch the area you're about to work in. Also check `packages/<context>/docs/adr/` for context-specific decisions.
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill creates them lazily when terms or decisions actually get resolved, including `GLOSSARY-MAP.md` once the first packages exist.
 
@@ -18,11 +18,17 @@ If any of these files don't exist, **proceed silently**. Don't flag their absenc
 /
 ├── GLOSSARY-MAP.md                    ← points at each context's GLOSSARY.md
 ├── docs/adr/                          ← system-wide decisions
-└── <pkg-root>/
-    ├── <context-a>/
+├── apps/
+│   ├── web/                           ← React SPA (no domain logic)
+│   └── api/                           ← Hono + oRPC, wires the contexts together
+└── packages/
+    ├── shared/                        ← one package per context
     │   ├── GLOSSARY.md
     │   └── docs/adr/                  ← context-specific decisions
-    └── <context-b>/
+    ├── plan/
+    │   ├── GLOSSARY.md
+    │   └── docs/adr/
+    └── record/
         ├── GLOSSARY.md
         └── docs/adr/
 ```

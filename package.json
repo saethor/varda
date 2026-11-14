@@ -11,11 +11,13 @@
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "test:adapters": "turbo run test:adapters",
     "lint": "biome check .",
     "format": "biome check --write .",
     "depcruise": "depcruise apps packages",
     "check": "pnpm lint && pnpm depcruise && pnpm typecheck && pnpm test",
     "db:up": "docker compose up -d",
+    "db:migrate": "pnpm --filter @varda/api db:migrate",
     "db:down": "docker compose down"
   },
   "devDependencies": {

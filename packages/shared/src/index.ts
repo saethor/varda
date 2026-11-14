@@ -1,4 +1,5 @@
 // Public server interface of the Shared context (ADR 0006). apps/api imports only this file.
+export { createSharedAdapters, type SharedInfra } from './adapters/postgres/index.ts';
 export { createSharedRouter, requirePerson, type SharedContext } from './adapters/rpc.ts';
 export type { Ids, Persons } from './application/ports.ts';
 // The safety net and the login-account hook both resolve through this (used by the auth adapter).

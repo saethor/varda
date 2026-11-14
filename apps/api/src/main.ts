@@ -1,20 +1,20 @@
 import { serve } from '@hono/node-server';
-import type { Persons } from '@varda/shared';
+import { createSharedAdapters } from '@varda/shared';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 import { createApp } from './app.ts';
 import { createUuidV7Ids } from './ids.ts';
 
 // The only code that reads the environment and opens connections (ADR 0008).
 const port = Number(process.env.PORT ?? 4000);
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) throw new Error('DATABASE_URL is not set (see .env.example).');
 
-// Until the Drizzle adapter (#24) and Better Auth (#25) arrive, nobody can sign
-// in, so no procedure ever reaches the persons.
-const notYetStored = async (): Promise<never> => {
-  throw new Error('Persons are not stored yet: the Drizzle adapter arrives in #24.');
-};
-const persons: Persons = { createFor: notYetStored, findFor: notYetStored };
+const db = drizzle({ client: new Pool({ connectionString: databaseUrl }) });
 
 const app = createApp({
-  shared: { persons },
+  shared: createSharedAdapters({ db }),
+  // Until Better Auth arrives (#25), nobody can sign in.
   auth: { personFor: async () => null },
   ids: createUuidV7Ids(),
 });

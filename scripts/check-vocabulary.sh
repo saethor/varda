@@ -9,7 +9,7 @@ allowed='POSTGRES_USER|MINIO_ROOT_USER'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \
-  ':!apps/api/src/auth/**' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary.sh' |
+  ':!apps/api/src/auth/**' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary*.sh' |
   grep -v -E "$allowed")
 
 if [ -n "$found" ]; then

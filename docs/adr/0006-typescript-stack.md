@@ -12,12 +12,13 @@ The whole system is TypeScript on Node.js LTS, in a pnpm + Turborepo monorepo. T
 - **A hosted auth provider (Clerk, Auth0).** Login accounts would live with a vendor, outside the EU database, and cost per user.
 - **BullMQ + Redis.** More capable, but another service to run; pg-boss can queue a job in the same transaction as the change that caused it.
 - **Serverless.** pg-boss needs a long-running worker and Postgres needs pooling from short-lived functions. The API and worker run as containers on an EU platform; the web app is static files on a CDN. Hono keeps a later move open.
+- **Effect** (`Effect<A, E, R>` with Layers, tagged errors and Schema). Its main gains are dependency injection and typed errors: ADR 0008's injected adapters already give the first in plain TypeScript, and thrown domain errors mapped to oRPC typed errors already give the web app typed failures. In exchange it colours every function that does I/O, needs every promise-based library (Hono, oRPC, Drizzle, Better Auth, pg-boss) wrapped, and needs its own guard tooling against dropped effects and untagged errors.
 
 ## Consequences
 
 - **Each context implements its own part of the contract**, in `src/adapters/rpc` (a driving adapter, the only layer allowed `@orpc/server`). A context's `index.ts` exports only its router factory `createXRouter(adapters)`, its real-adapter factory `createXAdapters(infra)`, the `XAdapters` type, and readers it offers to other contexts. Use cases are not exported. We chose this over implementing everything in `apps/api` so that the contract and its handlers change together, and so apps/api doesn't grow per-procedure glue and domain mapping (the gateway problem ADR 0005 rejected).
 - Handlers call `application/` use cases. They may call `domain/` directly only when no ports are involved (e.g. listing sports); a use case that only reshapes domain data is a pass-through and shouldn't exist.
-- Procedures declare their expected failures as oRPC typed errors in the contract. Use cases return or throw domain errors, and `adapters/rpc` translates them, so domain code never imports oRPC and the web app gets typed failures.
+- Procedures declare their expected failures as oRPC typed errors in the contract. Use cases throw domain errors (`Error` subclasses named in the domain's words), and `adapters/rpc` translates each to its typed error and anything else to a 500, so domain code never imports oRPC and the web app gets typed failures.
 - Shared owns the per-request context (the signed-in person) and the middleware that requires one, so all three contexts implement their contracts on the same base.
 - The login account (Better Auth's "user") stays outside the domain; the Shared context maps it to a **person**. "User" appears only inside the auth adapter.
 - Each context package owns its Drizzle schema and its own migrations folder; one command runs them all.

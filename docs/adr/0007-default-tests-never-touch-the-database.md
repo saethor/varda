@@ -7,3 +7,4 @@
 - All I/O sits behind interfaces in each package's `adapters` layer, so use cases can be tested with fakes. This is a design constraint, not only a testing one.
 - Don't "improve coverage" by adding database tests to the default suite; add a fake or an adapter test instead.
 - Keep Postgres tests to an absolute minimum. A behaviour suite has about one case per port method, showing that the real adapter agrees with its fake; edge cases are tested through the fakes in the default suite, never against Postgres.
+- Reading checked-in fixture files (a FIT file from a real watch) is allowed: the rule is about state and I/O behind ports, not test inputs. A default test never writes to the filesystem.

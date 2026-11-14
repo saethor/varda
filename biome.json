@@ -25,7 +25,38 @@
   },
   "linter": {
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": { "maxAllowedComplexity": 15 }
+        }
+      },
+      "nursery": {
+        "useExhaustiveSwitchCases": {
+          "level": "error",
+          "options": { "requireExplicitCase": true }
+        },
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error"
+      },
+      "style": {
+        "useThrowOnlyError": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "vitest": {
+                "importNames": ["vi"],
+                "message": "Fake at ports instead of mocking (CODING_STANDARDS.md, Testing)."
+              }
+            }
+          }
+        }
+      },
+      "suspicious": {
+        "noExplicitAny": "error"
+      }
     }
   },
   "assist": {

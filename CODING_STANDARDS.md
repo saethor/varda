@@ -45,7 +45,9 @@ line each:
   even types. Enforced by dependency-cruiser (`web-imports-only-contracts-and-ui`).
 - **The contract is implemented in `adapters/rpc`**, the only layer that imports
   `@orpc/server`. A context's `index.ts` exports only its router factory, its
-  adapter factory, its `XAdapters` type and its published readers. Enforced by
+  adapter factory, its `XAdapters` type and its published readers. Shared also
+  exports `SharedContext`, the per-request context that `apps/api` fills and
+  every context's router runs on. Enforced by
   dependency-cruiser for `domain` and `application`; review for the rest.
 - **Fakes and `createTestApp` are for tests only.** Enforced by
   dependency-cruiser (`testing-code-only-in-tests`).

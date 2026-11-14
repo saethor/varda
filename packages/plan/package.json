@@ -1,0 +1,20 @@
+{
+  "name": "@varda/plan",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./contract": "./src/contract.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@orpc/contract": "1.16.2",
+    "@varda/shared": "workspace:*",
+    "zod": "4.3.5"
+  },
+  "devDependencies": {
+    "@varda/config": "workspace:*"
+  }
+}

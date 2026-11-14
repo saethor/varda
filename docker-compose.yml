@@ -1,0 +1,29 @@
+# Local development services. Start with `pnpm db:up`.
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: varda
+      POSTGRES_PASSWORD: varda
+      POSTGRES_DB: varda
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql
+
+  # S3-compatible storage for recordings (ADR 0002).
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: varda
+      MINIO_ROOT_PASSWORD: varda-local
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio:/data
+
+volumes:
+  postgres:
+  minio:

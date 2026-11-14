@@ -2,7 +2,7 @@
 
 How the engineering skills should consume this repo's domain documentation when exploring the codebase.
 
-This repo is a **multi-context monorepo** (ADR 0005, ADR 0006). Each context is a package: `packages/shared`, `packages/plan` and `packages/record`. Until those packages are created, their glossaries live in `docs/contexts/{shared,plan,record}/`.
+This repo is a **multi-context monorepo** (ADR 0005, ADR 0006). Each context is a package: `packages/shared`, `packages/plan` and `packages/record`.
 
 ## Before exploring, read these
 

@@ -11,4 +11,4 @@ The domain splits into **Plan** (looking ahead: journeys, stages, workouts, the 
 - **Workout outcome, deviation reason and unplanned stone belong to Record**, not to the workout. Record reads workouts and their workout steps from Plan, matches a stone's laps to them, and judges the workout outcome. Plan only shows workout outcomes; a missed workout stays exactly as planned.
 - **Plan owns the journey** (destination, open journey, waypoints, stages, training weeks); Record owns the **cairn** and the **journey result**, and refers to the journey by identity and dates.
 - Each context refers to the other's things by identity only and never changes them.
-- Glossaries live in `docs/contexts/{shared,plan,record}/` until packages exist; see `GLOSSARY-MAP.md`.
+- Each context's glossary lives in its package (`packages/{shared,plan,record}/GLOSSARY.md`); see `GLOSSARY-MAP.md`.

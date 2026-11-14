@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Varða palette, taken from the Icelandic highlands (see README). */
+@theme {
+  --color-basalt: #2b2e2f;
+  --color-moss: #5e7a4e;
+  --color-lichen: #b5c26a;
+  --color-ember: #e0662a;
+  --color-snow: #f3f1ec;
+
+  --color-background: var(--color-snow);
+  --color-foreground: var(--color-basalt);
+  --color-primary: var(--color-moss);
+  --color-accent: var(--color-lichen);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}

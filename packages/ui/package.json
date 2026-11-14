@@ -1,0 +1,21 @@
+{
+  "name": "@varda/ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./styles.css": "./src/styles.css",
+    "./lib/*": "./src/lib/*.ts",
+    "./components/*": "./src/components/*.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "clsx": "2.1.1",
+    "tailwind-merge": "3.7.0"
+  },
+  "devDependencies": {
+    "@varda/config": "workspace:*",
+    "tailwindcss": "4.3.5"
+  }
+}

@@ -39,6 +39,34 @@ Your training works the same way. Each run is a stone, the cairn grows over time
 
 ---
 
+## Development
+
+Requires Node 24 (`.nvmrc`), pnpm and Docker.
+
+```sh
+pnpm install
+pnpm db:up        # Postgres + MinIO (docker-compose.yml)
+pnpm dev          # api on :4000, web on :5173 (proxies /rpc to the api)
+pnpm check        # lint, boundaries, typecheck, tests (what CI runs)
+```
+
+```
+apps/
+├── web/          # Vite + React SPA: TanStack Router/Query, Tailwind
+└── api/          # Hono + oRPC: implements @varda/contract, wires the contexts
+packages/
+├── shared/       # one package per context: src/{domain,application,adapters},
+├── plan/         #   contract.ts (public to web), index.ts (public to api),
+├── record/       #   GLOSSARY.md
+├── contract/     # composes the contexts' contracts into the one API contract
+├── ui/           # design system: Varða palette, shadcn components
+└── config/       # shared tsconfig
+```
+
+Module boundaries (ADR 0005) are checked by `pnpm depcruise`; see `.dependency-cruiser.cjs`. The default tests never touch the database, network or filesystem (ADR 0007). TypeScript stays on 6.x until TypeScript 7 publishes the compiler API that dependency-cruiser needs.
+
+---
+
 ## Name and practical details
 
 | | |

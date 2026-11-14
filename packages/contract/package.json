@@ -1,0 +1,19 @@
+{
+  "name": "@varda/contract",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@varda/plan": "workspace:*",
+    "@varda/record": "workspace:*",
+    "@varda/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@varda/config": "workspace:*"
+  }
+}

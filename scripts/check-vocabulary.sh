@@ -5,7 +5,7 @@
 # dependency-cruiser sees imports, not identifiers, hence a grep.
 
 # Third-party settings named by their images, not by us.
-allowed='POSTGRES_USER|MINIO_ROOT_USER'
+allowed='POSTGRES_USER'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \

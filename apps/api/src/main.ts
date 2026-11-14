@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server';
-import { createSharedAdapters } from '@varda/shared';
+import { createSharedAdapters, createSharedReaders } from '@varda/shared';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { createApp } from './app.ts';
@@ -11,8 +11,7 @@ import { createUuidV7Ids } from './ids.ts';
 const port = Number(process.env.PORT ?? 4000);
 
 const db = drizzle({ client: new Pool({ connectionString: required('DATABASE_URL') }) });
-const shared = createSharedAdapters({ db });
-const ids = createUuidV7Ids();
+const shared = createSharedAdapters({ db, ids: createUuidV7Ids() });
 
 const app = createApp({
   shared,
@@ -20,9 +19,8 @@ const app = createApp({
     db,
     secret: required('BETTER_AUTH_SECRET'),
     baseURL: required('BETTER_AUTH_URL'),
-    shared: { ...shared, ids },
+    persons: createSharedReaders(shared).persons,
   }),
-  ids,
 });
 
 serve({ fetch: app.fetch, port }, (info) => {

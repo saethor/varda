@@ -1,4 +1,4 @@
-import { createSharedAdapters } from '@varda/shared';
+import { createSharedAdapters, createSharedReaders } from '@varda/shared';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { afterAll, expect, it } from 'vitest';
@@ -11,8 +11,13 @@ afterAll(async () => await pool.end());
 
 const db = drizzle({ client: pool });
 const baseURL = 'http://localhost:4000';
-const shared = { ...createSharedAdapters({ db }), ids: createUuidV7Ids() };
-const auth = createBetterAuthAdapter({ db, secret: 'adapter-test-secret-at-least-32-characters', baseURL, shared });
+const shared = createSharedAdapters({ db, ids: createUuidV7Ids() });
+const auth = createBetterAuthAdapter({
+  db,
+  secret: 'adapter-test-secret-at-least-32-characters',
+  baseURL,
+  persons: createSharedReaders(shared).persons,
+});
 
 const uuidV7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
@@ -40,5 +45,5 @@ it('creates the person when signing up, and resolves the session to them', async
   const signedIn = await auth.personFor(new Request(`${baseURL}/rpc/shared/persons/me`, { headers: { cookie } }));
 
   expect(created).toEqual({ id: expect.stringMatching(uuidV7), name: 'Anna' });
-  expect(signedIn).toEqual(created);
+  expect(signedIn).toEqual(created?.id);
 });

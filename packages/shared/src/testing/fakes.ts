@@ -15,6 +15,9 @@ export function createInMemoryPersons(): Persons {
     async findFor(loginAccount) {
       return byLoginAccount.get(loginAccount) ?? null;
     },
+    async byId(id) {
+      return [...byLoginAccount.values()].find((person) => person.id === id) ?? null;
+    },
   };
 }
 

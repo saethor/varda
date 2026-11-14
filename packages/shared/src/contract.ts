@@ -7,8 +7,25 @@ const SportSchema = z.object({
   group: z.enum(sportGroups),
 });
 
+const PersonSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+});
+
+/**
+ * The base for every procedure that requires a signed-in person, in any context.
+ * Without one it fails with `UNAUTHORIZED`, so the web app can send them to sign in.
+ */
+export const requiresPerson = oc.errors({
+  UNAUTHORIZED: { message: 'Sign in to continue.' },
+});
+
 export const sharedContract = {
   sports: {
     list: oc.output(z.array(SportSchema)),
+  },
+  persons: {
+    /** Who the signed-in person is. */
+    me: requiresPerson.output(PersonSchema),
   },
 };

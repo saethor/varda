@@ -47,6 +47,9 @@ importers:
       hono:
         specifier: 4.13.18
         version: 4.13.18
+      uuid:
+        specifier: 14.0.3
+        version: 14.0.3
     devDependencies:
       '@orpc/client':
         specifier: 1.16.2
@@ -1328,6 +1331,10 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  uuid@14.0.3:
+    resolution: {integrity: sha512-Sc5u1VVln93y1Xnz4R+CunOZc7R9LUcTmhj7Rc7Eg3HVcf7rVn2FOoa812fe0W8p3jD7xeoGSYbfqCGGH2B6xw==}
+    hasBin: true
+
   vite@8.3.8:
     resolution: {integrity: sha512-LzOn3h9rG/0vhLdXrV4yJ4QFA9eEoqCl+Yx+kGJd7aB9w6nfNgVHKSYwLPZUHrz4ZGa+t+kXjV9itvcHDLQouA==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2414,6 +2421,8 @@ snapshots:
   use-sync-external-store@1.7.0(react@19.3.1):
     dependencies:
       react: 19.3.1
+
+  uuid@14.0.3: {}
 
   vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0):
     dependencies:

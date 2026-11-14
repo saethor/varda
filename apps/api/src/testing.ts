@@ -3,6 +3,8 @@ import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import type { ContractRouterClient } from '@orpc/contract';
 import type { Contract } from '@varda/contract';
+import type { Person } from '@varda/shared';
+import { createInMemoryPersons, createSequentialIds } from '@varda/shared/testing';
 import type { AppAdapters } from './adapters.ts';
 import { createApp } from './app.ts';
 
@@ -14,8 +16,19 @@ export type TestApp = {
   app: ReturnType<typeof createApp>;
 };
 
-export function createTestApp({ overrides = {} }: { overrides?: Partial<AppAdapters> } = {}): TestApp {
-  const fakes: AppAdapters = { ...overrides };
+export type TestAppOptions = {
+  /** The person every request is signed in as. Leave out for nobody signed in. */
+  as?: Person;
+  overrides?: Partial<AppAdapters>;
+};
+
+export function createTestApp({ as, overrides = {} }: TestAppOptions = {}): TestApp {
+  const fakes: AppAdapters = {
+    shared: { persons: createInMemoryPersons() },
+    auth: { personFor: async () => as ?? null },
+    ids: createSequentialIds(),
+    ...overrides,
+  };
   const app = createApp(fakes);
   const client: ContractRouterClient<Contract> = createORPCClient(
     new RPCLink({ url: 'http://api.test/rpc', fetch: async (request) => await app.fetch(request) }),

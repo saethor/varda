@@ -11,7 +11,13 @@ Code and packages are named after the contexts (`plan`, `record`, `shared`), nev
 
 ## Consequences
 
-- **Context packages never import each other; each may import only `shared`.** Plan and Record read from each other in both directions (Record reads workouts, Plan reads workout outcomes), so a one-way package dependency can't express the relationship. Instead the reading context defines the interface it needs (e.g. Record's `PlannedWorkouts`), and `apps/api` wires the other context's implementation into it. Screens that show both, such as the plan with its workout outcomes, call both contexts' contracts and combine them in the web app.
+- **Context packages never import each other; each may import only `shared`.** Record reads workouts and journeys from Plan; Plan shows workout outcomes but reads them only through the web app, so there is no server-side dependency from Plan to Record until a Plan use case needs one. Even so, a one-way package dependency would let Record reach into Plan's internals. Instead:
+  - The context being read **publishes readers** from its `index.ts` that return its own neutral read model, not shaped for any one reader and not its internal domain types.
+  - The reading context defines **narrow ports named after its own questions** (Record's `PlannedWorkouts.onDay`, `PlannedWorkouts.byId`, `Journeys.containing`), plus an adapter (`record/src/adapters/plan.ts`) that maps the published read model into its own terms. The adapter types its input structurally; contexts never import each other's `contract` subpath, which is shaped for the web app.
+  - `apps/api` only connects the two (`plannedWorkouts: fromPlan(planReaders.workouts)`), so the compiler checks the fit there and no mapping lives in apps/api.
+  - Published readers are trusted in-process calls with no access checks; the reading context checks access once, in its procedure, through its `CoachingAccess` port.
+  - The mapper is tested inside the reading context against hand-built objects; the only runtime test across both contexts is the Playwright flow that places a stone.
+  - Screens that show both, such as the plan with its workout outcomes, call both contexts' contracts and combine them in the web app.
 - These rules, and the layering inside each package, are checked in CI by dependency-cruiser.
 - A module can later be pulled out into its own service; its schema and public interface are already the seam.
-- Cross-context references are identities only, so there are no foreign keys between schemas.
+- Cross-context references are identities only, so there are no foreign keys between schemas. A reader may answer "not found" for something the other context removed, and the reading context must handle it: Record keeps a judged workout outcome even if its workout is later removed from the plan.

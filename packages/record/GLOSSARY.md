@@ -43,7 +43,7 @@ _Avoid_: Wellness, readiness, daily log
 ### Against the plan
 
 **Workout outcome**:
-How a workout turned out: _completed_, _partial_ or _missed_. Doing a workout on another day is not a workout outcome; it is the same workout on a different date.
+How a workout turned out: _completed_, _partial_ or _missed_. Doing a workout on another day is not a workout outcome; it is the same workout on a different date. A workout outcome is judged when a stone is matched to the workout; later changes to the workout don't change an outcome already judged, and if the workout is removed from the plan, the stone keeps its outcome and shows that it fulfilled a removed workout.
 _Avoid_: Outcome (unprefixed), status, compliance
 
 **Deviation reason**:
@@ -51,7 +51,7 @@ The athlete's chosen reason a workout was partial or missed (e.g. illness, niggl
 _Avoid_: Excuse
 
 **Unplanned stone**:
-A stone that did not fulfil any workout.
+A stone that did not fulfil any workout. A stone whose workout was later removed from the plan is not an unplanned stone.
 
 ### The journey, looking back
 

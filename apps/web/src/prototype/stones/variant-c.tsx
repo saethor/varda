@@ -1,4 +1,4 @@
-// PROTOTYPE, throw me away. Variant C, "Weeks": stones grouped by week with week totals, a
+// PROTOTYPE, throw me away. Variant C, "Weeks": stones by week (a Mon–Sun row on desktop) with week totals, a
 // floating "Place a stone" button, a stone opens as a bottom sheet over the list, and what
 // happened shows as a toast. Delete has no confirmation: it's undoable for a few seconds and
 // only really deleted when the toast goes (the server call would wait for that).
@@ -23,6 +23,12 @@ type Toast =
   | { kind: 'already placed'; stone: Stone }
   | { kind: 'turned away'; title: string; why: string }
   | { kind: 'deleted'; stone: Stone };
+
+function addDays(localDate: string, days: number) {
+  const d = new Date(`${localDate}T12:00:00`);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
 
 function monday(localDate: string) {
   const d = new Date(`${localDate}T12:00:00`);
@@ -96,7 +102,7 @@ export function VariantC({ fake }: { fake: FakeStones }) {
       )}
 
       {toast && (
-        <div className="fixed bottom-32 left-1/2 z-50 flex w-[22rem] -translate-x-1/2 items-start justify-between gap-3 rounded-lg bg-foreground px-4 py-3 text-sm text-background shadow-xl">
+        <div className="fixed bottom-32 left-1/2 z-50 flex w-[22rem] -translate-x-1/2 lg:right-8 lg:left-auto lg:translate-x-0 items-start justify-between gap-3 rounded-lg bg-foreground px-4 py-3 text-sm text-background shadow-xl">
           <div>
             {toast.kind === 'placed' && (
               <p>
@@ -147,13 +153,47 @@ function Week({ week, stones, onOpen }: { week: string; stones: Stone[]; onOpen:
   const secs = stones.reduce((sum, s) => sum + s.movingS, 0);
   return (
     <div>
-      <div className="mb-2 flex items-baseline justify-between border-b pb-1">
+      <div className="mb-2 flex items-baseline justify-between border-b pb-1 lg:border-none">
         <h2 className="text-sm font-medium">Week of {day(week, 'short')}</h2>
-        <span className="text-xs text-muted-foreground tabular-nums">
+        <span className="text-xs text-muted-foreground tabular-nums lg:hidden">
           {stones.length} stones · {km.toFixed(1)} km · {duration(secs)}
         </span>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="hidden grid-cols-[repeat(7,minmax(0,1fr))_9rem] gap-2 lg:grid">
+        {Array.from({ length: 7 }, (_, i) => {
+          const date = addDays(week, i);
+          const today = stones.filter((s) => s.localDate === date);
+          return (
+            <div key={date} className="flex min-h-28 flex-col gap-1 rounded-xl border border-dashed p-1.5">
+              <span className="px-1 text-xs text-muted-foreground">{day(date, 'short')}</span>
+              {today.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => onOpen(s)}
+                  className="flex flex-col rounded-lg bg-muted px-2 py-1.5 text-left hover:bg-accent"
+                >
+                  <span className="text-xs text-muted-foreground capitalize">
+                    {sportEmoji[s.sport]} {s.sport}
+                  </span>
+                  <span className="tabular-nums">
+                    {s.distanceM !== null ? distance(s.distanceM) : duration(s.movingS)}
+                  </span>
+                  {s.distanceM !== null && (
+                    <span className="text-xs text-muted-foreground tabular-nums">{duration(s.movingS)}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          );
+        })}
+        <div className="flex flex-col justify-center gap-1 rounded-xl bg-muted/60 p-3 text-sm tabular-nums">
+          <span className="text-xs text-muted-foreground">{stones.length} stones</span>
+          <span className="text-lg">{km.toFixed(1)} km</span>
+          <span className="text-muted-foreground">{duration(secs)}</span>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2 lg:hidden">
         {stones.map((s) => (
           <button
             key={s.id}
@@ -182,10 +222,10 @@ function Week({ week, stones, onOpen }: { week: string; stones: Stone[]; onOpen:
 function Sheet({ stone, onClose, onDelete }: { stone: Stone; onClose: () => void; onDelete: () => void }) {
   const pace = paceOrSpeed(stone.sport, stone.distanceM, stone.movingS);
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40">
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 lg:items-stretch lg:justify-end">
       <button type="button" aria-label="Close" className="absolute inset-0" onClick={onClose} />
-      <div className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-background p-6 pb-24 shadow-2xl">
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/30" />
+      <div className="relative max-h-[80vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-background p-6 pb-24 shadow-2xl lg:max-h-none lg:max-w-xl lg:rounded-none lg:p-10">
+        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/30 lg:hidden" />
         <p className="text-sm text-muted-foreground">
           {day(stone.localDate)} · {time(stone.start)}
         </p>

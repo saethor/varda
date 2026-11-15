@@ -30,5 +30,14 @@
     "turbo": "2.11.11",
     "typescript": "6.0.3",
     "vitest": "5.1.0"
-  }
+  },
+  "version": "1.0.0",
+  "description": "> **Splitsmith shapes the stone. Varða shows the way.**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

@@ -1,9 +1,9 @@
 import { Trans } from '@lingui/react/macro';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@varda/ui/components/card';
+import { SomethingWentWrongAlert } from '../../components/form.tsx';
 import { forgetWhoIsSignedIn, meQuery } from '../../lib/me.ts';
 import { signOut } from '../../sign-in/sign-in.ts';
 
@@ -36,13 +36,7 @@ function Home() {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-start gap-4">
-        {signingOut.isError && (
-          <Alert variant="destructive">
-            <AlertDescription>
-              <Trans>Something went wrong, try again.</Trans>
-            </AlertDescription>
-          </Alert>
-        )}
+        {signingOut.isError && <SomethingWentWrongAlert />}
         <Button variant="secondary" disabled={signingOut.isPending} onClick={() => signingOut.mutate()}>
           <Trans>Sign out</Trans>
         </Button>

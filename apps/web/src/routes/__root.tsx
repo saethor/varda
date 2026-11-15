@@ -1,9 +1,9 @@
 import { Trans } from '@lingui/react/macro';
 import type { QueryClient } from '@tanstack/react-query';
 import { createRootRouteWithContext, Outlet, useRouter } from '@tanstack/react-router';
-import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
 import type { ReactNode } from 'react';
+import { SomethingWentWrongAlert } from '../components/form.tsx';
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: () => (
@@ -35,11 +35,7 @@ function SomethingWentWrong() {
 
   return (
     <Page>
-      <Alert variant="destructive">
-        <AlertDescription>
-          <Trans>Something went wrong, try again.</Trans>
-        </AlertDescription>
-      </Alert>
+      <SomethingWentWrongAlert />
       <Button className="self-start" onClick={() => void router.invalidate()}>
         <Trans>Try again</Trans>
       </Button>

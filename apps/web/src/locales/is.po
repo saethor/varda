@@ -7,33 +7,33 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: is\n"
 
-#: src/routes/sign-up.tsx:171
+#: src/routes/sign-up.tsx:103
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 
-#: src/routes/sign-in.tsx:94
-#: src/routes/sign-up.tsx:108
+#: src/routes/sign-in.tsx:85
+#: src/routes/sign-up.tsx:74
 msgid "Email"
 msgstr "Netfang"
 
-#: src/routes/sign-in.tsx:46
-#: src/routes/sign-up.tsx:40
+#: src/routes/sign-in.tsx:43
+#: src/routes/sign-up.tsx:35
 msgid "Enter a valid email address."
 msgstr "Sláðu inn gilt netfang."
 
-#: src/routes/sign-up.tsx:39
+#: src/routes/sign-up.tsx:34
 msgid "Enter your name."
 msgstr "Sláðu inn nafnið þitt."
 
-#: src/routes/_signed-in/index.tsx:35
+#: src/routes/_signed-in/index.tsx:34
 msgid "Hi, {name}"
 msgstr "Hæ, {name}"
 
-#: src/routes/sign-up.tsx:86
+#: src/routes/sign-up.tsx:70
 msgid "Name"
 msgstr "Nafn"
 
-#: src/routes/sign-in.tsx:146
+#: src/routes/sign-in.tsx:109
 msgid "New to Varða? <0>Sign up</0>"
 msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
 
@@ -41,41 +41,38 @@ msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
 msgid "One stone at a time."
 msgstr "Einn steinn í einu."
 
-#: src/routes/sign-in.tsx:117
-#: src/routes/sign-up.tsx:142
+#: src/routes/sign-in.tsx:91
+#: src/routes/sign-up.tsx:88
 msgid "Password"
 msgstr "Lykilorð"
 
-#: src/routes/sign-in.tsx:64
-#: src/routes/sign-in.tsx:137
+#: src/routes/sign-in.tsx:61
+#: src/routes/sign-in.tsx:100
 msgid "Sign in"
 msgstr "Innskráning"
 
-#: src/routes/_signed-in/index.tsx:48
+#: src/routes/_signed-in/index.tsx:41
 msgid "Sign out"
 msgstr "Útskrá"
 
-#: src/routes/sign-up.tsx:60
-#: src/routes/sign-up.tsx:162
+#: src/routes/sign-up.tsx:55
+#: src/routes/sign-up.tsx:94
 msgid "Sign up"
 msgstr "Nýskráning"
 
-#: src/routes/__root.tsx:40
-#: src/routes/_signed-in/index.tsx:43
-#: src/routes/sign-in.tsx:83
-#: src/routes/sign-up.tsx:76
+#: src/components/form.tsx:53
 msgid "Something went wrong, try again."
 msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
-#: src/routes/sign-in.tsx:81
+#: src/routes/sign-in.tsx:78
 msgid "That email and password don't match."
 msgstr "Netfangið og lykilorðið passa ekki saman."
 
-#: src/routes/sign-up.tsx:122
+#: src/routes/sign-up.tsx:76
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
 
-#: src/routes/__root.tsx:44
+#: src/routes/__root.tsx:40
 msgid "Try again"
 msgstr "Reyna aftur"
 

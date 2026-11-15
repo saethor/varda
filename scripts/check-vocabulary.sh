@@ -3,6 +3,7 @@
 # "user" (ADR 0006, packages/shared/GLOSSARY.md). Only the auth adapter
 # (apps/api/src/auth/) and the web sign-in module (apps/web/src/sign-in/sign-in.ts),
 # which wrap Better Auth's "user", may say it. Docs (*.md) may name the word they avoid.
+# Vendored skills (Impeccable) are third-party text, not our domain.
 # dependency-cruiser sees imports, not identifiers, hence a grep.
 
 # Third-party names, not ours: settings named by their images, and TanStack Router's
@@ -12,7 +13,7 @@ allowed='POSTGRES_USER|useRoute'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \
-  ':!apps/api/src/auth/**' ':!apps/web/src/sign-in/sign-in.ts' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary*.sh' |
+  ':!apps/api/src/auth/**' ':!apps/web/src/sign-in/sign-in.ts' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary*.sh' ':!**/skills/impeccable/**' |
   awk -v allowed="$allowed" '{
     # Look past "path:line:" at the matched text, with the allowed names taken out.
     text = $0; sub(/^[^:]*:[0-9]+:/, "", text); gsub(allowed, "", text)

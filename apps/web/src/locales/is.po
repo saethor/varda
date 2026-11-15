@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-11-14 23:13+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: is\n"
+
+#: src/routes/sign-up.tsx:103
+msgid "Already signed up? <0>Sign in</0>"
+msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
+
+#: src/routes/sign-in.tsx:85
+#: src/routes/sign-up.tsx:74
+msgid "Email"
+msgstr "Netfang"
+
+#: src/routes/sign-in.tsx:43
+#: src/routes/sign-up.tsx:35
+msgid "Enter a valid email address."
+msgstr "Sláðu inn gilt netfang."
+
+#: src/routes/sign-up.tsx:34
+msgid "Enter your name."
+msgstr "Sláðu inn nafnið þitt."
+
+#: src/routes/_signed-in/index.tsx:34
+msgid "Hi, {name}"
+msgstr "Hæ, {name}"
+
+#: src/routes/sign-up.tsx:70
+msgid "Name"
+msgstr "Nafn"
+
+#: src/routes/sign-in.tsx:109
+msgid "New to Varða? <0>Sign up</0>"
+msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
+
+#: src/routes/__root.tsx:25
+msgid "One stone at a time."
+msgstr "Einn steinn í einu."
+
+#: src/routes/sign-in.tsx:91
+#: src/routes/sign-up.tsx:88
+msgid "Password"
+msgstr "Lykilorð"
+
+#: src/routes/sign-in.tsx:61
+#: src/routes/sign-in.tsx:100
+msgid "Sign in"
+msgstr "Innskráning"
+
+#: src/routes/_signed-in/index.tsx:41
+msgid "Sign out"
+msgstr "Útskrá"
+
+#: src/routes/sign-up.tsx:55
+#: src/routes/sign-up.tsx:94
+msgid "Sign up"
+msgstr "Nýskráning"
+
+#: src/components/form.tsx:53
+msgid "Something went wrong, try again."
+msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
+
+#: src/routes/sign-in.tsx:78
+msgid "That email and password don't match."
+msgstr "Netfangið og lykilorðið passa ekki saman."
+
+#: src/routes/sign-up.tsx:76
+msgid "This email is already signed up. <0>Sign in instead?</0>"
+msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
+
+#: src/routes/__root.tsx:40
+msgid "Try again"
+msgstr "Reyna aftur"
+
+#: src/sign-in/password.ts:14
+msgid "Your password can have at most {max} characters."
+msgstr "Lykilorðið má vera í mesta lagi {max} stafir."
+
+#: src/sign-in/password.ts:13
+msgid "Your password needs at least {min} characters."
+msgstr "Lykilorðið þarf að vera að minnsta kosti {min} stafir."

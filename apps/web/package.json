@@ -6,19 +6,30 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "test": "vitest run",
+    "i18n:extract": "lingui extract --clean",
+    "i18n:compile": "lingui compile --strict"
   },
   "dependencies": {
+    "@lingui/core": "6.12.0",
+    "@lingui/react": "6.12.0",
     "@orpc/client": "1.16.2",
     "@orpc/contract": "1.16.2",
     "@orpc/tanstack-query": "1.16.2",
+    "@tanstack/react-form": "1.33.5",
     "@tanstack/react-query": "5.107.1",
     "@tanstack/react-router": "1.170.46",
     "@varda/ui": "workspace:*",
+    "better-auth": "1.7.25",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "zod": "4.6.6"
   },
   "devDependencies": {
+    "@lingui/cli": "6.12.0",
+    "@lingui/conf": "6.12.0",
+    "@lingui/vite-plugin": "6.12.0",
     "@tailwindcss/vite": "4.3.5",
     "@tanstack/router-plugin": "1.169.0",
     "@types/react": "19.3.0",

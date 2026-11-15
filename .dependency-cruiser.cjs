@@ -84,6 +84,13 @@ module.exports = {
       },
     },
     {
+      name: 'only-the-web-sign-in-module-imports-better-auth',
+      severity: 'error',
+      comment: 'Only the sign-in module wraps Better Auth; the rest of the web app speaks of persons (ADR 0006).',
+      from: { path: '^apps/web/', pathNot: '^apps/web/src/sign-in/sign-in\\.ts$' },
+      to: { path: 'node_modules/better-auth/' },
+    },
+    {
       name: 'testing-code-only-in-tests',
       severity: 'error',
       comment: 'In-memory fakes and createTestApp are for tests only (ADR 0008).',

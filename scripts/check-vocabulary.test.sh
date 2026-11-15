@@ -8,11 +8,29 @@ check="$(cd "$(dirname "$0")" && pwd)/check-vocabulary.sh"
 fixture=$(mktemp -d)
 trap 'rm -rf "$fixture"' EXIT
 cd "$fixture" && git init -q . || exit 1
-mkdir -p apps/api/src/auth packages/shared/src
+mkdir -p apps/api/src/auth apps/web/src/sign-in packages/shared/src
 
 echo 'export const user = 1;' > apps/api/src/auth/better-auth.ts
 if ! sh "$check" > /dev/null; then
   echo 'check-vocabulary.sh failed on "user" inside the auth adapter, where it is allowed.'
+  exit 1
+fi
+
+echo 'export const user = 1;' > apps/web/src/sign-in/sign-in.ts
+if ! sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh failed on "user" inside the web sign-in module, where it is allowed.'
+  exit 1
+fi
+
+mkdir -p apps/web/src/routes
+echo "import { useRouter } from '@tanstack/react-router';" > apps/web/src/routes/__root.tsx
+if ! sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh failed on TanStack Router'"'"'s useRouter, which is not "user".'
+  exit 1
+fi
+echo 'const { person } = Route.useRouteContext();' > apps/web/src/routes/index.tsx
+if ! sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh failed on TanStack Router'"'"'s useRouteContext, which is not "user".'
   exit 1
 fi
 
@@ -21,5 +39,19 @@ if sh "$check" > /dev/null; then
   echo 'check-vocabulary.sh passed with "user" leaked into packages/shared.'
   exit 1
 fi
+rm packages/shared/src/leak.ts
 
-echo 'check-vocabulary.sh allows the auth adapter and catches a leak.'
+echo 'const user = Route.useRouteContext();' > apps/web/src/routes/index.tsx
+if sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh passed with "user" on the same line as useRouteContext.'
+  exit 1
+fi
+rm apps/web/src/routes/index.tsx
+
+echo 'POSTGRES_USER: varda # the user' > docker-compose.yml
+if sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh passed with "user" on the same line as POSTGRES_USER.'
+  exit 1
+fi
+
+echo 'check-vocabulary.sh allows the auth adapter and the web sign-in module, and catches a leak.'

@@ -10,7 +10,7 @@ export type BetterAuthInfra = {
   db: NodePgDatabase;
   /** BETTER_AUTH_SECRET, at least 32 characters. */
   secret: string;
-  /** BETTER_AUTH_URL, where the API is served, e.g. http://localhost:4000. */
+  /** BETTER_AUTH_URL, the origin people sign in on: the web app's, which proxies /api/auth here, e.g. http://localhost:5173. */
   baseURL: string;
   /** Shared's reader that resolves a login account to its person. */
   persons: SharedReaders['persons'];

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Apps import this file, so Tailwind must also scan the components here. */
+@source "./components";
+
 /* Varða palette, taken from the Icelandic highlands (see README). */
 @theme {
   --color-basalt: #2b2e2f;
@@ -7,14 +10,39 @@
   --color-lichen: #b5c26a;
   --color-ember: #e0662a;
   --color-snow: #f3f1ec;
+  --color-lava: #8c2f39;
 
+  /*
+   * shadcn/ui's semantic tokens (#27, variant E "Warm stone, final").
+   * Moss is too light for snow text (4.26:1), so primary is a darker moss.
+   * Errors are lava, never ember. No dark mode.
+   */
   --color-background: var(--color-snow);
   --color-foreground: var(--color-basalt);
-  --color-primary: var(--color-moss);
+  --color-card: #faf9f6;
+  --color-card-foreground: var(--color-basalt);
+  --color-popover: #faf9f6;
+  --color-popover-foreground: var(--color-basalt);
+  --color-primary: #4f6841;
+  --color-primary-foreground: var(--color-snow);
+  --color-secondary: #ebe7dd;
+  --color-secondary-foreground: var(--color-basalt);
   --color-accent: var(--color-lichen);
+  --color-accent-foreground: var(--color-basalt);
+  --color-muted: #ebe7dd;
+  --color-muted-foreground: #6f695d;
+  --color-border: #d8d3c7;
+  --color-input: #8f8878;
+  --color-ring: var(--color-moss);
+  --color-destructive: var(--color-lava);
+  --color-destructive-foreground: var(--color-snow);
 }
 
 @layer base {
+  * {
+    @apply border-border outline-ring;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
   }

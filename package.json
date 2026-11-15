@@ -12,14 +12,17 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:adapters": "turbo run test:adapters",
+    "test:e2e": "turbo run test:e2e",
     "lint": "biome check .",
     "format": "biome check --write .",
     "lint:vocabulary": "sh scripts/check-vocabulary.sh",
     "depcruise": "depcruise apps packages",
-    "check": "pnpm lint && pnpm lint:vocabulary && pnpm depcruise && pnpm typecheck && pnpm test",
+    "check": "pnpm lint && pnpm lint:vocabulary && pnpm depcruise && pnpm i18n:compile && pnpm typecheck && pnpm test",
     "db:up": "docker compose up -d",
     "db:migrate": "pnpm --filter @varda/api db:migrate",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "i18n:extract": "pnpm --filter @varda/web i18n:extract",
+    "i18n:compile": "pnpm --filter @varda/web i18n:compile"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.7",

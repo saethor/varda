@@ -49,7 +49,12 @@ test.describe('in English', () => {
     await signInMethods.getByRole('button', { name: 'Add a passkey' }).click();
     // Playwright's Desktop Chrome speaks as Chrome on Windows.
     await expect(signInMethods.getByRole('listitem')).toHaveText(['Password', /^Chrome on Windows\s*Added /]);
-    await expect(signInMethods.getByRole('button', { name: /remove/i })).toHaveCount(0);
+    await expect(
+      signInMethods
+        .getByRole('listitem')
+        .filter({ hasText: 'Password' })
+        .getByRole('button', { name: /remove/i }),
+    ).toHaveCount(0);
 
     await page.getByRole('link', { name: 'Home' }).click();
     await page.getByRole('button', { name: 'Sign out' }).click();
@@ -57,5 +62,22 @@ test.describe('in English', () => {
 
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
+
+    // The passkey stays on the device, but Varða no longer accepts it.
+    await page.getByRole('link', { name: 'Settings' }).click();
+    await signInMethods.getByRole('button', { name: 'Remove Chrome on Windows' }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Cancel' }).click();
+    await expect(signInMethods.getByRole('listitem')).toHaveText(['Password', /^Chrome on Windows/]);
+
+    await signInMethods.getByRole('button', { name: 'Remove Chrome on Windows' }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Remove' }).click();
+    await expect(signInMethods.getByRole('listitem')).toHaveText(['Password']);
+
+    await page.getByRole('link', { name: 'Home' }).click();
+    await page.getByRole('button', { name: 'Sign out' }).click();
+    await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
+    await expect(
+      page.getByText("Varða doesn't recognise that passkey. Sign in with your password instead."),
+    ).toBeVisible();
   });
 });

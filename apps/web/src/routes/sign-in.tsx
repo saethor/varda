@@ -48,6 +48,9 @@ function SignIn() {
     },
   });
   const { withPasskey, withAutofill } = usePasskeySignIn(goingTo);
+  // The autofill offer is made again after the button's prompt fails, so it only counts as an
+  // attempt once it has failed itself; otherwise it would hide the button's failure.
+  const signInAttempts = [signingIn, withPasskey, ...(withAutofill.error ? [withAutofill] : [])];
 
   const password = usePasswordSchema();
   const schema = z.object({
@@ -82,7 +85,7 @@ function SignIn() {
           }}
         >
           <FieldGroup>
-            <SignInFailed error={latestError([signingIn, withPasskey, withAutofill])} />
+            <SignInFailed error={latestError(signInAttempts)} />
             <form.Field name="email">
               {(field) => (
                 // `webauthn` offers the person's passkeys in the browser's autofill on this field.

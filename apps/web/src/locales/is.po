@@ -7,21 +7,25 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: is\n"
 
-#: src/sign-in/sign-in.ts:175
+#: src/sign-in/sign-in.ts:189
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} á {operatingSystem}"
 
-#: src/routes/_signed-in/settings.tsx:57
+#: src/routes/_signed-in/settings.tsx:68
 msgid "Add a passkey"
 msgstr "Bæta við aðgangslykli"
 
-#: src/routes/_signed-in/settings.tsx:72
+#: src/routes/_signed-in/settings.tsx:90
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
 #: src/routes/sign-up.tsx:103
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
+
+#: src/routes/_signed-in/settings.tsx:111
+msgid "Cancel"
+msgstr "Hætta við"
 
 #: src/routes/sign-in.tsx:89
 #: src/routes/sign-up.tsx:74
@@ -61,19 +65,32 @@ msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
 msgid "One stone at a time."
 msgstr "Einn steinn í einu."
 
-#: src/routes/_signed-in/settings.tsx:70
-#: src/sign-in/sign-in.ts:176
+#: src/routes/_signed-in/settings.tsx:78
+#: src/sign-in/sign-in.ts:190
 msgid "Passkey"
 msgstr "Aðgangslykill"
 
-#: src/routes/_signed-in/settings.tsx:49
+#: src/routes/_signed-in/settings.tsx:60
 #: src/routes/sign-in.tsx:96
 #: src/routes/sign-up.tsx:88
 msgid "Password"
 msgstr "Lykilorð"
 
+#: src/routes/_signed-in/settings.tsx:97
+#: src/routes/_signed-in/settings.tsx:114
+msgid "Remove"
+msgstr "Fjarlægja"
+
+#: src/routes/_signed-in/settings.tsx:96
+msgid "Remove {name}"
+msgstr "Fjarlægja {name}"
+
+#: src/routes/_signed-in/settings.tsx:103
+msgid "Remove {name}?"
+msgstr "Fjarlægja {name}?"
+
 #: src/routes/_signed-in.tsx:28
-#: src/routes/_signed-in/settings.tsx:21
+#: src/routes/_signed-in/settings.tsx:32
 msgid "Settings"
 msgstr "Stillingar"
 
@@ -95,7 +112,7 @@ msgstr "Útskrá"
 msgid "Sign up"
 msgstr "Nýskráning"
 
-#: src/routes/_signed-in/settings.tsx:44
+#: src/routes/_signed-in/settings.tsx:55
 msgid "Sign-in methods"
 msgstr "Innskráningarleiðir"
 
@@ -110,6 +127,10 @@ msgstr "Netfangið og lykilorðið passa ekki saman."
 #: src/routes/sign-up.tsx:76
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
+
+#: src/routes/_signed-in/settings.tsx:106
+msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
+msgstr "Þessi aðgangslykill skráir þig ekki lengur inn í Vörðu. Þú getur áfram skráð þig inn með lykilorðinu þínu."
 
 #: src/routes/__root.tsx:40
 msgid "Try again"

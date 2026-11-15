@@ -7,21 +7,25 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/sign-in/sign-in.ts:175
+#: src/sign-in/sign-in.ts:189
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
 
-#: src/routes/_signed-in/settings.tsx:57
+#: src/routes/_signed-in/settings.tsx:68
 msgid "Add a passkey"
 msgstr "Add a passkey"
 
-#: src/routes/_signed-in/settings.tsx:72
+#: src/routes/_signed-in/settings.tsx:90
 msgid "Added {added}"
 msgstr "Added {added}"
 
 #: src/routes/sign-up.tsx:103
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
+
+#: src/routes/_signed-in/settings.tsx:111
+msgid "Cancel"
+msgstr "Cancel"
 
 #: src/routes/sign-in.tsx:89
 #: src/routes/sign-up.tsx:74
@@ -61,19 +65,32 @@ msgstr "New to Varða? <0>Sign up</0>"
 msgid "One stone at a time."
 msgstr "One stone at a time."
 
-#: src/routes/_signed-in/settings.tsx:70
-#: src/sign-in/sign-in.ts:176
+#: src/routes/_signed-in/settings.tsx:78
+#: src/sign-in/sign-in.ts:190
 msgid "Passkey"
 msgstr "Passkey"
 
-#: src/routes/_signed-in/settings.tsx:49
+#: src/routes/_signed-in/settings.tsx:60
 #: src/routes/sign-in.tsx:96
 #: src/routes/sign-up.tsx:88
 msgid "Password"
 msgstr "Password"
 
+#: src/routes/_signed-in/settings.tsx:97
+#: src/routes/_signed-in/settings.tsx:114
+msgid "Remove"
+msgstr "Remove"
+
+#: src/routes/_signed-in/settings.tsx:96
+msgid "Remove {name}"
+msgstr "Remove {name}"
+
+#: src/routes/_signed-in/settings.tsx:103
+msgid "Remove {name}?"
+msgstr "Remove {name}?"
+
 #: src/routes/_signed-in.tsx:28
-#: src/routes/_signed-in/settings.tsx:21
+#: src/routes/_signed-in/settings.tsx:32
 msgid "Settings"
 msgstr "Settings"
 
@@ -95,7 +112,7 @@ msgstr "Sign out"
 msgid "Sign up"
 msgstr "Sign up"
 
-#: src/routes/_signed-in/settings.tsx:44
+#: src/routes/_signed-in/settings.tsx:55
 msgid "Sign-in methods"
 msgstr "Sign-in methods"
 
@@ -110,6 +127,10 @@ msgstr "That email and password don't match."
 #: src/routes/sign-up.tsx:76
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "This email is already signed up. <0>Sign in instead?</0>"
+
+#: src/routes/_signed-in/settings.tsx:106
+msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
+msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 
 #: src/routes/__root.tsx:40
 msgid "Try again"

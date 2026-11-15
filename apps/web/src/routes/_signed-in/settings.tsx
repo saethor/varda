@@ -1,11 +1,22 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@varda/ui/components/alert-dialog';
 import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@varda/ui/components/card';
 import { SomethingWentWrongAlert } from '../../components/form.tsx';
 import { passkeysQuery } from '../../lib/passkeys.ts';
-import { addPasskey, browserSupportsPasskeys, type Passkey } from '../../sign-in/sign-in.ts';
+import { addPasskey, browserSupportsPasskeys, type Passkey, removePasskey } from '../../sign-in/sign-in.ts';
 
 export const Route = createFileRoute('/_signed-in/settings')({
   loader: async ({ context }) => await context.queryClient.ensureQueryData(passkeysQuery),
@@ -62,15 +73,49 @@ function SignInMethods() {
 }
 
 function PasskeyItem({ passkey }: { passkey: Passkey }) {
-  const { i18n } = useLingui();
+  const { i18n, t } = useLingui();
   const added = i18n.date(passkey.addedAt, { dateStyle: 'medium' });
+  const name = passkey.name ?? t`Passkey`;
+  const queryClient = useQueryClient();
+  const removing = useMutation({
+    mutationFn: async () => await removePasskey(passkey.id),
+    onSuccess: async () => await queryClient.invalidateQueries(passkeysQuery),
+  });
 
   return (
-    <li className="flex flex-col px-4 py-3">
-      <span>{passkey.name ?? <Trans>Passkey</Trans>}</span>
-      <span className="text-sm text-muted-foreground">
-        <Trans>Added {added}</Trans>
-      </span>
+    <li className="flex items-center justify-between gap-4 px-4 py-3">
+      <div className="flex flex-col">
+        <span>{name}</span>
+        <span className="text-sm text-muted-foreground">
+          <Trans>Added {added}</Trans>
+        </span>
+        {removing.isError && <SomethingWentWrongAlert />}
+      </div>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="outline" size="sm" disabled={removing.isPending} aria-label={t`Remove ${name}`}>
+            <Trans>Remove</Trans>
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              <Trans>Remove {name}?</Trans>
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <Trans>This passkey will no longer sign you in to Varða. You can still sign in with your password.</Trans>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              <Trans>Cancel</Trans>
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => removing.mutate()}>
+              <Trans>Remove</Trans>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </li>
   );
 }

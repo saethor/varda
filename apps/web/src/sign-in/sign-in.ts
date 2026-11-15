@@ -144,6 +144,12 @@ export async function listPasskeys(): Promise<Passkey[]> {
     .sort((a, b) => a.addedAt.getTime() - b.addedAt.getTime());
 }
 
+/** Removes a passkey from the signed-in person's login account, so it can no longer sign them in. */
+export async function removePasskey(id: string): Promise<void> {
+  const { error } = await betterAuth.passkey.deletePasskey({ id });
+  if (error) throw failure(error);
+}
+
 /** How the person last signed in on this browser, or `null` if they never have. */
 export function lastSignInMethod(): 'password' | 'passkey' | null {
   const method = betterAuth.getLastUsedLoginMethod();

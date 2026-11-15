@@ -23,7 +23,7 @@ export function createSharedReaders(adapters: SharedAdapters): SharedReaders {
   return {
     persons: {
       forLoginAccount: (loginAccount) => resolvePerson(adapters, loginAccount),
-      everyone: async () => (await adapters.persons.all()).sort((a, b) => byName.compare(a.name, b.name)),
+      everyone: async () => (await adapters.persons.everyone()).sort((a, b) => byName.compare(a.name, b.name)),
       loginAccountOf: (id) => adapters.persons.loginAccountOf(id),
     },
   };

@@ -21,14 +21,16 @@ export function devMenu(persons: SharedReaders['persons']) {
        */
       devMenuImpersonate: createAuthEndpoint(
         '/dev/impersonate',
-        { method: 'POST', body: z.object({ personId: z.uuid() }) },
+        { method: 'POST', body: z.object({ personId: z.string() }) },
         async (ctx) => {
-          const loginAccount = await persons.loginAccountOf(ctx.body.personId);
+          const { personId } = ctx.body;
+          // An ID that isn't a UUID is no person's either: 404, not 400 (and never a query the database rejects).
+          const loginAccount = z.uuid().safeParse(personId).success ? await persons.loginAccountOf(personId) : null;
           const user = loginAccount && (await ctx.context.internalAdapter.findUserById(loginAccount));
-          if (!user) throw new APIError('NOT_FOUND', { message: `No person ${ctx.body.personId}.` });
+          if (!user) throw new APIError('NOT_FOUND', { message: `No person ${personId}.` });
           const session = await ctx.context.internalAdapter.createSession(user.id);
           await setSessionCookie(ctx, { session, user });
-          return ctx.json({ personId: ctx.body.personId });
+          return ctx.json({ personId });
         },
       ),
     },

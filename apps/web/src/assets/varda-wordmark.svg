@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="12 12 248.5 60" width="248.5" height="60">
+  <title>Varða</title>
+  <!-- From logo/final/varda-wordmark.svg, cropped to the letters (cap height 60); clear space comes from the layout. -->
+  <defs><clipPath id="capclip"><rect x="-10" y="0" width="268.5" height="60"/></clipPath></defs>
+  <g transform="translate(12 12)" clip-path="url(#capclip)"><g transform="translate(0 0)"><polygon fill="#2B2E2F" points="0,0 12,0 25,45 38,0 50,0 31,60 19,60"/></g><g transform="translate(42 0)"><polygon fill="#2B2E2F" points="19,0 31,0 50,60 38,60 25,16 12,60 0,60"/><rect x="11" y="38" width="28" height="9" fill="#2B2E2F"/></g><g transform="translate(97.5 0)"><g fill="none" stroke="#2B2E2F" stroke-width="11"><line x1="5.5" y1="0" x2="5.5" y2="60"/><path d="M0,5.5 H20 A14,14 0 0 1 20,33.5 H0"/></g><polygon fill="#2B2E2F" points="9.7,30 22.7,30 42,60 29,60"/></g><g transform="translate(142 0)"><g fill="none" stroke="#2B2E2F" stroke-width="11"><line x1="11.5" y1="0" x2="11.5" y2="60"/><path d="M6,5.5 H26 A24.5,24.5 0 0 1 26,54.5 H6"/></g><rect x="0" y="25.5" width="28" height="9" rx="2" fill="#5E7A4E"/></g><g transform="translate(198.5 0)"><polygon fill="#2B2E2F" points="19,0 31,0 50,60 38,60 25,16 12,60 0,60"/><rect x="11" y="38" width="28" height="9" fill="#2B2E2F"/></g></g>
+</svg>

@@ -81,8 +81,8 @@ msgstr "Reyna aftur"
 
 #: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."
-msgstr "Lykilorðið má vera mest {max} stafir."
+msgstr "Lykilorðið má vera í mesta lagi {max} stafir."
 
 #: src/sign-in/password.ts:13
 msgid "Your password needs at least {min} characters."
-msgstr "Lykilorðið þarf að vera minnst {min} stafir."
+msgstr "Lykilorðið þarf að vera að minnsta kosti {min} stafir."

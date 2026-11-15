@@ -18,11 +18,10 @@ describe('safeRedirect', () => {
     expect(safeRedirect('/\\evil.example')).toBe('/');
   });
 
-  it('goes home when the redirect is empty', () => {
-    expect(safeRedirect('')).toBe('/');
-  });
-
-  it('goes home when there is no redirect', () => {
-    expect(safeRedirect(undefined)).toBe('/');
+  it.each([
+    { redirect: '', case: 'empty' },
+    { redirect: undefined, case: 'missing' },
+  ])('goes home when the redirect is $case', ({ redirect }) => {
+    expect(safeRedirect(redirect)).toBe('/');
   });
 });

@@ -14,12 +14,11 @@ describe('pickLanguage', () => {
     expect(pickLanguage(['de', 'en', 'is'])).toBe('en');
   });
 
-  it('speaks Icelandic to a browser that asks for a regional variant of it', () => {
-    expect(pickLanguage(['is-IS', 'en-GB'])).toBe('is');
-  });
-
-  it('follows a regional variant of English listed before Icelandic', () => {
-    expect(pickLanguage(['en-US', 'is-IS'])).toBe('en');
+  it.each([
+    { languages: ['is-IS', 'en-GB'], expected: 'is' },
+    { languages: ['en-US', 'is-IS'], expected: 'en' },
+  ])('reads a regional variant as its language: $languages speaks $expected', ({ languages, expected }) => {
+    expect(pickLanguage(languages)).toBe(expected);
   });
 
   it('falls back to English when neither language is asked for', () => {

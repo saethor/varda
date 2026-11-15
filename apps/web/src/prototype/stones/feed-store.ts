@@ -43,7 +43,8 @@ export function useFeed() {
 
 let nextId = 200;
 
-export async function placeFromFile(fileName: string, outcome: UploadOutcome) {
+/** Places a stone from the file, or says why not; the result is also left as the notice. */
+export async function placeFromFile(fileName: string, outcome: UploadOutcome): Promise<Notice | null> {
   set({ uploading: fileName, notice: null });
   await new Promise((r) => setTimeout(r, 1200));
   if (outcome === 'placed') {
@@ -54,7 +55,7 @@ export async function placeFromFile(fileName: string, outcome: UploadOutcome) {
       id: `d${nextId}`,
       start: new Date('2026-11-15T07:45:00'),
       localDate: '2026-11-15',
-      sport: 'treadmill running',
+      sport: 'running',
       fileName,
     };
     set({ uploading: null, stones: [placed, ...state.stones], notice: { kind: 'placed', stone: placed } });
@@ -68,6 +69,7 @@ export async function placeFromFile(fileName: string, outcome: UploadOutcome) {
   } else {
     set({ uploading: null, notice: { kind: 'turned away', fileName, why: turnedAwayWhy[outcome] } });
   }
+  return state.notice;
 }
 
 export function deleteStone(stone: Stone) {

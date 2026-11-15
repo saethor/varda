@@ -6,6 +6,8 @@ import { type UploadOutcome, uploadOutcomes } from './fake.ts';
 export const prototypeSearch = z.object({
   variant: z.enum(['A', 'B', 'C', 'D']).catch('D'),
   start: z.enum(['empty', 'stones']).catch('stones'),
+  /** Variant D: the athlete toggles between the feed and the calendar. */
+  view: z.enum(['feed', 'calendar']).catch('feed'),
   next: z.enum(uploadOutcomes as [UploadOutcome, ...UploadOutcome[]]).catch('placed'),
 });
 

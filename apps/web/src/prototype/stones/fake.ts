@@ -21,7 +21,11 @@ export type Stone = {
   elapsedS: number;
   laps: Lap[];
   fileName: string;
+  /** A simplified GPS track (a few hundred points, x/y in metres here; lat/lon for real), or null without GPS. */
+  track: Point[] | null;
 };
+
+export type Point = [number, number];
 
 export type UploadOutcome =
   | 'placed'
@@ -69,18 +73,62 @@ function stone(id: string, iso: string, sport: Sport, lapList: Lap[], extra?: Pa
     elapsedS,
     laps: lapList,
     fileName: `${iso.slice(0, 10).replaceAll('-', '')}_${id}.fit`,
+    track: null,
     ...extra,
   };
 }
 
+// Fake tracks, shaped like real routes: a lumpy loop, a lead-in to a running track, an
+// out-and-back trail, a long ride with a detour, and a short wander.
+const steps = (n: number) => Array.from({ length: n + 1 }, (_, i) => i / n);
+
+const lumpyLoop: Point[] = steps(240).map((t) => {
+  const a = t * 2 * Math.PI;
+  const r = 2000 * (1 + 0.28 * Math.sin(3 * a + 0.6) + 0.12 * Math.cos(7 * a) + 0.05 * Math.sin(17 * a));
+  return [r * Math.cos(a) * 1.3, r * Math.sin(a)];
+});
+
+const toTheTrack: Point[] = [
+  ...steps(60).map((t): Point => [t * 1600 + 80 * Math.sin(t * 9), t * 700]),
+  ...steps(180).map((t): Point => {
+    const a = t * 2 * Math.PI * 6;
+    return [1700 + 60 * Math.cos(a) + 30 * Math.sign(Math.cos(a)), 700 + 37 * Math.sin(a)];
+  }),
+  ...steps(60).map((t): Point => [(1 - t) * 1600 + 60 * Math.sin(t * 7), (1 - t) * 700 + 40]),
+];
+
+const trailOutAndBack: Point[] = [
+  ...steps(150).map((t): Point => [t * 6000, 900 * Math.sin(t * 5) + 300 * Math.sin(t * 19)]),
+  ...steps(150).map(
+    (t): Point => [
+      (1 - t) * 6000,
+      900 * Math.sin((1 - t) * 5) + 300 * Math.sin((1 - t) * 19) + 120 + 80 * Math.sin(t * 40),
+    ],
+  ),
+];
+
+const rideWithDetour: Point[] = steps(300).map((t) => {
+  const a = t * 2 * Math.PI;
+  const detour = Math.exp(-(((t - 0.62) * 14) ** 2)) * 5000;
+  const r = 9000 * (1 + 0.2 * Math.sin(2 * a)) + detour;
+  return [r * Math.cos(a), r * Math.sin(a) * 0.7];
+});
+
+const wander: Point[] = steps(120).map((t) => [
+  1200 * Math.sin(t * 4.2) + t * 600,
+  800 * Math.sin(t * 2.7 + 1) * Math.cos(t * 1.3),
+]);
+
 export const someStones: Stone[] = [
-  stone('s7', '2026-11-14T09:12:00', 'running', laps(16, 1000, 330)),
+  stone('s7', '2026-11-14T09:12:00', 'running', laps(16, 1000, 330), { track: lumpyLoop }),
   stone('s6', '2026-11-13T17:40:00', 'strength', [], { distanceM: null, movingS: 2460, elapsedS: 2910 }),
-  stone('s5', '2026-11-12T06:30:00', 'running', [...laps(1, 2000, 360), ...laps(6, 800, 250), ...laps(1, 2000, 370)]),
+  stone('s5', '2026-11-12T06:30:00', 'running', [...laps(1, 2000, 360), ...laps(6, 800, 250), ...laps(1, 2000, 370)], {
+    track: toTheTrack,
+  }),
   stone('s4', '2026-11-11T12:05:00', 'swimming', laps(8, 200, 1050)),
-  stone('s3', '2026-11-09T10:00:00', 'trail running', laps(14, 1000, 410), { elapsedS: 6400 }),
-  stone('s2', '2026-11-08T08:15:00', 'cycling', laps(4, 10000, 110)),
-  stone('s1', '2026-11-04T18:20:00', 'other', laps(1, 3400, 600)),
+  stone('s3', '2026-11-09T10:00:00', 'trail running', laps(14, 1000, 410), { elapsedS: 6400, track: trailOutAndBack }),
+  stone('s2', '2026-11-08T08:15:00', 'cycling', laps(4, 10000, 110), { track: rideWithDetour }),
+  stone('s1', '2026-11-04T18:20:00', 'other', laps(1, 3400, 600), { track: wander }),
 ];
 
 let nextId = 100;

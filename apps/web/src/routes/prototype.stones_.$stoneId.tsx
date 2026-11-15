@@ -1,11 +1,12 @@
 // PROTOTYPE, throw me away. Variant D's stone screen: a stone opens as its own page, not a modal
-// or a side panel. Laps as bars and a table side by side on desktop; delete confirmed inline.
+// or a side panel. Placing a stone lands here too. Laps as bars beside a table on desktop; delete
+// is confirmed in a modal. The detail of this screen is not what #39 is deciding.
 
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { Button } from '@varda/ui/components/button';
 import { useState } from 'react';
 import { day, distance, duration, paceOrSpeed, sportEmoji, time } from '../prototype/stones/fake.ts';
-import { deleteStone, startFeed, useFeed } from '../prototype/stones/feed-store.ts';
+import { deleteStone, dismissNotice, startFeed, useFeed } from '../prototype/stones/feed-store.ts';
 import { prototypeSearch } from '../prototype/stones/search.ts';
 import { LapsTable } from '../prototype/stones/shared.tsx';
 import { LapStrip } from '../prototype/stones/variant-d.tsx';
@@ -20,7 +21,7 @@ function StoneScreen() {
   startFeed(search.start);
   const { stoneId } = Route.useParams();
   const navigate = useNavigate();
-  const { stones } = useFeed();
+  const { stones, notice } = useFeed();
   const [confirming, setConfirming] = useState(false);
   const stone = stones.find((s) => s.id === stoneId);
   const back = (
@@ -44,6 +45,14 @@ function StoneScreen() {
   return (
     <section className="flex flex-col gap-8">
       {back}
+      {notice?.kind === 'placed' && notice.stone.id === stone.id && (
+        <div className="flex items-center justify-between rounded-xl border border-primary/40 bg-primary/5 px-4 py-3 text-sm">
+          <span>✓ Stone placed from {stone.fileName}</span>
+          <button type="button" className="text-xs underline" onClick={dismissNotice}>
+            Dismiss
+          </button>
+        </div>
+      )}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-muted-foreground">
@@ -79,13 +88,23 @@ function StoneScreen() {
 
       <div className="flex flex-col gap-3 border-t pt-6 text-sm">
         <p className="text-muted-foreground">Placed from {stone.fileName}</p>
-        {confirming ? (
-          <div className="flex max-w-xl flex-col gap-3 rounded-lg border border-destructive p-4">
-            <p>
-              Delete this stone and the watch file it was placed from? This can't be undone. You can place it again from
-              the same file.
+        <Button variant="ghost" className="self-start text-destructive" onClick={() => setConfirming(true)}>
+          Delete stone…
+        </Button>
+      </div>
+
+      {confirming && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-6">
+          <div role="dialog" aria-modal className="flex max-w-md flex-col gap-4 rounded-xl bg-background p-6 shadow-xl">
+            <h2 className="text-lg font-medium">Delete this stone?</h2>
+            <p className="text-sm text-muted-foreground">
+              Your {stone.sport} from {day(stone.localDate)} ({distance(stone.distanceM)}) and the watch file it was
+              placed from will be gone for good. You can place it again from the same file.
             </p>
-            <div className="flex gap-2">
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setConfirming(false)}>
+                Keep it
+              </Button>
               <Button
                 variant="destructive"
                 onClick={() => {
@@ -95,17 +114,10 @@ function StoneScreen() {
               >
                 Delete stone
               </Button>
-              <Button variant="secondary" onClick={() => setConfirming(false)}>
-                Keep it
-              </Button>
             </div>
           </div>
-        ) : (
-          <Button variant="ghost" className="self-start text-destructive" onClick={() => setConfirming(true)}>
-            Delete stone…
-          </Button>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

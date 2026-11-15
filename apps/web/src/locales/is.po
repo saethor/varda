@@ -7,67 +7,68 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: is\n"
 
-#: src/routes/index.tsx:86
-msgid "Cross-training"
-msgstr "Önnur þjálfun"
+#: src/routes/sign-up.tsx:171
+msgid "Already signed up? <0>Sign in</0>"
+msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 
-#: src/routes/index.tsx:65
-msgid "Cycling"
-msgstr "Hjólreiðar"
+#: src/routes/sign-up.tsx:108
+msgid "Email"
+msgstr "Netfang"
 
-#: src/routes/index.tsx:71
-msgid "Hiking"
-msgstr "Fjallganga"
+#: src/routes/sign-up.tsx:37
+msgid "Enter a valid email address."
+msgstr "Sláðu inn gilt netfang."
 
-#: src/routes/index.tsx:27
+#: src/routes/sign-up.tsx:36
+msgid "Enter your name."
+msgstr "Sláðu inn nafnið þitt."
+
+#: src/routes/_signed-in/index.tsx:32
+msgid "Hi, {name}"
+msgstr "Hæ, {name}"
+
+#: src/routes/sign-up.tsx:86
+msgid "Name"
+msgstr "Nafn"
+
+#: src/routes/sign-in.tsx:21
+msgid "New to Varða? <0>Sign up</0>"
+msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
+
+#: src/routes/__root.tsx:12
 msgid "One stone at a time."
 msgstr "Einn steinn í einu."
 
-#: src/routes/index.tsx:75
-msgid "Other"
-msgstr "Annað"
+#: src/routes/sign-up.tsx:142
+msgid "Password"
+msgstr "Lykilorð"
 
-#: src/routes/index.tsx:45
-msgid "Refresh"
-msgstr "Uppfæra"
+#: src/routes/sign-in.tsx:15
+msgid "Sign in"
+msgstr "Innskráning"
 
-#: src/routes/index.tsx:55
-msgid "Road running"
-msgstr "Götuhlaup"
+#: src/routes/_signed-in/index.tsx:45
+msgid "Sign out"
+msgstr "Útskrá"
 
-#: src/routes/index.tsx:82
-msgid "Running"
-msgstr "Hlaup"
+#: src/routes/sign-up.tsx:60
+#: src/routes/sign-up.tsx:162
+msgid "Sign up"
+msgstr "Nýskráning"
 
-#: src/routes/index.tsx:69
-msgid "Skiing"
-msgstr "Skíði"
+#: src/routes/_signed-in/index.tsx:40
+#: src/routes/sign-up.tsx:76
+msgid "Something went wrong, try again."
+msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
-#: src/routes/index.tsx:32
-msgid "Sports"
-msgstr "Íþróttir"
+#: src/routes/sign-up.tsx:122
+msgid "This email is already signed up. <0>Sign in instead?</0>"
+msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
 
-#: src/routes/index.tsx:63
-#: src/routes/index.tsx:84
-msgid "Strength"
-msgstr "Styrktarþjálfun"
+#: src/routes/sign-up.tsx:41
+msgid "Your password can have at most {max} characters."
+msgstr "Lykilorðið má vera mest {max} stafir."
 
-#: src/routes/index.tsx:67
-msgid "Swimming"
-msgstr "Sund"
-
-#: src/routes/index.tsx:59
-msgid "Track running"
-msgstr "Brautarhlaup"
-
-#: src/routes/index.tsx:57
-msgid "Trail running"
-msgstr "Utanvegahlaup"
-
-#: src/routes/index.tsx:61
-msgid "Treadmill running"
-msgstr "Hlaup á bretti"
-
-#: src/routes/index.tsx:73
-msgid "Walking"
-msgstr "Ganga"
+#: src/routes/sign-up.tsx:40
+msgid "Your password needs at least {min} characters."
+msgstr "Lykilorðið þarf að vera minnst {min} stafir."

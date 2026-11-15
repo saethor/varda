@@ -1,8 +1,8 @@
 // PROTOTYPE, throw me away. Variant D, "Feed": stones as a feed of cards, newest first, using the
 // desktop width, with a toggle to a calendar of weeks (Mon–Sun, with week totals). A stone opens
 // on its own screen (/prototype/stones/$stoneId), never a modal or a side panel; so does a stone
-// just placed. Placing lives in a rail beside the stones (above them on phones). Each card draws
-// its GPS track top right: just the line, no map.
+// just placed. Placing lives in a rail beside the stones (above them on phones). Each feed card draws
+// its GPS track top right: just the line, no map. The calendar leaves it out.
 
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Button } from '@varda/ui/components/button';
@@ -345,7 +345,6 @@ function CalendarStone({ stone, search }: { stone: Stone; search: PrototypeSearc
             <span className="text-xs text-muted-foreground tabular-nums">{duration(stone.movingS)}</span>
           )}
         </span>
-        {stone.track && <Track points={stone.track} className="h-8 w-10 shrink-0 text-primary/70" />}
       </span>
     </Link>
   );

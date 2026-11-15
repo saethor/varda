@@ -44,5 +44,21 @@ export function describePersons(name: string, setup: () => Promise<PersonsSetup>
       expect(await persons.byId(created.id)).toEqual(created);
       expect(await persons.byId(ids.next())).toBeNull();
     });
+
+    it('lists every person', async () => {
+      const { persons, ids, newLoginAccount } = await setup();
+      const created = await persons.createFor({ id: ids.next(), loginAccount: newLoginAccount(), name: 'Kári' });
+
+      expect(await persons.everyone()).toContainEqual(created);
+    });
+
+    it('finds the login account of a person, or none', async () => {
+      const { persons, ids, newLoginAccount } = await setup();
+      const loginAccount = newLoginAccount();
+      const created = await persons.createFor({ id: ids.next(), loginAccount, name: 'Sóley' });
+
+      expect(await persons.loginAccountOf(created.id)).toBe(loginAccount);
+      expect(await persons.loginAccountOf(ids.next())).toBeNull();
+    });
   });
 }

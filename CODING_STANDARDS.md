@@ -49,7 +49,7 @@ line each:
   exports `SharedContext`, the per-request context that `apps/api` fills and
   every context's router runs on. Enforced by
   dependency-cruiser for `domain` and `application`; review for the rest.
-- **Fakes and `createTestApp` are for tests only.** Enforced by
+- **Fakes, `createTestApp` and `createRealApp` are for tests only.** Enforced by
   dependency-cruiser (`testing-code-only-in-tests`).
 
 ## Configuration and data
@@ -62,6 +62,10 @@ that reads `process.env` and opens connections
 reads every variable the process needs at startup and stops, naming the
 variable, if one is missing, before any work starts. Everything else receives
 configuration and connections through its adapters.
+
+The standalone commands are entry points too, under the same rule:
+`migrate.ts` (`pnpm db:migrate`) and `seed.ts` (`pnpm db:seed`) each read their
+own variables at startup through `env.ts`'s `required`.
 
 Review only.
 
@@ -252,6 +256,10 @@ The UI ships in English and Icelandic
 string a person reads comes from the message catalogue, keyed by its English
 text; a component never contains a user-facing literal. The library is chosen
 with the first real screen.
+
+The one exception is developer tooling that never ships to a person: the dev
+menu (`apps/web/src/dev-menu/`, loaded only in development) uses plain-English
+literals outside the message catalogue (spec #50).
 
 Review only.
 

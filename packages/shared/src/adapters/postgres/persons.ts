@@ -29,5 +29,12 @@ export function createPostgresPersons(db: NodePgDatabase): Persons {
       const [found] = await db.select(columns).from(persons).where(eq(persons.id, id));
       return found ?? null;
     },
+    async everyone() {
+      return await db.select(columns).from(persons);
+    },
+    async loginAccountOf(id) {
+      const [found] = await db.select({ loginAccount: persons.loginAccount }).from(persons).where(eq(persons.id, id));
+      return found?.loginAccount ?? null;
+    },
   };
 }

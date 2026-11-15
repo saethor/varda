@@ -4,6 +4,7 @@ import type { SharedReaders } from '@varda/shared';
 import { betterAuth } from 'better-auth';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Auth } from '../adapters.ts';
+import { devMenu } from './dev-menu.ts';
 import { loginOptions } from './options.ts';
 
 export type BetterAuthInfra = {
@@ -14,14 +15,18 @@ export type BetterAuthInfra = {
   baseURL: string;
   /** Shared's reader that resolves a login account to its person. */
   persons: SharedReaders['persons'];
+  /** VARDA_DEV_MENU=true: serve the dev menu's endpoints under /api/auth/dev/. Local development only. */
+  devMenu: boolean;
 };
 
 /** The real `auth` adapter: email and password login with Better Auth, its tables in the `auth` schema. */
-export function createBetterAuthAdapter({ db, secret, baseURL, persons }: BetterAuthInfra): Auth {
+export function createBetterAuthAdapter({ db, secret, baseURL, persons, devMenu: withDevMenu }: BetterAuthInfra): Auth {
   const betterAuthInstance = betterAuth({
     secret,
     baseURL,
     ...loginOptions(db),
+    // Without the flag the dev routes aren't registered at all, so there is no bypass to get wrong.
+    plugins: withDevMenu ? [devMenu(persons)] : [],
     databaseHooks: {
       user: {
         create: {

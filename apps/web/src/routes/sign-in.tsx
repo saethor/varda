@@ -9,6 +9,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@varda/ui/components/
 import { Input } from '@varda/ui/components/input';
 import { z } from 'zod';
 import { forgetWhoIsSignedIn, signedInPerson } from '../lib/me.ts';
+import { usePasswordSchema } from '../sign-in/password.ts';
 import { safeRedirect } from '../sign-in/safe-redirect.ts';
 import { EmailAndPasswordDontMatch, signIn } from '../sign-in/sign-in.ts';
 
@@ -40,10 +41,10 @@ function SignIn() {
     },
   });
 
+  const password = usePasswordSchema();
   const schema = z.object({
     email: z.email(t`Enter a valid email address.`),
-    // Only "not empty": a wrong length is just another password that doesn't match.
-    password: z.string().min(1, t`Enter your password.`),
+    password,
   });
 
   const form = useForm({

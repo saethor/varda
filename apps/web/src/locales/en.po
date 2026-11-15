@@ -7,16 +7,16 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/routes/sign-up.tsx:174
+#: src/routes/sign-up.tsx:171
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
-#: src/routes/sign-in.tsx:93
-#: src/routes/sign-up.tsx:111
+#: src/routes/sign-in.tsx:94
+#: src/routes/sign-up.tsx:108
 msgid "Email"
 msgstr "Email"
 
-#: src/routes/sign-in.tsx:44
+#: src/routes/sign-in.tsx:46
 #: src/routes/sign-up.tsx:40
 msgid "Enter a valid email address."
 msgstr "Enter a valid email address."
@@ -25,19 +25,15 @@ msgstr "Enter a valid email address."
 msgid "Enter your name."
 msgstr "Enter your name."
 
-#: src/routes/sign-in.tsx:46
-msgid "Enter your password."
-msgstr "Enter your password."
-
 #: src/routes/_signed-in/index.tsx:35
 msgid "Hi, {name}"
 msgstr "Hi, {name}"
 
-#: src/routes/sign-up.tsx:89
+#: src/routes/sign-up.tsx:86
 msgid "Name"
 msgstr "Name"
 
-#: src/routes/sign-in.tsx:145
+#: src/routes/sign-in.tsx:146
 msgid "New to Varða? <0>Sign up</0>"
 msgstr "New to Varða? <0>Sign up</0>"
 
@@ -45,13 +41,13 @@ msgstr "New to Varða? <0>Sign up</0>"
 msgid "One stone at a time."
 msgstr "One stone at a time."
 
-#: src/routes/sign-in.tsx:116
-#: src/routes/sign-up.tsx:145
+#: src/routes/sign-in.tsx:117
+#: src/routes/sign-up.tsx:142
 msgid "Password"
 msgstr "Password"
 
-#: src/routes/sign-in.tsx:63
-#: src/routes/sign-in.tsx:136
+#: src/routes/sign-in.tsx:64
+#: src/routes/sign-in.tsx:137
 msgid "Sign in"
 msgstr "Sign in"
 
@@ -59,23 +55,23 @@ msgstr "Sign in"
 msgid "Sign out"
 msgstr "Sign out"
 
-#: src/routes/sign-up.tsx:63
-#: src/routes/sign-up.tsx:165
+#: src/routes/sign-up.tsx:60
+#: src/routes/sign-up.tsx:162
 msgid "Sign up"
 msgstr "Sign up"
 
 #: src/routes/__root.tsx:40
 #: src/routes/_signed-in/index.tsx:43
-#: src/routes/sign-in.tsx:82
-#: src/routes/sign-up.tsx:79
+#: src/routes/sign-in.tsx:83
+#: src/routes/sign-up.tsx:76
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
 
-#: src/routes/sign-in.tsx:80
+#: src/routes/sign-in.tsx:81
 msgid "That email and password don't match."
 msgstr "That email and password don't match."
 
-#: src/routes/sign-up.tsx:125
+#: src/routes/sign-up.tsx:122
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "This email is already signed up. <0>Sign in instead?</0>"
 
@@ -83,10 +79,10 @@ msgstr "This email is already signed up. <0>Sign in instead?</0>"
 msgid "Try again"
 msgstr "Try again"
 
-#: src/routes/sign-up.tsx:44
+#: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."
 msgstr "Your password can have at most {max} characters."
 
-#: src/routes/sign-up.tsx:43
+#: src/sign-in/password.ts:13
 msgid "Your password needs at least {min} characters."
 msgstr "Your password needs at least {min} characters."

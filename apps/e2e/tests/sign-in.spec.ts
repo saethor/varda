@@ -24,6 +24,10 @@ test.describe('in English', () => {
     await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
 
     await page.getByLabel('Email').fill(email);
+    await page.getByLabel('Password').fill('short');
+    await page.getByRole('button', { name: 'Sign in' }).click();
+    await expect(page.getByRole('alert')).toHaveText('Your password needs at least 8 characters.');
+
     await page.getByLabel('Password').fill('not the password');
     await page.getByRole('button', { name: 'Sign in' }).click();
     await expect(page.getByRole('alert')).toHaveText("That email and password don't match.");

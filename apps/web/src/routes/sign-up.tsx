@@ -9,7 +9,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@varda/ui/components/
 import { Input } from '@varda/ui/components/input';
 import { z } from 'zod';
 import { forgetWhoIsSignedIn, signedInPerson } from '../lib/me.ts';
-import { passwordLength } from '../sign-in/password.ts';
+import { usePasswordSchema } from '../sign-in/password.ts';
 import { EmailAlreadySignedUp, signUp } from '../sign-in/sign-in.ts';
 
 export const Route = createFileRoute('/sign-up')({
@@ -34,14 +34,11 @@ function SignUp() {
     },
   });
 
-  const { min, max } = passwordLength;
+  const password = usePasswordSchema();
   const schema = z.object({
     name: z.string().trim().min(1, t`Enter your name.`),
     email: z.email(t`Enter a valid email address.`),
-    password: z
-      .string()
-      .min(min, t`Your password needs at least ${min} characters.`)
-      .max(max, t`Your password can have at most ${max} characters.`),
+    password,
   });
 
   const form = useForm({

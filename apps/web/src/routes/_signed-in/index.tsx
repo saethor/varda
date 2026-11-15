@@ -4,7 +4,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@varda/ui/components/card';
 import { SomethingWentWrongAlert } from '../../components/form.tsx';
-import { forgetWhoIsSignedIn, meQuery } from '../../lib/me.ts';
+import { forgetEverythingCached, meQuery } from '../../lib/me.ts';
 import { signOut } from '../../sign-in/sign-in.ts';
 
 export const Route = createFileRoute('/_signed-in/')({
@@ -20,7 +20,7 @@ function Home() {
     mutationFn: signOut,
     onSuccess: async () => {
       // Forget first, or sign-in would still see this person and send them back here.
-      forgetWhoIsSignedIn(queryClient);
+      forgetEverythingCached(queryClient);
       await navigate({ to: '/sign-in' });
     },
   });

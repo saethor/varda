@@ -4,4 +4,5 @@ import { betterAuth } from 'better-auth';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { loginOptions } from './options.ts';
 
-export const auth = betterAuth(loginOptions(drizzle.mock()));
+// Any origin will do: it decides how passkeys are checked, not what the tables look like.
+export const auth = betterAuth(loginOptions({ db: drizzle.mock(), baseURL: 'http://localhost:5173' }));

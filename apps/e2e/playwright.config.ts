@@ -3,7 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 // Ports of their own, so a run never reuses an API or web app left running for development.
 const apiPort = 4100;
 const webPort = 4174;
-const webOrigin = `http://127.0.0.1:${webPort}`;
+// `localhost`, not 127.0.0.1: WebAuthn won't accept an IP address as the relying party ID,
+// which Better Auth takes from BETTER_AUTH_URL, so passkeys only work on a host name.
+const webOrigin = `http://localhost:${webPort}`;
 
 export default defineConfig({
   testDir: 'tests',
@@ -30,8 +32,8 @@ export default defineConfig({
     },
     {
       // The Vite dev server, since the dev menu is only in development builds. It proxies /rpc and
-      // /api/auth to the API above.
-      command: `pnpm dev --host 127.0.0.1 --port ${webPort} --strictPort`,
+      // /api/auth to the API above. On `localhost`, like the origin above, for WebAuthn.
+      command: `pnpm dev --host localhost --port ${webPort} --strictPort`,
       cwd: '../web',
       env: { VARDA_API_URL: `http://127.0.0.1:${apiPort}` },
       url: webOrigin,

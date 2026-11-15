@@ -7,21 +7,42 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/routes/sign-up.tsx:103
+#: src/sign-in/device-name.ts:32
+msgid "{browser} on {operatingSystem}"
+msgstr "{browser} on {operatingSystem}"
+
+#: src/routes/_signed-in/add-a-passkey.tsx:45
+#: src/routes/_signed-in/settings.tsx:65
+msgid "Add a passkey"
+msgstr "Add a passkey"
+
+#: src/routes/_signed-in/add-a-passkey.tsx:31
+msgid "Add a passkey?"
+msgstr "Add a passkey?"
+
+#: src/routes/_signed-in/settings.tsx:83
+msgid "Added {added}"
+msgstr "Added {added}"
+
+#: src/routes/sign-up.tsx:104
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
-#: src/routes/sign-in.tsx:85
-#: src/routes/sign-up.tsx:74
+#: src/routes/_signed-in/settings.tsx:104
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/routes/sign-in.tsx:97
+#: src/routes/sign-up.tsx:75
 msgid "Email"
 msgstr "Email"
 
-#: src/routes/sign-in.tsx:43
-#: src/routes/sign-up.tsx:35
+#: src/routes/sign-in.tsx:62
+#: src/routes/sign-up.tsx:36
 msgid "Enter a valid email address."
 msgstr "Enter a valid email address."
 
-#: src/routes/sign-up.tsx:34
+#: src/routes/sign-up.tsx:35
 msgid "Enter your name."
 msgstr "Enter your name."
 
@@ -29,52 +50,112 @@ msgstr "Enter your name."
 msgid "Hi, {name}"
 msgstr "Hi, {name}"
 
-#: src/routes/sign-up.tsx:70
+#: src/routes/_signed-in.tsx:25
+msgid "Home"
+msgstr "Home"
+
+#: src/routes/sign-in.tsx:166
+msgid "Last used"
+msgstr "Last used"
+
+#: src/routes/_signed-in.tsx:23
+msgid "Main"
+msgstr "Main"
+
+#: src/routes/sign-up.tsx:71
 msgid "Name"
 msgstr "Name"
 
-#: src/routes/sign-in.tsx:109
+#: src/routes/sign-in.tsx:143
 msgid "New to Varða? <0>Sign up</0>"
 msgstr "New to Varða? <0>Sign up</0>"
+
+#: src/routes/_signed-in/add-a-passkey.tsx:35
+msgid "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
+msgstr "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
+
+#: src/routes/_signed-in/add-a-passkey.tsx:50
+msgid "Not now"
+msgstr "Not now"
 
 #: src/routes/__root.tsx:25
 msgid "One stone at a time."
 msgstr "One stone at a time."
 
-#: src/routes/sign-in.tsx:91
-#: src/routes/sign-up.tsx:88
+#: src/routes/_signed-in/settings.tsx:75
+#: src/sign-in/device-name.ts:33
+msgid "Passkey"
+msgstr "Passkey"
+
+#: src/routes/_signed-in/settings.tsx:57
+#: src/routes/sign-in.tsx:104
+#: src/routes/sign-up.tsx:89
 msgid "Password"
 msgstr "Password"
 
-#: src/routes/sign-in.tsx:61
-#: src/routes/sign-in.tsx:100
+#: src/routes/_signed-in/settings.tsx:90
+#: src/routes/_signed-in/settings.tsx:107
+msgid "Remove"
+msgstr "Remove"
+
+#: src/routes/_signed-in/settings.tsx:89
+msgid "Remove {name}"
+msgstr "Remove {name}"
+
+#: src/routes/_signed-in/settings.tsx:96
+msgid "Remove {name}?"
+msgstr "Remove {name}?"
+
+#: src/routes/_signed-in.tsx:28
+#: src/routes/_signed-in/settings.tsx:32
+msgid "Settings"
+msgstr "Settings"
+
+#: src/routes/sign-in.tsx:80
+#: src/routes/sign-in.tsx:115
 msgid "Sign in"
 msgstr "Sign in"
+
+#: src/routes/sign-in.tsx:134
+msgid "Sign in with a passkey"
+msgstr "Sign in with a passkey"
 
 #: src/routes/_signed-in/index.tsx:41
 msgid "Sign out"
 msgstr "Sign out"
 
-#: src/routes/sign-up.tsx:55
-#: src/routes/sign-up.tsx:94
+#: src/routes/sign-up.tsx:56
+#: src/routes/sign-up.tsx:95
 msgid "Sign up"
 msgstr "Sign up"
+
+#: src/routes/_signed-in/settings.tsx:52
+msgid "Sign-in methods"
+msgstr "Sign-in methods"
 
 #: src/components/form.tsx:53
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
 
-#: src/routes/sign-in.tsx:78
+#: src/routes/sign-in.tsx:230
 msgid "That email and password don't match."
 msgstr "That email and password don't match."
 
-#: src/routes/sign-up.tsx:76
+#: src/routes/sign-up.tsx:77
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "This email is already signed up. <0>Sign in instead?</0>"
+
+#: src/routes/_signed-in/settings.tsx:99
+msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
+msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 
 #: src/routes/__root.tsx:40
 msgid "Try again"
 msgstr "Try again"
+
+#: src/routes/sign-in.tsx:232
+msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
+msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
 
 #: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."

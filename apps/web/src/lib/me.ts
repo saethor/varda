@@ -17,9 +17,12 @@ export async function signedInPerson(queryClient: QueryClient) {
   }
 }
 
-/** Drops the cached person after signing in, up or out, so the next page asks again. */
-export function forgetWhoIsSignedIn(queryClient: QueryClient) {
-  queryClient.removeQueries({ queryKey: orpc.shared.persons.me.key() });
+/**
+ * Drops the whole query cache after signing in, up or out: who is signed in, and
+ * everything that belonged to them (their passkeys), so the next page asks again.
+ */
+export function forgetEverythingCached(queryClient: QueryClient) {
+  queryClient.removeQueries();
 }
 
 /** A `beforeLoad` for sign-in and sign-up: a person who is already signed in goes home. */

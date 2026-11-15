@@ -13,8 +13,12 @@ Someone who uses Varða, as an athlete, a coach or both. A person signs in with 
 _Avoid_: User, account, member, profile
 
 **Login account**:
-What a person signs in with: an email address and a password. It is not part of the domain; it belongs to login, and the person refers to it by identity only. Each login account has exactly one person, created with it.
+What a person signs in with: an email address, reached through one or more sign-in methods. It is not part of the domain; it belongs to login, and the person refers to it by identity only. Each login account has exactly one person, created with it.
 _Avoid_: User, account (unprefixed), credentials
+
+**Sign-in method**:
+A way into a login account: a password or a passkey. A login account has at least one, and any but the last can be removed. Better Auth calls the password method "email"; that word stays inside the auth modules.
+_Avoid_: Login method, provider, credential
 
 **Athlete**:
 The person whose training is planned, recorded and analysed.

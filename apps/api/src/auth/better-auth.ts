@@ -19,14 +19,15 @@ export type BetterAuthInfra = {
   devMenu: boolean;
 };
 
-/** The real `auth` adapter: email and password login with Better Auth, its tables in the `auth` schema. */
+/** The real `auth` adapter: login with a password or a passkey through Better Auth, its tables in the `auth` schema. */
 export function createBetterAuthAdapter({ db, secret, baseURL, persons, devMenu: withDevMenu }: BetterAuthInfra): Auth {
+  const login = loginOptions({ db, baseURL });
   const betterAuthInstance = betterAuth({
     secret,
     baseURL,
-    ...loginOptions(db),
+    ...login,
     // Without the flag the dev routes aren't registered at all, so there is no bypass to get wrong.
-    plugins: withDevMenu ? [devMenu(persons)] : [],
+    plugins: [...login.plugins, ...(withDevMenu ? [devMenu(persons)] : [])],
     databaseHooks: {
       user: {
         create: {

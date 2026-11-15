@@ -8,11 +8,17 @@ check="$(cd "$(dirname "$0")" && pwd)/check-vocabulary.sh"
 fixture=$(mktemp -d)
 trap 'rm -rf "$fixture"' EXIT
 cd "$fixture" && git init -q . || exit 1
-mkdir -p apps/api/src/auth packages/shared/src
+mkdir -p apps/api/src/auth apps/web/src/sign-in packages/shared/src
 
 echo 'export const user = 1;' > apps/api/src/auth/better-auth.ts
 if ! sh "$check" > /dev/null; then
   echo 'check-vocabulary.sh failed on "user" inside the auth adapter, where it is allowed.'
+  exit 1
+fi
+
+echo 'export const user = 1;' > apps/web/src/sign-in/sign-in.ts
+if ! sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh failed on "user" inside the web sign-in module, where it is allowed.'
   exit 1
 fi
 
@@ -22,4 +28,4 @@ if sh "$check" > /dev/null; then
   exit 1
 fi
 
-echo 'check-vocabulary.sh allows the auth adapter and catches a leak.'
+echo 'check-vocabulary.sh allows the auth adapter and the web sign-in module, and catches a leak.'

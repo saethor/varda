@@ -9,11 +9,11 @@ allowed='POSTGRES_USER|MINIO_ROOT_USER'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \
-  ':!apps/api/src/auth/**' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary*.sh' |
+  ':!apps/api/src/auth/**' ':!apps/web/src/sign-in/sign-in.ts' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary*.sh' |
   grep -v -E "$allowed")
 
 if [ -n "$found" ]; then
-  echo 'Say "person" or "login account", not "user" (only apps/api/src/auth/ may wrap Better Auth'"'"'s "user"):'
+  echo 'Say "person" or "login account", not "user" (only apps/api/src/auth/ and apps/web/src/sign-in/sign-in.ts may wrap Better Auth'"'"'s "user"):'
   echo "$found"
   exit 1
 fi

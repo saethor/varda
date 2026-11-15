@@ -3,6 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 // Ports of their own, so a run never reuses an API or web app left running for development.
 const apiPort = 4100;
 const webPort = 4174;
+const webOrigin = `http://127.0.0.1:${webPort}`;
 
 export default defineConfig({
   testDir: 'tests',
@@ -10,16 +11,18 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['list']] : 'list',
   use: {
-    baseURL: `http://127.0.0.1:${webPort}`,
+    baseURL: webOrigin,
     trace: 'retain-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      // DATABASE_URL and Better Auth's settings come from the environment, or locally from the root .env.
+      // DATABASE_URL and BETTER_AUTH_SECRET come from the environment, or locally from the root .env.
+      // BETTER_AUTH_URL is the web app's origin, since Better Auth is reached through its proxy and
+      // checks the Origin header. Set here, it wins over the .env's dev-server address.
       command: 'node --env-file-if-exists=../../.env src/main.ts',
       cwd: '../api',
-      env: { PORT: String(apiPort) },
+      env: { PORT: String(apiPort), BETTER_AUTH_URL: webOrigin },
       url: `http://127.0.0.1:${apiPort}/health`,
       reuseExistingServer: false,
     },
@@ -28,7 +31,7 @@ export default defineConfig({
       command: `pnpm build && pnpm preview --host 127.0.0.1 --port ${webPort} --strictPort`,
       cwd: '../web',
       env: { VARDA_API_URL: `http://127.0.0.1:${apiPort}` },
-      url: `http://127.0.0.1:${webPort}`,
+      url: webOrigin,
       reuseExistingServer: false,
       timeout: 120_000,
     },

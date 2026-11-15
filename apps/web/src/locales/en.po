@@ -7,7 +7,7 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/sign-in/sign-in.ts:175
+#: src/sign-in/sign-in.ts:183
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
 
@@ -23,12 +23,12 @@ msgstr "Added {added}"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
-#: src/routes/sign-in.tsx:89
+#: src/routes/sign-in.tsx:93
 #: src/routes/sign-up.tsx:74
 msgid "Email"
 msgstr "Email"
 
-#: src/routes/sign-in.tsx:54
+#: src/routes/sign-in.tsx:58
 #: src/routes/sign-up.tsx:35
 msgid "Enter a valid email address."
 msgstr "Enter a valid email address."
@@ -45,6 +45,10 @@ msgstr "Hi, {name}"
 msgid "Home"
 msgstr "Home"
 
+#: src/routes/sign-in.tsx:162
+msgid "Last used"
+msgstr "Last used"
+
 #: src/routes/_signed-in.tsx:23
 msgid "Main"
 msgstr "Main"
@@ -53,7 +57,7 @@ msgstr "Main"
 msgid "Name"
 msgstr "Name"
 
-#: src/routes/sign-in.tsx:122
+#: src/routes/sign-in.tsx:139
 msgid "New to Varða? <0>Sign up</0>"
 msgstr "New to Varða? <0>Sign up</0>"
 
@@ -62,12 +66,12 @@ msgid "One stone at a time."
 msgstr "One stone at a time."
 
 #: src/routes/_signed-in/settings.tsx:70
-#: src/sign-in/sign-in.ts:176
+#: src/sign-in/sign-in.ts:184
 msgid "Passkey"
 msgstr "Passkey"
 
 #: src/routes/_signed-in/settings.tsx:49
-#: src/routes/sign-in.tsx:96
+#: src/routes/sign-in.tsx:100
 #: src/routes/sign-up.tsx:88
 msgid "Password"
 msgstr "Password"
@@ -77,12 +81,12 @@ msgstr "Password"
 msgid "Settings"
 msgstr "Settings"
 
-#: src/routes/sign-in.tsx:72
-#: src/routes/sign-in.tsx:105
+#: src/routes/sign-in.tsx:76
+#: src/routes/sign-in.tsx:111
 msgid "Sign in"
 msgstr "Sign in"
 
-#: src/routes/sign-in.tsx:115
+#: src/routes/sign-in.tsx:130
 msgid "Sign in with a passkey"
 msgstr "Sign in with a passkey"
 
@@ -103,7 +107,7 @@ msgstr "Sign-in methods"
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
 
-#: src/routes/sign-in.tsx:186
+#: src/routes/sign-in.tsx:220
 msgid "That email and password don't match."
 msgstr "That email and password don't match."
 
@@ -115,7 +119,7 @@ msgstr "This email is already signed up. <0>Sign in instead?</0>"
 msgid "Try again"
 msgstr "Try again"
 
-#: src/routes/sign-in.tsx:195
+#: src/routes/sign-in.tsx:229
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
 

@@ -57,5 +57,8 @@ test.describe('in English', () => {
 
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Sign out' }).click();
+    await expect(page.getByRole('button', { name: 'Sign in with a passkey' })).toHaveAccessibleDescription('Last used');
   });
 });

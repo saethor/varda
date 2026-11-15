@@ -17,6 +17,7 @@ test.describe('in English', () => {
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Sign up' }).click();
+    await page.getByRole('button', { name: 'Not now' }).click();
 
     await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
 

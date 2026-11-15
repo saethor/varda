@@ -13,6 +13,7 @@ import { Route as SignedInRouteImport } from './routes/_signed-in'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignedInIndexRouteImport } from './routes/_signed-in/index'
+import { Route as SignedInSettingsRouteImport } from './routes/_signed-in/settings'
 
 const SignedInRoute = SignedInRouteImport.update({
   id: '/_signed-in',
@@ -33,15 +34,22 @@ const SignedInIndexRoute = SignedInIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SignedInRoute,
 } as any)
+const SignedInSettingsRoute = SignedInSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SignedInRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SignedInIndexRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/settings': typeof SignedInSettingsRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/settings': typeof SignedInSettingsRoute
   '/': typeof SignedInIndexRoute
 }
 export interface FileRoutesById {
@@ -49,14 +57,21 @@ export interface FileRoutesById {
   '/_signed-in': typeof SignedInRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/_signed-in/settings': typeof SignedInSettingsRoute
   '/_signed-in/': typeof SignedInIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up'
+  fullPaths: '/' | '/sign-in' | '/sign-up' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/'
-  id: '__root__' | '/_signed-in' | '/sign-in' | '/sign-up' | '/_signed-in/'
+  to: '/sign-in' | '/sign-up' | '/settings' | '/'
+  id:
+    | '__root__'
+    | '/_signed-in'
+    | '/sign-in'
+    | '/sign-up'
+    | '/_signed-in/settings'
+    | '/_signed-in/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,14 +110,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignedInIndexRouteImport
       parentRoute: typeof SignedInRoute
     }
+    '/_signed-in/settings': {
+      id: '/_signed-in/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SignedInSettingsRouteImport
+      parentRoute: typeof SignedInRoute
+    }
   }
 }
 
 interface SignedInRouteChildren {
+  SignedInSettingsRoute: typeof SignedInSettingsRoute
   SignedInIndexRoute: typeof SignedInIndexRoute
 }
 
 const SignedInRouteChildren: SignedInRouteChildren = {
+  SignedInSettingsRoute: SignedInSettingsRoute,
   SignedInIndexRoute: SignedInIndexRoute,
 }
 

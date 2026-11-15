@@ -12,6 +12,7 @@
     "i18n:compile": "lingui compile --strict"
   },
   "dependencies": {
+    "@better-auth/passkey": "1.7.25",
     "@lingui/core": "6.12.0",
     "@lingui/react": "6.12.0",
     "@orpc/client": "1.16.2",

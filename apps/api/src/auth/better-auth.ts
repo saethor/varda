@@ -16,12 +16,12 @@ export type BetterAuthInfra = {
   persons: SharedReaders['persons'];
 };
 
-/** The real `auth` adapter: email and password login with Better Auth, its tables in the `auth` schema. */
+/** The real `auth` adapter: login with a password or a passkey through Better Auth, its tables in the `auth` schema. */
 export function createBetterAuthAdapter({ db, secret, baseURL, persons }: BetterAuthInfra): Auth {
   const betterAuthInstance = betterAuth({
     secret,
     baseURL,
-    ...loginOptions(db),
+    ...loginOptions({ db, baseURL }),
     databaseHooks: {
       user: {
         create: {

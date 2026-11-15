@@ -1,10 +1,10 @@
 import { Trans } from '@lingui/react/macro';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@varda/ui/components/card';
-import { forgetWhoIsSignedIn } from '../../lib/me.ts';
+import { forgetWhoIsSignedIn, meQuery } from '../../lib/me.ts';
 import { signOut } from '../../sign-in/sign-in.ts';
 
 export const Route = createFileRoute('/_signed-in/')({
@@ -12,9 +12,8 @@ export const Route = createFileRoute('/_signed-in/')({
 });
 
 function Home() {
-  // The signed-in layout asked who is signed in; read from there, so forgetting it on
-  // signing out doesn't ask again while this page is still showing.
-  const { person } = Route.useRouteContext();
+  // The signed-in layout has already loaded who is signed in, so this never suspends.
+  const { data: person } = useSuspenseQuery(meQuery);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const signingOut = useMutation({

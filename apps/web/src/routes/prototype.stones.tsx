@@ -1,68 +1,61 @@
 // PROTOTYPE, throw me away. "How should the stone screens look?" (#39 on map #35).
-// Three variants on one throwaway route, switchable via ?variant=A|B|C and the floating bar.
+// Four variants on one throwaway route, switchable via ?variant=A|B|C|D and the floating bar.
+// D (Feed) is the direction picked so far: a stone opens on its own screen, /prototype/stones/$stoneId.
 // Sits outside the signed-in layout so it runs with the web dev server alone, no API or database.
 // The real screens would be signed-in, under the same VARÐA header.
 
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { z } from 'zod';
-import { uploadOutcomes, useFakeStones } from '../prototype/stones/fake.ts';
+import { type UploadOutcome, useFakeStones } from '../prototype/stones/fake.ts';
+import { startFeed } from '../prototype/stones/feed-store.ts';
+import { type PrototypeSearch, prototypeSearch } from '../prototype/stones/search.ts';
 import { PrototypeSwitcher } from '../prototype/stones/switcher.tsx';
 import { VariantA } from '../prototype/stones/variant-a.tsx';
 import { VariantB } from '../prototype/stones/variant-b.tsx';
 import { VariantC } from '../prototype/stones/variant-c.tsx';
+import { VariantD } from '../prototype/stones/variant-d.tsx';
 
 const variants = [
-  { key: 'A', name: 'Pages', Component: VariantA },
-  { key: 'B', name: 'Drop zone', Component: VariantB },
-  { key: 'C', name: 'Weeks', Component: VariantC },
+  { key: 'D', name: 'Feed' },
+  { key: 'A', name: 'Pages' },
+  { key: 'B', name: 'Drop zone' },
+  { key: 'C', name: 'Weeks' },
 ];
+const older = { A: VariantA, B: VariantB, C: VariantC };
 
 export const Route = createFileRoute('/prototype/stones')({
-  validateSearch: z.object({
-    variant: z.enum(['A', 'B', 'C']).catch('A'),
-    start: z.enum(['empty', 'stones']).catch('stones'),
-    next: z.enum(uploadOutcomes as [string, ...string[]]).catch('placed'),
-  }),
+  validateSearch: prototypeSearch,
   component: StonesPrototype,
 });
 
 function StonesPrototype() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-  const set = (patch: Partial<typeof search>) => void navigate({ search: { ...search, ...patch }, replace: true });
-  const current = variants.find((v) => v.key === search.variant) ?? variants[0]!;
+  const set = (patch: Partial<PrototypeSearch>) => void navigate({ search: { ...search, ...patch }, replace: true });
+  startFeed(search.start);
 
   return (
     <>
-      {/* Re-mount on every switch, so each variant starts from the chosen state. */}
-      <Fake
-        key={`${search.variant}-${search.start}`}
-        start={search.start}
-        next={search.next}
-        Component={current.Component}
-      />
+      {search.variant === 'D' ? (
+        <VariantD search={search} />
+      ) : (
+        // Re-mount on every switch, so each older variant starts from the chosen state.
+        <Older key={`${search.variant}-${search.start}`} search={search} />
+      )}
       <PrototypeSwitcher
         variants={variants}
         current={search.variant}
-        onVariant={(variant) => set({ variant: variant as 'A' | 'B' | 'C' })}
+        onVariant={(variant) => set({ variant: variant as PrototypeSearch['variant'] })}
         start={search.start}
         onStart={(start) => set({ start })}
-        nextUpload={search.next as (typeof uploadOutcomes)[number]}
+        nextUpload={search.next}
         onNextUpload={(next) => set({ next })}
       />
     </>
   );
 }
 
-function Fake({
-  start,
-  next,
-  Component,
-}: {
-  start: 'empty' | 'stones';
-  next: string;
-  Component: (typeof variants)[number]['Component'];
-}) {
-  const fake = useFakeStones(start, next as (typeof uploadOutcomes)[number]);
+function Older({ search }: { search: PrototypeSearch }) {
+  const fake = useFakeStones(search.start, search.next as UploadOutcome);
+  const Component = older[search.variant as keyof typeof older];
   return <Component fake={fake} />;
 }

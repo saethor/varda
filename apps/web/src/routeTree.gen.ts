@@ -14,6 +14,7 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignedInIndexRouteImport } from './routes/_signed-in/index'
 import { Route as PrototypeStonesRouteImport } from './routes/prototype.stones'
+import { Route as PrototypeStonesStoneIdRouteImport } from './routes/prototype.stones_.$stoneId'
 
 const SignedInRoute = SignedInRouteImport.update({
   id: '/_signed-in',
@@ -39,18 +40,25 @@ const PrototypeStonesRoute = PrototypeStonesRouteImport.update({
   path: '/prototype/stones',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrototypeStonesStoneIdRoute = PrototypeStonesStoneIdRouteImport.update({
+  id: '/prototype/stones_/$stoneId',
+  path: '/prototype/stones/$stoneId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SignedInIndexRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/prototype/stones': typeof PrototypeStonesRoute
+  '/prototype/stones/$stoneId': typeof PrototypeStonesStoneIdRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/prototype/stones': typeof PrototypeStonesRoute
   '/': typeof SignedInIndexRoute
+  '/prototype/stones/$stoneId': typeof PrototypeStonesStoneIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +67,23 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/prototype/stones': typeof PrototypeStonesRoute
   '/_signed-in/': typeof SignedInIndexRoute
+  '/prototype/stones_/$stoneId': typeof PrototypeStonesStoneIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up' | '/prototype/stones'
+  fullPaths:
+    | '/'
+    | '/sign-in'
+    | '/sign-up'
+    | '/prototype/stones'
+    | '/prototype/stones/$stoneId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/prototype/stones' | '/'
+  to:
+    | '/sign-in'
+    | '/sign-up'
+    | '/prototype/stones'
+    | '/'
+    | '/prototype/stones/$stoneId'
   id:
     | '__root__'
     | '/_signed-in'
@@ -72,6 +91,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/prototype/stones'
     | '/_signed-in/'
+    | '/prototype/stones_/$stoneId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -79,6 +99,7 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   PrototypeStonesRoute: typeof PrototypeStonesRoute
+  PrototypeStonesStoneIdRoute: typeof PrototypeStonesStoneIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -118,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrototypeStonesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prototype/stones_/$stoneId': {
+      id: '/prototype/stones_/$stoneId'
+      path: '/prototype/stones/$stoneId'
+      fullPath: '/prototype/stones/$stoneId'
+      preLoaderRoute: typeof PrototypeStonesStoneIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -138,6 +166,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   PrototypeStonesRoute: PrototypeStonesRoute,
+  PrototypeStonesStoneIdRoute: PrototypeStonesStoneIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

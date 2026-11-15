@@ -11,3 +11,4 @@ Watches get things wrong. A treadmill run is the obvious case: the watch says 9.
 - Every derived value (training load, best efforts, the Breakdown) is calculated from the recording with its corrections applied, never from the raw recording alone.
 - Correcting a stone's total distance scales its laps proportionally; correcting a lap changes only that lap.
 - Best efforts include corrected stones, and the athlete can exclude any single stone from them.
+- Deleting a stone is not a correction: it removes the stone, its corrections and its recording entirely, and nothing is kept for anyone, coaches included.

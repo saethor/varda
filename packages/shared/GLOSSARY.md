@@ -29,7 +29,7 @@ A person who plans training for an athlete and sees all of that athlete's traini
 _Avoid_: Trainer, planner, self-coached athlete
 
 **Coaching relationship**:
-The link between one athlete and one coach, started by an invitation from either side and ended by either side at any time. An invitation is addressed to an email address, not a person, so the person invited may not exist yet. When it ends the coach loses access, but everything they contributed stays with the athlete.
+The link between one athlete and one coach, started by an invitation from either side and ended by either side at any time. An invitation is delivered to an email address, not a person, so the person invited may not exist yet; it is accepted through its link, whatever email address the accepting person's login account has. When it ends the coach loses access, but everything they contributed stays with the athlete.
 _Avoid_: Subscription, connection, follow
 
 ### Training

@@ -9,7 +9,7 @@ The English words here are canonical in code and docs; the Icelandic UI translat
 ### Stones
 
 **Stone**:
-A training session the athlete actually did, of any sport. Stones belong to the athlete, are dated by the local date where they started, and fall within a journey only by that date. A session is placed as a stone only once, whatever its sources.
+A training session the athlete actually did, of any sport. Stones belong to the athlete, are dated by the local date where they started, and fall within a journey only by that date. A session is placed as a stone only once, whatever its sources. Only the athlete can delete a stone; deleting it removes the stone and its recording entirely, leaving nothing behind, so the same session can be placed again.
 _Avoid_: Activity, workout (for completed work), run (unless it is one)
 
 **Placing a stone**:
@@ -17,7 +17,7 @@ Adding a completed session to the athlete's record, whether from a watch file, a
 _Avoid_: Uploading, logging, syncing (as domain verbs)
 
 **Recording**:
-The raw data a stone was placed from (a watch file, a synced platform). It is never changed.
+The raw data a stone was placed from (a watch file, a synced platform). It is never changed, and is deleted only together with its stone.
 _Avoid_: Activity file, raw data
 
 **Correction**:

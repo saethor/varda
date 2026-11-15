@@ -4,8 +4,9 @@
 # wraps Better Auth's "user", may say it. Docs (*.md) may name the word they avoid.
 # dependency-cruiser sees imports, not identifiers, hence a grep.
 
-# Third-party settings named by their images, not by us.
-allowed='POSTGRES_USER|MINIO_ROOT_USER'
+# Third-party names, not ours: settings named by their images, and TanStack Router's
+# useRouter, useRouteContext and friends (where "user" is only "use" + "Route").
+allowed='POSTGRES_USER|MINIO_ROOT_USER|useRoute'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \

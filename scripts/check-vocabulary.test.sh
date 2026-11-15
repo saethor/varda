@@ -22,6 +22,18 @@ if ! sh "$check" > /dev/null; then
   exit 1
 fi
 
+mkdir -p apps/web/src/routes
+echo "import { useRouter } from '@tanstack/react-router';" > apps/web/src/routes/__root.tsx
+if ! sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh failed on TanStack Router'"'"'s useRouter, which is not "user".'
+  exit 1
+fi
+echo 'const { person } = Route.useRouteContext();' > apps/web/src/routes/index.tsx
+if ! sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh failed on TanStack Router'"'"'s useRouteContext, which is not "user".'
+  exit 1
+fi
+
 echo 'export const user = 1;' > packages/shared/src/leak.ts
 if sh "$check" > /dev/null; then
   echo 'check-vocabulary.sh passed with "user" leaked into packages/shared.'

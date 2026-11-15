@@ -12,7 +12,7 @@ export type Persons = {
   /** The person with this ID, or null when there is none. */
   byId(id: PersonId): Promise<Person | null>;
   /** Every person, in no particular order. */
-  all(): Promise<Person[]>;
+  everyone(): Promise<Person[]>;
   /** The login account a person signs in with, or null when there is no such person. */
   loginAccountOf(id: PersonId): Promise<LoginAccountId | null>;
 };

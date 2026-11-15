@@ -1,7 +1,7 @@
 import type { Auth } from './adapters.ts';
 
 /** The persons a fresh local database gets, on the reserved `varda.test` domain. */
-const devPersons = [
+export const devPersons = [
   { name: 'Anna Jónsdóttir', email: 'anna@varda.test' },
   { name: 'Bjarni Sigurðsson', email: 'bjarni@varda.test' },
   { name: 'Guðrún Ólafsdóttir', email: 'gudrun@varda.test' },

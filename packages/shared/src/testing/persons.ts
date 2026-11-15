@@ -49,7 +49,7 @@ export function describePersons(name: string, setup: () => Promise<PersonsSetup>
       const { persons, ids, newLoginAccount } = await setup();
       const created = await persons.createFor({ id: ids.next(), loginAccount: newLoginAccount(), name: 'Kári' });
 
-      expect(await persons.all()).toContainEqual(created);
+      expect(await persons.everyone()).toContainEqual(created);
     });
 
     it('finds the login account of a person, or none', async () => {

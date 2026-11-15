@@ -10,7 +10,15 @@ import { signOut } from '../sign-in/sign-in.ts';
 
 type Person = { id: string; name: string };
 
-const signedOut = 'signed-out';
+/** Who the browser switches to. */
+type Choice = { kind: 'signed-out' } | { kind: 'person'; id: string };
+
+// The <select>'s value for "Signed out"; every other option's value is a person ID (a UUID).
+const signedOutValue = 'signed-out';
+
+function choiceOf(value: string): Choice {
+  return value === signedOutValue ? { kind: 'signed-out' } : { kind: 'person', id: value };
+}
 
 async function everyone(): Promise<Person[]> {
   const response = await fetch('/api/auth/dev/persons');
@@ -18,15 +26,23 @@ async function everyone(): Promise<Person[]> {
   return (await response.json()) as Person[];
 }
 
-/** Signs this browser in as the person, or out for `signedOut`. */
-async function switchTo(choice: string): Promise<void> {
-  if (choice === signedOut) return await signOut();
+/** Signs this browser in as the person chosen, or out. */
+async function switchTo(choice: Choice): Promise<void> {
+  switch (choice.kind) {
+    case 'signed-out':
+      return await signOut();
+    case 'person':
+      return await impersonate(choice.id);
+  }
+}
+
+async function impersonate(personId: string): Promise<void> {
   const response = await fetch('/api/auth/dev/impersonate', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ personId: choice }),
+    body: JSON.stringify({ personId }),
   });
-  if (!response.ok) throw new Error(`Switching to person ${choice} failed: ${response.status}`);
+  if (!response.ok) throw new Error(`Switching to person ${personId} failed: ${response.status}`);
 }
 
 export function DevMenu() {
@@ -35,7 +51,7 @@ export function DevMenu() {
   const persons = useQuery({ queryKey: ['dev-menu', 'persons'], queryFn: everyone });
   // Failing with UNAUTHORIZED means nobody is signed in, so there is nothing to retry.
   const me = useQuery({ ...meQuery, retry: false });
-  const current = me.status === 'success' ? me.data.id : signedOut;
+  const current = me.status === 'success' ? me.data.id : signedOutValue;
 
   const switching = useMutation({
     mutationFn: switchTo,
@@ -55,9 +71,9 @@ export function DevMenu() {
           className="rounded border bg-background px-1 py-0.5"
           value={current}
           disabled={switching.isPending || persons.isPending}
-          onChange={(event) => switching.mutate(event.target.value)}
+          onChange={(event) => switching.mutate(choiceOf(event.target.value))}
         >
-          <option value={signedOut}>Signed out</option>
+          <option value={signedOutValue}>Signed out</option>
           {persons.data?.map((person) => (
             <option key={person.id} value={person.id}>
               {person.name} · Athlete

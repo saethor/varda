@@ -20,6 +20,8 @@ const app = createApp({
     secret: required('BETTER_AUTH_SECRET'),
     baseURL: required('BETTER_AUTH_URL'),
     persons: createSharedReaders(shared).persons,
+    // Off unless exactly `true`; never set in deployed environments.
+    devMenu: process.env.VARDA_DEV_MENU === 'true',
   }),
 });
 

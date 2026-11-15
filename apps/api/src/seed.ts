@@ -1,5 +1,5 @@
 // `pnpm db:seed`: signs up the dev persons on a local, migrated database. Run by
-// hand after `pnpm db:migrate`; running it again adds nothing.
+// hand after `pnpm db:migrate`, and by the end-to-end suite; running it again adds nothing.
 import { createSharedAdapters, createSharedReaders } from '@varda/shared';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';

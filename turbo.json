@@ -13,7 +13,7 @@
     },
     "test:e2e": {
       "cache": false,
-      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "CI"]
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "VARDA_DEV_PASSWORD", "CI"]
     },
     "dev": {
       "cache": false,

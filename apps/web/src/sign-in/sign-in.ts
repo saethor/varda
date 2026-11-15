@@ -23,11 +23,11 @@ export class EmailAndPasswordDontMatch extends Error {
   }
 }
 
-/** Anything else went wrong: Varða couldn't be reached, or it failed. */
-export class SignInServiceFailed extends Error {
+/** Signing in, up or out failed for any other reason: Varða couldn't be reached, or it failed. */
+export class LoginServiceFailed extends Error {
   constructor(detail: string) {
     super(`Signing in, up or out failed: ${detail}`);
-    this.name = 'SignInServiceFailed';
+    this.name = 'LoginServiceFailed';
   }
 }
 
@@ -39,7 +39,7 @@ const emailAlreadySignedUpCodes = new Set(['USER_ALREADY_EXISTS', 'USER_ALREADY_
 function failure(error: BetterAuthError): Error {
   if (error.code && emailAlreadySignedUpCodes.has(error.code)) return new EmailAlreadySignedUp();
   if (error.code === 'INVALID_EMAIL_OR_PASSWORD') return new EmailAndPasswordDontMatch();
-  return new SignInServiceFailed(`${error.status} ${error.code ?? error.message ?? ''}`.trim());
+  return new LoginServiceFailed(`${error.status} ${error.code ?? error.message ?? ''}`.trim());
 }
 
 /** Signs a new person up and signs them in straight away. */

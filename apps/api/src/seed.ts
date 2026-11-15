@@ -32,6 +32,7 @@ try {
     secret: required('BETTER_AUTH_SECRET'),
     baseURL,
     persons: createSharedReaders(shared).persons,
+    devMenu: false,
   });
   const { created, skipped } = await seedPersons({ auth, baseURL, password });
   for (const email of created) console.log(`signed up ${email}`);

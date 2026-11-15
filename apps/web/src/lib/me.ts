@@ -9,7 +9,8 @@ export const meQuery = orpc.shared.persons.me.queryOptions();
 /** The signed-in person, or `null` when nobody is signed in. Any other failure is thrown. */
 export async function signedInPerson(queryClient: QueryClient) {
   try {
-    return await queryClient.ensureQueryData(meQuery);
+    // Cached until invalidated, e.g. by the dev menu switching persons; then asked again.
+    return await queryClient.fetchQuery({ ...meQuery, staleTime: Number.POSITIVE_INFINITY });
   } catch (error) {
     if (error instanceof ORPCError && error.code === 'UNAUTHORIZED') return null;
     throw error;

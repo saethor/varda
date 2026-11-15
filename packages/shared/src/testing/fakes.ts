@@ -18,6 +18,12 @@ export function createInMemoryPersons(): Persons {
     async byId(id) {
       return [...byLoginAccount.values()].find((person) => person.id === id) ?? null;
     },
+    async all() {
+      return [...byLoginAccount.values()];
+    },
+    async loginAccountOf(id) {
+      return [...byLoginAccount].find(([, person]) => person.id === id)?.[0] ?? null;
+    },
   };
 }
 

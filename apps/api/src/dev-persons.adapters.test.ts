@@ -23,6 +23,7 @@ const auth = createBetterAuthAdapter({
   secret: 'adapter-test-secret-at-least-32-characters',
   baseURL,
   persons: createSharedReaders(shared).persons,
+  devMenu: false,
 });
 const app = createApp({ shared, auth });
 

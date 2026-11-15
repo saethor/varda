@@ -13,6 +13,7 @@ import { Route as SignedInRouteImport } from './routes/_signed-in'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignedInIndexRouteImport } from './routes/_signed-in/index'
+import { Route as PrototypeStonesRouteImport } from './routes/prototype.stones'
 
 const SignedInRoute = SignedInRouteImport.update({
   id: '/_signed-in',
@@ -33,15 +34,22 @@ const SignedInIndexRoute = SignedInIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SignedInRoute,
 } as any)
+const PrototypeStonesRoute = PrototypeStonesRouteImport.update({
+  id: '/prototype/stones',
+  path: '/prototype/stones',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SignedInIndexRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/prototype/stones': typeof PrototypeStonesRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/prototype/stones': typeof PrototypeStonesRoute
   '/': typeof SignedInIndexRoute
 }
 export interface FileRoutesById {
@@ -49,20 +57,28 @@ export interface FileRoutesById {
   '/_signed-in': typeof SignedInRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/prototype/stones': typeof PrototypeStonesRoute
   '/_signed-in/': typeof SignedInIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up'
+  fullPaths: '/' | '/sign-in' | '/sign-up' | '/prototype/stones'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/'
-  id: '__root__' | '/_signed-in' | '/sign-in' | '/sign-up' | '/_signed-in/'
+  to: '/sign-in' | '/sign-up' | '/prototype/stones' | '/'
+  id:
+    | '__root__'
+    | '/_signed-in'
+    | '/sign-in'
+    | '/sign-up'
+    | '/prototype/stones'
+    | '/_signed-in/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   SignedInRoute: typeof SignedInRouteWithChildren
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  PrototypeStonesRoute: typeof PrototypeStonesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -95,6 +111,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignedInIndexRouteImport
       parentRoute: typeof SignedInRoute
     }
+    '/prototype/stones': {
+      id: '/prototype/stones'
+      path: '/prototype/stones'
+      fullPath: '/prototype/stones'
+      preLoaderRoute: typeof PrototypeStonesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -114,6 +137,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignedInRoute: SignedInRouteWithChildren,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  PrototypeStonesRoute: PrototypeStonesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

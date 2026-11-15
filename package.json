@@ -22,7 +22,8 @@
     "db:migrate": "pnpm --filter @varda/api db:migrate",
     "db:down": "docker compose down",
     "i18n:extract": "pnpm --filter @varda/web i18n:extract",
-    "i18n:compile": "pnpm --filter @varda/web i18n:compile"
+    "i18n:compile": "pnpm --filter @varda/web i18n:compile",
+    "prototype:stones": "echo 'PROTOTYPE: http://localhost:5173/prototype/stones' && pnpm --filter @varda/web dev"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.7",

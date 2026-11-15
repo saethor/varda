@@ -29,7 +29,7 @@ async function useVirtualAuthenticator(page: Page) {
 test.describe('in English', () => {
   test.use({ locale: 'en-GB' });
 
-  test('a person adds a passkey in Settings and signs in with it', async ({ page }) => {
+  test('a new person adds a passkey after signing up and signs in with it', async ({ page }) => {
     await useVirtualAuthenticator(page);
     const name = 'Bergþóra Skarphéðinsdóttir';
     // A unique email per run, so the database never needs resetting.
@@ -40,13 +40,12 @@ test.describe('in English', () => {
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill('a long enough password');
     await page.getByRole('button', { name: 'Sign up' }).click();
+    await expect(page.getByRole('heading', { name: 'Add a passkey?' })).toBeVisible();
+    await page.getByRole('button', { name: 'Add a passkey' }).click();
     await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
 
     await page.getByRole('link', { name: 'Settings' }).click();
     const signInMethods = page.getByRole('region', { name: 'Sign-in methods' });
-    await expect(signInMethods.getByRole('listitem')).toHaveText(['Password']);
-
-    await signInMethods.getByRole('button', { name: 'Add a passkey' }).click();
     // Playwright's Desktop Chrome speaks as Chrome on Windows.
     await expect(signInMethods.getByRole('listitem')).toHaveText(['Password', /^Chrome on Windows\s*Added /]);
     await expect(
@@ -75,6 +74,7 @@ test.describe('in English', () => {
 
     await page.getByRole('link', { name: 'Home' }).click();
     await page.getByRole('button', { name: 'Sign out' }).click();
+    await expect(page.getByRole('button', { name: 'Sign in with a passkey' })).toHaveAccessibleDescription('Last used');
     await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
     await expect(
       page.getByText("Varða doesn't recognise that passkey. Sign in with your password instead."),

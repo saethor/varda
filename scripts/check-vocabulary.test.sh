@@ -39,5 +39,19 @@ if sh "$check" > /dev/null; then
   echo 'check-vocabulary.sh passed with "user" leaked into packages/shared.'
   exit 1
 fi
+rm packages/shared/src/leak.ts
+
+echo 'const user = Route.useRouteContext();' > apps/web/src/routes/index.tsx
+if sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh passed with "user" on the same line as useRouteContext.'
+  exit 1
+fi
+rm apps/web/src/routes/index.tsx
+
+echo 'POSTGRES_USER: varda # the user' > docker-compose.yml
+if sh "$check" > /dev/null; then
+  echo 'check-vocabulary.sh passed with "user" on the same line as POSTGRES_USER.'
+  exit 1
+fi
 
 echo 'check-vocabulary.sh allows the auth adapter and the web sign-in module, and catches a leak.'

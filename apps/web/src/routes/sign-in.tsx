@@ -13,12 +13,13 @@ import { usePasswordSchema } from '../sign-in/password.ts';
 import { safeRedirect } from '../sign-in/safe-redirect.ts';
 import { EmailAndPasswordDontMatch, signIn } from '../sign-in/sign-in.ts';
 
-type SignInSearch = { redirect?: string };
+const signInSearch = z.object({
+  // Where the person was going, kept only if it is a path within Varða; otherwise home.
+  redirect: z.string().optional().catch(undefined).transform(safeRedirect),
+});
 
 export const Route = createFileRoute('/sign-in')({
-  // Where the person was going, kept only if it is a path within Varða.
-  validateSearch: (search): SignInSearch =>
-    typeof search.redirect === 'string' ? { redirect: safeRedirect(search.redirect) } : {},
+  validateSearch: signInSearch,
   beforeLoad: async ({ context }) => {
     if (await signedInPerson(context.queryClient)) throw redirect({ to: '/' });
   },
@@ -37,7 +38,7 @@ function SignIn() {
     mutationFn: signIn,
     onSuccess: async () => {
       forgetWhoIsSignedIn(queryClient);
-      await navigate({ href: safeRedirect(goingTo) });
+      await navigate({ href: goingTo });
     },
   });
 

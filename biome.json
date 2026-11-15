@@ -14,7 +14,8 @@
       "!logo",
       "!docs/diagrams",
       "!.claude",
-      "!.agents"
+      "!.agents",
+      "!.github/skills"
     ]
   },
   "formatter": {

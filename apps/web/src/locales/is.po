@@ -11,29 +11,34 @@ msgstr ""
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} á {operatingSystem}"
 
+#: src/routes/_signed-in/add-a-passkey.tsx:49
 #: src/routes/_signed-in/settings.tsx:57
 msgid "Add a passkey"
 msgstr "Bæta við aðgangslykli"
+
+#: src/routes/_signed-in/add-a-passkey.tsx:35
+msgid "Add a passkey?"
+msgstr "Bæta við aðgangslykli?"
 
 #: src/routes/_signed-in/settings.tsx:72
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
-#: src/routes/sign-up.tsx:103
+#: src/routes/sign-up.tsx:104
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 
 #: src/routes/sign-in.tsx:93
-#: src/routes/sign-up.tsx:74
+#: src/routes/sign-up.tsx:75
 msgid "Email"
 msgstr "Netfang"
 
 #: src/routes/sign-in.tsx:58
-#: src/routes/sign-up.tsx:35
+#: src/routes/sign-up.tsx:36
 msgid "Enter a valid email address."
 msgstr "Sláðu inn gilt netfang."
 
-#: src/routes/sign-up.tsx:34
+#: src/routes/sign-up.tsx:35
 msgid "Enter your name."
 msgstr "Sláðu inn nafnið þitt."
 
@@ -53,13 +58,21 @@ msgstr "Síðast notað"
 msgid "Main"
 msgstr "Aðalvalmynd"
 
-#: src/routes/sign-up.tsx:70
+#: src/routes/sign-up.tsx:71
 msgid "Name"
 msgstr "Nafn"
 
 #: src/routes/sign-in.tsx:139
 msgid "New to Varða? <0>Sign up</0>"
 msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
+
+#: src/routes/_signed-in/add-a-passkey.tsx:39
+msgid "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
+msgstr "Næst geturðu skráð þig inn með fingrafari, andliti eða PIN-númeri tækisins í stað lykilorðs. Þú getur líka bætt við aðgangslykli síðar í Stillingum."
+
+#: src/routes/_signed-in/add-a-passkey.tsx:52
+msgid "Not now"
+msgstr "Ekki núna"
 
 #: src/routes/__root.tsx:25
 msgid "One stone at a time."
@@ -72,7 +85,7 @@ msgstr "Aðgangslykill"
 
 #: src/routes/_signed-in/settings.tsx:49
 #: src/routes/sign-in.tsx:100
-#: src/routes/sign-up.tsx:88
+#: src/routes/sign-up.tsx:89
 msgid "Password"
 msgstr "Lykilorð"
 
@@ -94,8 +107,8 @@ msgstr "Innskráning með aðgangslykli"
 msgid "Sign out"
 msgstr "Útskrá"
 
-#: src/routes/sign-up.tsx:55
-#: src/routes/sign-up.tsx:94
+#: src/routes/sign-up.tsx:56
+#: src/routes/sign-up.tsx:95
 msgid "Sign up"
 msgstr "Nýskráning"
 
@@ -111,7 +124,7 @@ msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 msgid "That email and password don't match."
 msgstr "Netfangið og lykilorðið passa ekki saman."
 
-#: src/routes/sign-up.tsx:76
+#: src/routes/sign-up.tsx:77
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
 

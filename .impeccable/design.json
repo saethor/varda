@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T21:55:52+00:00",
+  "title": "Design System: Varða",
+  "extensions": {
+    "colorMeta": {
+      "basalt": {
+        "role": "neutral",
+        "displayName": "Basalt",
+        "canonical": "oklch(29.9% 0.005 219.6)",
+        "tonalRamp": ["#0a0b0c", "#202223", "#383b3c", "#535657", "#777b7c", "#9c9fa0", "#c5c8c9", "#edefef"]
+      },
+      "snow": {
+        "role": "neutral",
+        "displayName": "Snow",
+        "canonical": "oklch(95.8% 0.007 88.6)",
+        "tonalRamp": ["#0c0b09", "#22221f", "#3c3a37", "#575551", "#7c7a76", "#a09e9a", "#c8c7c4", "#efeeec"]
+      },
+      "ash-card": {
+        "role": "neutral",
+        "displayName": "Ash Card",
+        "canonical": "oklch(98.2% 0.004 91.4)",
+        "tonalRamp": ["#0b0b0a", "#222220", "#3b3a39", "#565553", "#7b7a78", "#9f9e9c", "#c8c7c5", "#efeeed"]
+      },
+      "weathered-stone": {
+        "role": "neutral",
+        "displayName": "Weathered Stone",
+        "canonical": "oklch(92.8% 0.014 88.7)",
+        "tonalRamp": ["#0c0b08", "#23211d", "#3d3a34", "#58554d", "#7e7a71", "#a19e96", "#cac7c0", "#f0eee9"]
+      },
+      "pale-scree": {
+        "role": "neutral",
+        "displayName": "Pale Scree",
+        "canonical": "oklch(86.8% 0.017 88.0)",
+        "tonalRamp": ["#0d0b07", "#24211c", "#3d3a33", "#59554b", "#7e7a6f", "#a29e94", "#cac7bf", "#f1eee8"]
+      },
+      "scree": {
+        "role": "neutral",
+        "displayName": "Scree",
+        "canonical": "oklch(62.8% 0.025 87.2)",
+        "tonalRamp": ["#0d0b06", "#252119", "#3f3a2f", "#5b5547", "#817a6a", "#a49e90", "#ccc7bb", "#f2eee5"]
+      },
+      "tephra": {
+        "role": "neutral",
+        "displayName": "Tephra",
+        "canonical": "oklch(52.3% 0.020 84.6)",
+        "tonalRamp": ["#0d0b07", "#24211b", "#3e3a31", "#5a554a", "#807a6d", "#a39e93", "#cbc7be", "#f1eee7"]
+      },
+      "deep-moss": {
+        "role": "primary",
+        "displayName": "Deep Moss",
+        "canonical": "oklch(48.6% 0.067 134.8)",
+        "tonalRamp": ["#050e02", "#182610", "#2e4124", "#465d39", "#69835b", "#8fa782", "#bbceb1", "#e5f4de"]
+      },
+      "moss": {
+        "role": "primary",
+        "displayName": "Moss",
+        "canonical": "oklch(54.6% 0.073 134.7)",
+        "tonalRamp": ["#050e01", "#17270e", "#2d4121", "#445e36", "#688458", "#8ea880", "#bacfaf", "#e4f4dc"]
+      },
+      "lichen": {
+        "role": "secondary",
+        "displayName": "Lichen",
+        "canonical": "oklch(78.5% 0.114 116.0)",
+        "tonalRamp": ["#0b0d00", "#202500", "#393f00", "#535c00", "#778228", "#9ba65c", "#c4ce94", "#ecf4c9"]
+      },
+      "ember": {
+        "role": "tertiary",
+        "displayName": "Ember",
+        "canonical": "oklch(65.1% 0.168 43.7)",
+        "tonalRamp": ["#240000", "#480100", "#6f1400", "#982900", "#c74f04", "#e87d4d", "#ffaf8a", "#ffddc1"]
+      },
+      "lava": {
+        "role": "error",
+        "displayName": "Lava",
+        "canonical": "oklch(44.5% 0.126 17.6)",
+        "tonalRamp": ["#1f0003", "#400a12", "#651e26", "#8b333c", "#b9575e", "#da8185", "#fab1b3", "#ffdedf"]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The one page heading, an h1 in the card title."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Dialog titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Descriptions, nav, alerts, field help and errors."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, buttons, card titles."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Badges and developer tooling."
+      }
+    },
+    "shadows": [
+      {
+        "name": "lip",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Outline buttons and inputs only."
+      },
+      {
+        "name": "float",
+        "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        "purpose": "Small overlays fixed to the viewport (dev menu)."
+      },
+      {
+        "name": "dialog",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        "purpose": "Alert dialogs, over a 50% black scrim."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default state transitions on buttons, inputs, badges and links."
+      },
+      {
+        "name": "dialog-enter",
+        "value": "150ms fade + zoom from 95% (tw-animate-css)",
+        "purpose": "Alert dialog open and close. With reduced motion on, the zoom is dropped and only the fade remains."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one forward action on a screen.",
+      "html": "<button class=\"ds-btn-primary\">Sign in</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#4f6841;color:#f3f1ec;} .ds-btn-primary:hover{background:color-mix(in oklab,#4f6841 90%,transparent);} .ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;} .ds-btn-primary:disabled{opacity:.5;pointer-events:none;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The alternative route, such as signing in with a passkey or signing out.",
+      "html": "<button class=\"ds-btn-secondary\">Sign in with a passkey</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#ebe7dd;color:#2b2e2f;} .ds-btn-secondary:hover{background:color-mix(in oklab,#ebe7dd 80%,transparent);} .ds-btn-secondary:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Cancel and other low-weight actions; fills with Lichen on hover.",
+      "html": "<button class=\"ds-btn-outline\">Cancel</button>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#f3f1ec;color:#2b2e2f;border:1px solid #d8d3c7;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);} .ds-btn-outline:hover{background:#b5c26a;color:#2b2e2f;} .ds-btn-outline:focus-visible{outline:none;border-color:#5e7a4e;box-shadow:0 0 0 3px #5e7a4e;}"
+    },
+    {
+      "name": "Destructive Button",
+      "kind": "button",
+      "refersTo": "button-destructive",
+      "description": "Confirms a destructive action. Lava, never Ember.",
+      "html": "<button class=\"ds-btn-destructive\">Remove passkey</button>",
+      "css": ".ds-btn-destructive{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#8c2f39;color:#f3f1ec;} .ds-btn-destructive:hover{background:color-mix(in oklab,#8c2f39 90%,transparent);} .ds-btn-destructive:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Labelled input; Scree hairline, Moss ring on focus, Lava when invalid.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Email</span><input class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\"></label><label class=\"ds-field ds-field-invalid\"><span class=\"ds-field-label\">Password</span><input class=\"ds-input\" type=\"password\" aria-invalid=\"true\" value=\"short\"><span class=\"ds-field-error\">Use at least 12 characters.</span></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:12px;width:280px;margin-bottom:20px;color:#2b2e2f;font-family:ui-sans-serif,system-ui,sans-serif;} .ds-field-label{font-size:14px;font-weight:500;line-height:1.375;} .ds-input{height:36px;padding:4px 12px;border:1px solid #8f8878;border-radius:6px;background:transparent;color:#2b2e2f;font-size:14px;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);transition:color 150ms,box-shadow 150ms;outline:none;} .ds-input::placeholder{color:#6f695d;} .ds-input:focus-visible{border-color:#5e7a4e;box-shadow:0 0 0 3px #5e7a4e;} .ds-field-invalid{color:#8c2f39;} .ds-field-invalid .ds-input{border-color:#8c2f39;box-shadow:0 0 0 3px #8c2f39;} .ds-field-error{font-size:14px;}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The one container per screen; lifted by tone and hairline, no shadow.",
+      "html": "<div class=\"ds-card\"><h1 class=\"ds-card-title\">Hi, Anna</h1><p class=\"ds-card-desc\">Your cairn has 12 stones.</p></div>",
+      "css": ".ds-card{display:flex;flex-direction:column;gap:24px;width:320px;padding:24px;background:#faf9f6;color:#2b2e2f;border:1px solid #d8d3c7;border-radius:12px;font-family:ui-sans-serif,system-ui,sans-serif;} .ds-card-title{margin:0;font-size:24px;line-height:32px;font-weight:600;} .ds-card-desc{margin:0;font-size:14px;line-height:20px;color:#6f695d;}"
+    },
+    {
+      "name": "Last Used Badge",
+      "kind": "chip",
+      "refersTo": "badge-outline",
+      "description": "Small status note pinned to the top edge of its control.",
+      "html": "<div class=\"ds-badge-wrap\"><button class=\"ds-badge-btn\">Sign in</button><span class=\"ds-badge\">Last used</span></div>",
+      "css": ".ds-badge-wrap{position:relative;display:inline-flex;flex-direction:column;width:240px;} .ds-badge-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#4f6841;color:#f3f1ec;} .ds-badge{position:absolute;top:-10px;right:8px;display:inline-flex;align-items:center;padding:2px 8px;border:1px solid #d8d3c7;border-radius:6px;background:#f3f1ec;color:#2b2e2f;font:500 12px/16px ui-sans-serif,system-ui,sans-serif;white-space:nowrap;}"
+    },
+    {
+      "name": "Error Alert",
+      "kind": "custom",
+      "refersTo": "alert-destructive",
+      "description": "Names a problem calmly: Lava text on Ash Card, not a Lava fill.",
+      "html": "<div class=\"ds-alert\" role=\"alert\">That email and password don't match.</div>",
+      "css": ".ds-alert{width:300px;padding:12px 16px;border:1px solid #d8d3c7;border-radius:8px;background:#faf9f6;color:#8c2f39;font:400 14px/20px ui-sans-serif,system-ui,sans-serif;}"
+    },
+    {
+      "name": "Main Nav",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Text links under the brand header; active is Basalt, inactive Tephra.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><a href=\"#\" class=\"ds-nav-link\" aria-current=\"page\">Home</a><a href=\"#\" class=\"ds-nav-link\">Settings</a></nav>",
+      "css": ".ds-nav{display:flex;gap:16px;font:400 14px/20px ui-sans-serif,system-ui,sans-serif;} .ds-nav-link{color:#6f695d;text-decoration:none;transition:color 150ms;} .ds-nav-link:hover,.ds-nav-link[aria-current=page]{color:#2b2e2f;} .ds-nav-link:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;border-radius:4px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Highland Waymark",
+    "overview": "**Creative North Star: \"The Highland Waymark\"**\n\nA varða is a pile of stones on an open, pale highland. You can see it from far off because almost nothing else is there. Varða's interface works the same way: calm, earthy marks on a quiet field of snow, where each mark has earned its place the way a cairn has on a long route. The mood is calm, earthy, reflective and precise. Splitsmith, the planning area, brings the heat of the forge with Ember. Varða itself stays cool and mossy.\n\nThe system is a warm-stone retune of shadcn/ui (new-york). The defaults have been moved off neutral gray onto basalt, snow and moss, and the restraint is deliberate. Density is low and the pace is unhurried: one narrow column, generous gaps, and one clear action per moment. Depth is tonal, not lifted. The brand mostly shows in the palette, the cairn mark and the vocabulary, not in ornament. Brand moments can get bolder, but working screens should feel like a well-kept field notebook.\n\nRejected: a Strava-style social feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (dark panels, walls of metric tiles), and generic neutral-gray shadcn SaaS.",
+    "keyCharacteristics": [
+      "Snow ground, basalt ink, deep-moss action, lichen as the light touch.",
+      "Flat and tonal: Ash Card lifts off Snow by value, with a hairline Pale Scree border.",
+      "One narrow, centred column on every screen today (28rem).",
+      "The system sans at small sizes. Hierarchy comes from weight and a few steps of scale.",
+      "Light only. There is no dark mode."
+    ],
+    "rules": [
+      {
+        "name": "The Lava, Never Ember Rule",
+        "body": "Errors are Lava. Ember belongs to Splitsmith's forge and never signals a problem.",
+        "section": "colors"
+      },
+      {
+        "name": "The Logo Pairing Rule",
+        "body": "On light backgrounds the cairn and wordmark are Basalt with a Moss accent. On dark backgrounds they are Snow with a Lichen accent. Never mix the pairs, for example Lichen on Snow.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warm Neutral Rule",
+        "body": "No cool or pure grays. Every new neutral sits on the ash hue (about 85–90° in OKLCH) like the existing ramp.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Language Rule",
+        "body": "Every label must fit in both English and Icelandic. Icelandic words run long, so never set fixed widths on text-bearing controls and never truncate a label to make it fit.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lift-By-Value Rule",
+        "body": "A surface in the page flow is lifted by a lighter tone and a hairline, never by a shadow. If it doesn't float over something, it gets no shadow. That includes cards, which drop shadcn's default `shadow-sm`.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do put the one forward action in Deep Moss and the alternative in Weathered Stone.",
+      "Do use Lava, and only Lava, for errors and destructive actions.",
+      "Do lift in-flow surfaces by tone (Ash Card on Snow) and a Pale Scree hairline.",
+      "Do show focus as a solid 3px Moss ring on every interactive element.",
+      "Do keep inputs at 16px on phones so iOS doesn't zoom.",
+      "Do use the drawn wordmark and cairn from `logo/final/`, Basalt with Moss on light and Snow with Lichen on dark.",
+      "Do keep new neutrals on the warm ash hue."
+    ],
+    "donts": [
+      "Don't use Ember for errors, warnings or anything outside Splitsmith, and never for small text.",
+      "Don't put text on brand Moss. Use Deep Moss for fills behind text.",
+      "Don't add shadows to cards or other in-flow surfaces.",
+      "Don't retype VARÐA in a font, or recolour the capstone or the Ð stone.",
+      "Don't pair Lichen with Snow.",
+      "Don't drift toward a Strava-style feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (dark panels, walls of metric tiles), or neutral-gray SaaS.",
+      "Don't use cool or pure grays."
+    ]
+  }
+}

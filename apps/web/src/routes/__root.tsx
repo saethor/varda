@@ -1,9 +1,22 @@
 import { Trans } from '@lingui/react/macro';
 import type { QueryClient } from '@tanstack/react-query';
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { createRootRouteWithContext, Outlet, useRouter } from '@tanstack/react-router';
+import { Alert, AlertDescription } from '@varda/ui/components/alert';
+import { Button } from '@varda/ui/components/button';
+import type { ReactNode } from 'react';
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: () => (
+    <Page>
+      <Outlet />
+    </Page>
+  ),
+  // Varða couldn't be reached or failed (not "nobody is signed in", which goes to sign-in).
+  errorComponent: SomethingWentWrong,
+});
+
+function Page({ children }: { children: ReactNode }) {
+  return (
     <main className="mx-auto flex max-w-md flex-col gap-6 p-8">
       <header>
         {/* The brand is a name, the same in every language. */}
@@ -12,7 +25,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           <Trans>One stone at a time.</Trans>
         </p>
       </header>
-      <Outlet />
+      {children}
     </main>
-  ),
-});
+  );
+}
+
+function SomethingWentWrong() {
+  const router = useRouter();
+
+  return (
+    <Page>
+      <Alert variant="destructive">
+        <AlertDescription>
+          <Trans>Something went wrong, try again.</Trans>
+        </AlertDescription>
+      </Alert>
+      <Button className="self-start" onClick={() => void router.invalidate()}>
+        <Trans>Try again</Trans>
+      </Button>
+    </Page>
+  );
+}

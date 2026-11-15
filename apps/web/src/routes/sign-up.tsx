@@ -1,18 +1,21 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@varda/ui/components/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@varda/ui/components/field';
 import { Input } from '@varda/ui/components/input';
 import { z } from 'zod';
-import { forgetWhoIsSignedIn } from '../lib/me.ts';
+import { forgetWhoIsSignedIn, signedInPerson } from '../lib/me.ts';
 import { passwordLength } from '../sign-in/password.ts';
 import { EmailAlreadySignedUp, signUp } from '../sign-in/sign-in.ts';
 
 export const Route = createFileRoute('/sign-up')({
+  beforeLoad: async ({ context }) => {
+    if (await signedInPerson(context.queryClient)) throw redirect({ to: '/' });
+  },
   component: SignUp,
 });
 

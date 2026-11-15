@@ -13,8 +13,12 @@ Someone who uses Varða, as an athlete, a coach or both. A person signs in with 
 _Avoid_: User, account, member, profile
 
 **Login account**:
-What a person signs in with: an email address and a password. It is not part of the domain; it belongs to login, and the person refers to it by identity only. Each login account has exactly one person, created with it.
+What a person signs in with: an email address reached through one or more sign-in methods. It is not part of the domain; it belongs to login, and the person refers to it by identity only. Each login account has exactly one person, created with it.
 _Avoid_: User, account (unprefixed), credentials
+
+**Sign-in method**:
+One way into a login account, such as a password or a passkey. A login account has at least one; the person can add more and remove any but the last.
+_Avoid_: Provider, credential, account, login
 
 **Athlete**:
 The person whose training is planned, recorded and analysed.
@@ -25,7 +29,7 @@ A person who plans training for an athlete and sees all of that athlete's traini
 _Avoid_: Trainer, planner, self-coached athlete
 
 **Coaching relationship**:
-The link between one athlete and one coach, started by an invitation from either side and ended by either side at any time. An invitation is addressed to an email address, not a person, so the person invited may not exist yet. When it ends the coach loses access, but everything they contributed stays with the athlete.
+The link between one athlete and one coach, started by an invitation from either side and ended by either side at any time. An invitation is delivered to an email address, not a person, so the person invited may not exist yet; it is accepted through its link, whatever email address the accepting person's login account has. When it ends the coach loses access, but everything they contributed stays with the athlete.
 _Avoid_: Subscription, connection, follow
 
 ### Training

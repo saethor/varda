@@ -46,7 +46,7 @@ Requires Node 24 (`.nvmrc`), pnpm and Docker.
 ```sh
 pnpm install
 cp .env.example .env
-pnpm db:up        # Postgres + MinIO (docker-compose.yml)
+pnpm db:up        # Postgres (docker-compose.yml)
 pnpm db:migrate   # every context's migrations; safe to re-run
 pnpm dev          # api on :4000, web on :5173 (proxies /rpc to the api)
 pnpm check        # lint, "user" check, boundaries, typecheck, tests; never touches Postgres

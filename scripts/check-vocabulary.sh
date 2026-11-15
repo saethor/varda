@@ -8,7 +8,7 @@
 # Third-party names, not ours: settings named by their images, and TanStack Router's
 # useRouter, useRouteContext and friends (where "user" is only "use" + "Route").
 # Only the names themselves are let through, not the rest of their line.
-allowed='POSTGRES_USER|MINIO_ROOT_USER|useRoute'
+allowed='POSTGRES_USER|useRoute'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \

@@ -13,6 +13,8 @@ import { Route as SignedInRouteImport } from './routes/_signed-in'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignedInIndexRouteImport } from './routes/_signed-in/index'
+import { Route as SignedInAddAPasskeyRouteImport } from './routes/_signed-in/add-a-passkey'
+import { Route as SignedInSettingsRouteImport } from './routes/_signed-in/settings'
 
 const SignedInRoute = SignedInRouteImport.update({
   id: '/_signed-in',
@@ -33,15 +35,29 @@ const SignedInIndexRoute = SignedInIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SignedInRoute,
 } as any)
+const SignedInAddAPasskeyRoute = SignedInAddAPasskeyRouteImport.update({
+  id: '/add-a-passkey',
+  path: '/add-a-passkey',
+  getParentRoute: () => SignedInRoute,
+} as any)
+const SignedInSettingsRoute = SignedInSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SignedInRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SignedInIndexRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/add-a-passkey': typeof SignedInAddAPasskeyRoute
+  '/settings': typeof SignedInSettingsRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/add-a-passkey': typeof SignedInAddAPasskeyRoute
+  '/settings': typeof SignedInSettingsRoute
   '/': typeof SignedInIndexRoute
 }
 export interface FileRoutesById {
@@ -49,14 +65,23 @@ export interface FileRoutesById {
   '/_signed-in': typeof SignedInRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/_signed-in/add-a-passkey': typeof SignedInAddAPasskeyRoute
+  '/_signed-in/settings': typeof SignedInSettingsRoute
   '/_signed-in/': typeof SignedInIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up'
+  fullPaths: '/' | '/sign-in' | '/sign-up' | '/add-a-passkey' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/'
-  id: '__root__' | '/_signed-in' | '/sign-in' | '/sign-up' | '/_signed-in/'
+  to: '/sign-in' | '/sign-up' | '/add-a-passkey' | '/settings' | '/'
+  id:
+    | '__root__'
+    | '/_signed-in'
+    | '/sign-in'
+    | '/sign-up'
+    | '/_signed-in/add-a-passkey'
+    | '/_signed-in/settings'
+    | '/_signed-in/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,14 +120,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignedInIndexRouteImport
       parentRoute: typeof SignedInRoute
     }
+    '/_signed-in/add-a-passkey': {
+      id: '/_signed-in/add-a-passkey'
+      path: '/add-a-passkey'
+      fullPath: '/add-a-passkey'
+      preLoaderRoute: typeof SignedInAddAPasskeyRouteImport
+      parentRoute: typeof SignedInRoute
+    }
+    '/_signed-in/settings': {
+      id: '/_signed-in/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SignedInSettingsRouteImport
+      parentRoute: typeof SignedInRoute
+    }
   }
 }
 
 interface SignedInRouteChildren {
+  SignedInAddAPasskeyRoute: typeof SignedInAddAPasskeyRoute
+  SignedInSettingsRoute: typeof SignedInSettingsRoute
   SignedInIndexRoute: typeof SignedInIndexRoute
 }
 
 const SignedInRouteChildren: SignedInRouteChildren = {
+  SignedInAddAPasskeyRoute: SignedInAddAPasskeyRoute,
+  SignedInSettingsRoute: SignedInSettingsRoute,
   SignedInIndexRoute: SignedInIndexRoute,
 }
 

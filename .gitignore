@@ -12,3 +12,6 @@ apps/web/src/locales/*.js
 # Playwright
 apps/e2e/test-results/
 apps/e2e/playwright-report/
+
+# Impeccable downloads its platform binary on first run.
+**/skills/impeccable/scripts/bin/

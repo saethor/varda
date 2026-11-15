@@ -9,11 +9,11 @@
     "test": {},
     "test:adapters": {
       "cache": false,
-      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL"]
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "VARDA_DEV_PASSWORD"]
     },
     "test:e2e": {
       "cache": false,
-      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "CI"]
+      "env": ["DATABASE_URL", "BETTER_AUTH_SECRET", "VARDA_DEV_PASSWORD", "CI"]
     },
     "dev": {
       "cache": false,

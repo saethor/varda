@@ -3,16 +3,19 @@
 # "user" (ADR 0006, packages/shared/GLOSSARY.md). Only the auth adapter
 # (apps/api/src/auth/) and the web sign-in module (apps/web/src/sign-in/sign-in.ts),
 # which wrap Better Auth's "user", may say it. Docs (*.md) may name the word they avoid.
+# Vendored skills (Impeccable) are third-party text, not our domain.
 # dependency-cruiser sees imports, not identifiers, hence a grep.
 
-# Third-party names, not ours: settings named by their images, and TanStack Router's
-# useRouter, useRouteContext and friends (where "user" is only "use" + "Route").
+# Third-party names, not ours: settings named by their images, TanStack Router's
+# useRouter, useRouteContext and friends and React's useReducer (where "user" is only
+# "use" + "Route" or "Reducer"), the browser's navigator.userAgent, and the WebAuthn
+# options of Chromium's virtual authenticator in the end-to-end suite.
 # Only the names themselves are let through, not the rest of their line.
-allowed='POSTGRES_USER|useRoute'
+allowed='POSTGRES_USER|useRoute|useReducer|userAgent|hasUserVerification|isUserVerified'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \
-  ':!apps/api/src/auth/**' ':!apps/web/src/sign-in/sign-in.ts' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary*.sh' |
+  ':!apps/api/src/auth/**' ':!apps/web/src/sign-in/sign-in.ts' ':!*.md' ':!pnpm-lock.yaml' ':!scripts/check-vocabulary*.sh' ':!**/skills/impeccable/**' |
   awk -v allowed="$allowed" '{
     # Look past "path:line:" at the matched text, with the allowed names taken out.
     text = $0; sub(/^[^:]*:[0-9]+:/, "", text); gsub(allowed, "", text)

@@ -7,9 +7,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@varda/ui/
 import { FieldGroup } from '@varda/ui/components/field';
 import { z } from 'zod';
 import { linkClassName, SomethingWentWrongAlert, TextField } from '../components/form.tsx';
-import { forgetWhoIsSignedIn, sendSignedInPersonHome } from '../lib/me.ts';
+import { forgetEverythingCached, sendSignedInPersonHome } from '../lib/me.ts';
 import { usePasswordSchema } from '../sign-in/password.ts';
-import { EmailAlreadySignedUp, signUp } from '../sign-in/sign-in.ts';
+import { browserSupportsPasskeys, EmailAlreadySignedUp, signUp } from '../sign-in/sign-in.ts';
 
 export const Route = createFileRoute('/sign-up')({
   beforeLoad: sendSignedInPersonHome,
@@ -24,8 +24,9 @@ function SignUp() {
   const signingUp = useMutation({
     mutationFn: signUp,
     onSuccess: async () => {
-      forgetWhoIsSignedIn(queryClient);
-      await navigate({ to: '/' });
+      forgetEverythingCached(queryClient);
+      // A new person is offered a passkey once, if their browser can make one.
+      await navigate({ to: browserSupportsPasskeys() ? '/add-a-passkey' : '/' });
     },
   });
 

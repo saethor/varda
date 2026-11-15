@@ -1,4 +1,4 @@
-// Read only by the entry points (main.ts, migrate.ts), at startup (ADR 0008).
+// Read only by the entry points (main.ts, migrate.ts, seed.ts), at startup (ADR 0008).
 
 /** The environment variable `name`, or stop before any work starts, naming it. */
 export function required(name: string): string {

@@ -2,7 +2,7 @@ import { Trans } from '@lingui/react/macro';
 import type { QueryClient } from '@tanstack/react-query';
 import { createRootRouteWithContext, Outlet, useRouter } from '@tanstack/react-router';
 import { Button } from '@varda/ui/components/button';
-import type { ReactNode } from 'react';
+import { lazy, type ReactNode, Suspense } from 'react';
 import { SomethingWentWrongAlert } from '../components/form.tsx';
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -15,6 +15,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: SomethingWentWrong,
 });
 
+// Only in Vite's dev mode; production builds drop the branch, and the module with it.
+const DevMenu = import.meta.env.DEV
+  ? lazy(async () => ({ default: (await import('../dev-menu/dev-menu.tsx')).DevMenu }))
+  : null;
+
 function Page({ children }: { children: ReactNode }) {
   return (
     <main className="mx-auto flex max-w-md flex-col gap-6 p-8">
@@ -26,6 +31,11 @@ function Page({ children }: { children: ReactNode }) {
         </p>
       </header>
       {children}
+      {DevMenu && (
+        <Suspense fallback={null}>
+          <DevMenu />
+        </Suspense>
+      )}
     </main>
   );
 }

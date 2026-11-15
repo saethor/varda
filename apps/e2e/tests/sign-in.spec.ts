@@ -11,30 +11,39 @@ test.describe('in English', () => {
 
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+    // A browser that has never signed in suggests no sign-in method.
+    await expect(page.getByText('Last used')).toHaveCount(0);
 
     await page.getByRole('link', { name: 'Sign up' }).click();
     await page.getByLabel('Name').fill(name);
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Sign up' }).click();
+    await page.getByRole('button', { name: 'Not now' }).click();
 
     await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
 
     await page.getByRole('button', { name: 'Sign out' }).click();
     await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toHaveAccessibleDescription('Last used');
 
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill('short');
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     await expect(page.getByRole('alert')).toHaveText('Your password needs at least 8 characters.');
 
     await page.getByLabel('Password').fill('not the password');
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     await expect(page.getByRole('alert')).toHaveText("That email and password don't match.");
 
     await page.getByLabel('Password').fill(password);
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
+
+    // Signing in with the password, not only signing up, marks it as the last used sign-in method.
+    await page.getByRole('button', { name: 'Sign out' }).click();
+    await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toHaveAccessibleDescription('Last used');
   });
 });
 

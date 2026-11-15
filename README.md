@@ -48,6 +48,7 @@ pnpm install
 cp .env.example .env
 pnpm db:up        # Postgres (docker-compose.yml)
 pnpm db:migrate   # every context's migrations; safe to re-run
+pnpm db:seed      # optional: five dev persons on localhost, password VARDA_DEV_PASSWORD; safe to re-run
 pnpm dev          # api on :4000, web on :5173 (proxies /rpc to the api)
 pnpm check        # lint, "user" check, boundaries, typecheck, tests; never touches Postgres
 pnpm test:adapters # ports' behaviour suites against Postgres (CI runs it too)

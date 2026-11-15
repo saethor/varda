@@ -39,6 +39,11 @@ test.describe('in English', () => {
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     await expect(page.getByRole('heading', { name: `Hi, ${name}` })).toBeVisible();
+
+    // Signing in with the password, not only signing up, marks it as the last used sign-in method.
+    await page.getByRole('button', { name: 'Sign out' }).click();
+    await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toHaveAccessibleDescription('Last used');
   });
 });
 

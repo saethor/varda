@@ -1,5 +1,5 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import {
   AlertDialog,
@@ -15,8 +15,8 @@ import {
 import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@varda/ui/components/card';
 import { SomethingWentWrongAlert } from '../../components/form.tsx';
-import { passkeysQuery } from '../../lib/passkeys.ts';
-import { addPasskey, browserSupportsPasskeys, type Passkey, removePasskey } from '../../sign-in/sign-in.ts';
+import { passkeysQuery, useAddPasskey, usePasskeyRemoval } from '../../lib/passkeys.ts';
+import { browserSupportsPasskeys, type Passkey } from '../../sign-in/sign-in.ts';
 
 export const Route = createFileRoute('/_signed-in/settings')({
   loader: async ({ context }) => await context.queryClient.ensureQueryData(passkeysQuery),
@@ -43,11 +43,8 @@ function Settings() {
 /** The ways the person can sign in: their password, which can't be removed, and each passkey. */
 function SignInMethods() {
   const { data: passkeys } = useSuspenseQuery(passkeysQuery);
-  const queryClient = useQueryClient();
-  const adding = useMutation({
-    mutationFn: addPasskey,
-    onSuccess: async () => await queryClient.invalidateQueries(passkeysQuery),
-  });
+  // The new passkey shows up in the list; there is nothing more to do.
+  const adding = useAddPasskey(null);
 
   return (
     <section aria-labelledby="sign-in-methods" className="flex flex-col items-start gap-4">
@@ -76,11 +73,7 @@ function PasskeyItem({ passkey }: { passkey: Passkey }) {
   const { i18n, t } = useLingui();
   const added = i18n.date(passkey.addedAt, { dateStyle: 'medium' });
   const name = passkey.name ?? t`Passkey`;
-  const queryClient = useQueryClient();
-  const removing = useMutation({
-    mutationFn: async () => await removePasskey(passkey.id),
-    onSuccess: async () => await queryClient.invalidateQueries(passkeysQuery),
-  });
+  const removing = usePasskeyRemoval(passkey.id);
 
   return (
     <li className="flex items-center justify-between gap-4 px-4 py-3">

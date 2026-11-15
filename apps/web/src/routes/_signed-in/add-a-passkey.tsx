@@ -1,31 +1,27 @@
 import { Trans } from '@lingui/react/macro';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@varda/ui/components/card';
 import { SomethingWentWrongAlert } from '../../components/form.tsx';
-import { passkeysQuery } from '../../lib/passkeys.ts';
-import { addPasskey } from '../../sign-in/sign-in.ts';
+import { useAddPasskey } from '../../lib/passkeys.ts';
+import { browserSupportsPasskeys } from '../../sign-in/sign-in.ts';
 
 // The one-time offer of a passkey. Only sign-up leads here, so it never comes back;
 // Settings is where to add a passkey later.
 export const Route = createFileRoute('/_signed-in/add-a-passkey')({
+  // Sign-up only comes here when the browser can make a passkey, but the address can
+  // still be opened directly; a browser that can't make one has nothing to offer.
+  beforeLoad: () => {
+    if (!browserSupportsPasskeys()) throw redirect({ to: '/' });
+  },
   component: AddAPasskey,
 });
 
 function AddAPasskey() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const goHome = async () => await navigate({ to: '/' });
-  const adding = useMutation({
-    mutationFn: addPasskey,
-    onSuccess: async (outcome) => {
-      // Closing the device's prompt leaves the person here to choose again.
-      if (outcome === 'closed') return;
-      await queryClient.invalidateQueries(passkeysQuery);
-      await goHome();
-    },
-  });
+  // Closing the device's prompt leaves the person here to choose again.
+  const adding = useAddPasskey(goHome);
 
   return (
     <Card>
@@ -48,6 +44,8 @@ function AddAPasskey() {
           <Button disabled={adding.isPending} onClick={() => adding.mutate()}>
             <Trans>Add a passkey</Trans>
           </Button>
+          {/* Nothing waits on going home: a click handler has nobody to hand the promise to,
+              and the router shows a failure to load home on its own. */}
           <Button variant="secondary" disabled={adding.isPending} onClick={() => void goHome()}>
             <Trans>Not now</Trans>
           </Button>

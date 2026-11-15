@@ -17,10 +17,10 @@ export async function signedInPerson(queryClient: QueryClient) {
 }
 
 /**
- * Drops everything cached after signing in, up or out: who is signed in, and everything
- * that belonged to them (their passkeys), so the next page asks again.
+ * Drops the whole query cache after signing in, up or out: who is signed in, and
+ * everything that belonged to them (their passkeys), so the next page asks again.
  */
-export function forgetWhoIsSignedIn(queryClient: QueryClient) {
+export function forgetEverythingCached(queryClient: QueryClient) {
   queryClient.removeQueries();
 }
 

@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useForm } from '@tanstack/react-form';
-import { type UseMutationResult, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Badge } from '@varda/ui/components/badge';
@@ -8,10 +8,10 @@ import { Button } from '@varda/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@varda/ui/components/card';
 import { FieldGroup } from '@varda/ui/components/field';
 import { Separator } from '@varda/ui/components/separator';
-import { type ReactNode, useEffect, useId, useState } from 'react';
+import { type ReactNode, useEffect, useId, useReducer, useState } from 'react';
 import { z } from 'zod';
 import { linkClassName, SomethingWentWrongAlert, TextField } from '../components/form.tsx';
-import { forgetWhoIsSignedIn, sendSignedInPersonHome } from '../lib/me.ts';
+import { forgetEverythingCached, sendSignedInPersonHome } from '../lib/me.ts';
 import { usePasswordSchema } from '../sign-in/password.ts';
 import { type SafePath, safeRedirect } from '../sign-in/safe-redirect.ts';
 import {
@@ -24,6 +24,7 @@ import {
   signIn,
   signInWithPasskey,
 } from '../sign-in/sign-in.ts';
+import { nothingFailed, type SignInEvent, signInFailure } from '../sign-in/sign-in-failure.ts';
 
 const signInSearch = z.object({
   // Where the person was going, kept only if it is a path within Varða; otherwise home.
@@ -42,17 +43,17 @@ function SignIn() {
   const navigate = useNavigate();
   const { redirect: goingTo } = Route.useSearch();
 
+  const [failure, dispatch] = useReducer(signInFailure, nothingFailed);
   const signingIn = useMutation({
     mutationFn: signIn,
+    onMutate: () => dispatch({ type: 'signInStarted' }),
+    onError: (error) => dispatch({ type: 'signInFailed', error }),
     onSuccess: async () => {
-      forgetWhoIsSignedIn(queryClient);
+      forgetEverythingCached(queryClient);
       await navigate({ href: goingTo });
     },
   });
-  const { withPasskey, withAutofill } = usePasskeySignIn(goingTo);
-  // The autofill offer is made again after the button's prompt fails, so it only counts as an
-  // attempt once it has failed itself; otherwise it would hide the button's failure.
-  const signInAttempts = [signingIn, withPasskey, ...(withAutofill.error ? [withAutofill] : [])];
+  const withPasskey = usePasskeySignIn(goingTo, dispatch);
   // Read once as the screen opens: signing in here moves on to another screen anyway.
   const [lastUsed] = useState(lastSignInMethod);
 
@@ -89,7 +90,7 @@ function SignIn() {
           }}
         >
           <FieldGroup>
-            <SignInFailed error={latestError(signInAttempts)} />
+            <SignInFailed error={failure.shown} />
             <form.Field name="email">
               {(field) => (
                 // `webauthn` offers the person's passkeys in the browser's autofill on this field.
@@ -155,9 +156,9 @@ function SignIn() {
  * Marks the button of the sign-in method this browser used last with a "Last used" badge,
  * which also describes the button to screen readers. `children` gets the badge's id.
  */
-function LastUsed({ shown, children }: { shown: boolean; children: (badge?: string) => ReactNode }) {
+function LastUsed({ shown, children }: { shown: boolean; children: (badge: string | undefined) => ReactNode }) {
   const badge = useId();
-  if (!shown) return children();
+  if (!shown) return children(undefined);
   return (
     <div className="relative flex flex-col">
       {children(badge)}
@@ -172,15 +173,16 @@ function LastUsed({ shown, children }: { shown: boolean; children: (badge?: stri
  * Signing in with a passkey, from the button or from the browser's autofill on the email
  * field, which is offered as soon as the screen opens. Closing the browser's prompt changes
  * nothing on screen; the autofill offer, which the button's prompt replaces, is made again.
+ * Returns the button's mutation; what happens is told to `dispatch` to decide what fails.
  */
-function usePasskeySignIn(goingTo: SafePath) {
+function usePasskeySignIn(goingTo: SafePath, dispatch: (event: SignInEvent) => void) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const signedInIfDone = async (outcome: PasskeyOutcome) => {
     switch (outcome) {
       case 'done':
-        forgetWhoIsSignedIn(queryClient);
+        forgetEverythingCached(queryClient);
         await navigate({ href: goingTo });
         return;
       case 'closed':
@@ -188,10 +190,16 @@ function usePasskeySignIn(goingTo: SafePath) {
     }
   };
 
-  const withAutofill = useMutation({ mutationFn: offerPasskeysInAutofill, onSuccess: signedInIfDone });
-  const { mutate: offerAutofill } = withAutofill;
+  const { mutate: offerAutofill } = useMutation({
+    mutationFn: async () => await offerPasskeysInAutofill(() => dispatch({ type: 'passkeyPickedFromAutofill' })),
+    onMutate: () => dispatch({ type: 'autofillOffered' }),
+    onError: (error) => dispatch({ type: 'autofillFailed', error }),
+    onSuccess: signedInIfDone,
+  });
   const withPasskey = useMutation({
     mutationFn: signInWithPasskey,
+    onMutate: () => dispatch({ type: 'signInStarted' }),
+    onError: (error) => dispatch({ type: 'signInFailed', error }),
     onSuccess: signedInIfDone,
     onSettled: (outcome) => {
       if (outcome !== 'done') offerAutofill();
@@ -203,36 +211,25 @@ function usePasskeySignIn(goingTo: SafePath) {
     if (browserSupportsPasskeys()) offerAutofill();
   }, [offerAutofill]);
 
-  return { withPasskey, withAutofill };
-}
-
-type AnyMutation = Pick<UseMutationResult<unknown, Error, never>, 'error' | 'submittedAt'>;
-
-/** The error of whichever way of signing in was tried last, if it failed. */
-function latestError(mutations: AnyMutation[]): Error | null {
-  const latest = mutations.reduce((a, b) => (b.submittedAt > a.submittedAt ? b : a));
-  return latest.error;
+  return withPasskey;
 }
 
 function SignInFailed({ error }: { error: Error | null }) {
   if (!error) return null;
-  if (error instanceof EmailAndPasswordDontMatch) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          <Trans>That email and password don't match.</Trans>
-        </AlertDescription>
-      </Alert>
-    );
-  }
+  const message = failureMessage(error);
+  if (!message) return <SomethingWentWrongAlert />;
+  return (
+    <Alert variant="destructive">
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
+  );
+}
+
+/** What to tell the person about a failure they can do something about, or `null` for any other. */
+function failureMessage(error: Error): ReactNode {
+  if (error instanceof EmailAndPasswordDontMatch) return <Trans>That email and password don't match.</Trans>;
   if (error instanceof PasskeyNotRecognised) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          <Trans>Varða doesn't recognise that passkey. Sign in with your password instead.</Trans>
-        </AlertDescription>
-      </Alert>
-    );
+    return <Trans>Varða doesn't recognise that passkey. Sign in with your password instead.</Trans>;
   }
-  return <SomethingWentWrongAlert />;
+  return null;
 }

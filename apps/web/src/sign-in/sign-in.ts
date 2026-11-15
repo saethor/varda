@@ -3,9 +3,9 @@
 // speaks of persons, sign-in methods, passwords and passkeys (ADR 0006). Who is signed
 // in comes from `shared.persons.me`, never from Better Auth's session.
 import { passkeyClient } from '@better-auth/passkey/client';
-import { t } from '@lingui/core/macro';
 import { createAuthClient } from 'better-auth/client';
 import { lastLoginMethodClient } from 'better-auth/client/plugins';
+import { thisBrowserAndOperatingSystem } from './device-name.ts';
 
 // Better Auth is served on the web app's own origin (Vite proxies /api/auth to the API),
 // so the session cookie is same-site.
@@ -85,8 +85,10 @@ export async function signOut() {
  */
 export type PasskeyOutcome = 'done' | 'closed';
 
-// The browser's passkey prompt was closed or cancelled (NotAllowedError, which browsers
-// also raise when it times out), or aborted because another prompt replaced it.
+// The browser's passkey prompt was closed or cancelled, or aborted because another prompt
+// replaced it. Closing it surfaces as NotAllowedError (ERROR_PASSTHROUGH_SEE_CAUSE_PROPERTY),
+// which WebAuthn deliberately also raises when the prompt times out or the device refuses,
+// so a site can't tell whether a passkey exists. All of them read as "closed".
 const promptClosedCodes = new Set(['ERROR_PASSTHROUGH_SEE_CAUSE_PROPERTY', 'ERROR_CEREMONY_ABORTED']);
 
 function passkeyOutcome(error: BetterAuthError | null): PasskeyOutcome {
@@ -108,21 +110,38 @@ export async function signInWithPasskey(): Promise<PasskeyOutcome> {
 
 /**
  * Offers the person's passkeys in the browser's autofill on the email field, which must
- * have `autocomplete="email webauthn"` (conditional mediation). Settles once they pick
- * one (`done`, signed in) or the offer is replaced by another passkey prompt (`closed`).
- * In a browser without passkey autofill it settles straight away as `closed`.
+ * have `autocomplete="email webauthn"` (conditional mediation). `whenPicked` is called
+ * once the person picks one and Varða starts checking it. Settles once that signs them in
+ * (`done`) or the offer is replaced by another passkey prompt (`closed`). In a browser
+ * without passkey autofill it settles straight away as `closed`.
  */
-export async function offerPasskeysInAutofill(): Promise<PasskeyOutcome> {
+export async function offerPasskeysInAutofill(whenPicked: () => void): Promise<PasskeyOutcome> {
   if (!(await window.PublicKeyCredential?.isConditionalMediationAvailable?.())) return 'closed';
-  const { error } = await betterAuth.signIn.passkey({ autoFill: true });
-  return autofillOutcome(error);
+  let picked = false;
+  const { error } = await betterAuth.signIn.passkey({
+    autoFill: true,
+    // Better Auth sends these fetch options only with the request that verifies the
+    // passkey the browser handed over, so this runs once the person has picked one.
+    fetchOptions: {
+      onRequest: () => {
+        picked = true;
+        whenPicked();
+      },
+    },
+  });
+  return autofillOutcome(error, picked);
 }
 
-function autofillOutcome(error: BetterAuthError | null): PasskeyOutcome {
-  // AUTH_CANCELLED is Better Auth's word for a browser error it can't place, such as a
-  // browser that claims passkey autofill but has no authenticator to offer (NotSupportedError).
-  // The person asked for nothing, so an offer the browser couldn't make is not shown as a failure.
-  if (error?.code === 'AUTH_CANCELLED') return 'closed';
+function autofillOutcome(error: BetterAuthError | null, picked: boolean): PasskeyOutcome {
+  if (error?.code === 'AUTH_CANCELLED') {
+    // AUTH_CANCELLED is Better Auth's word for two different things. Before the person
+    // picked a passkey, it is a browser error it can't place, such as a browser that claims
+    // passkey autofill but has no authenticator to offer (NotSupportedError): the person
+    // asked for nothing, so an offer the browser couldn't make is not a failure. After they
+    // picked one, it means the request verifying it threw: Varða couldn't be reached.
+    if (picked) throw new LoginServiceFailed('the passkey picked from autofill could not be verified');
+    return 'closed';
+  }
   return passkeyOutcome(error);
 }
 
@@ -150,42 +169,13 @@ export async function removePasskey(id: string): Promise<void> {
   if (error) throw failure(error);
 }
 
+/** A way into a login account (the glossary's sign-in method). */
+export type SignInMethod = 'password' | 'passkey';
+
 /** How the person last signed in on this browser, or `null` if they never have. */
-export function lastSignInMethod(): 'password' | 'passkey' | null {
+export function lastSignInMethod(): SignInMethod | null {
   const method = betterAuth.getLastUsedLoginMethod();
   if (method === 'email') return 'password';
   if (method === 'passkey') return 'passkey';
   return null;
-}
-
-// Naming a passkey after where it was made, e.g. "Safari on Mac". The first match wins,
-// so browsers built on Chrome come before Chrome, and Chrome before Safari.
-const browsers: [pattern: RegExp, name: string][] = [
-  [/Edg(e|A|iOS)?\//, 'Edge'],
-  [/OPR\/|Opera/, 'Opera'],
-  [/Firefox\/|FxiOS\//, 'Firefox'],
-  [/SamsungBrowser\//, 'Samsung Internet'],
-  [/Chrome\/|CriOS\//, 'Chrome'],
-  [/Safari\//, 'Safari'],
-];
-
-const operatingSystems: [pattern: RegExp, name: string][] = [
-  [/iPhone/, 'iPhone'],
-  [/iPad/, 'iPad'],
-  [/Android/, 'Android'],
-  [/CrOS/, 'ChromeOS'],
-  [/Mac OS X|Macintosh/, 'Mac'],
-  [/Windows/, 'Windows'],
-  [/Linux/, 'Linux'],
-];
-
-function firstMatch(userAgent: string, candidates: [RegExp, string][]): string | undefined {
-  return candidates.find(([pattern]) => pattern.test(userAgent))?.[1];
-}
-
-function thisBrowserAndOperatingSystem(): string {
-  const browser = firstMatch(navigator.userAgent, browsers);
-  const operatingSystem = firstMatch(navigator.userAgent, operatingSystems);
-  if (browser && operatingSystem) return t`${browser} on ${operatingSystem}`;
-  return browser ?? operatingSystem ?? t`Passkey`;
 }

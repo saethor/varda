@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDistance, formatDuration } from './format.ts';
+import { formatDistance, formatDuration, formatPace, formatSpeed } from './format.ts';
 
 describe('formatting a duration', () => {
   it('shows minutes and seconds under an hour', () => {
@@ -20,5 +20,25 @@ describe('formatting a distance', () => {
   it('shows kilometres to two decimals, in the language shown', () => {
     expect(formatDistance(10_234.5, 'en')).toBe('10.23 km');
     expect(formatDistance(3000, 'is')).toBe('3,00 km');
+  });
+});
+
+describe('formatting a pace', () => {
+  it('shows the time per kilometre', () => {
+    // 3 km in 15 minutes.
+    expect(formatPace(3000, 900, 1000)).toBe('5:00 /km');
+  });
+
+  it('shows the time per 100 metres', () => {
+    // 1500 m in 26:15.
+    expect(formatPace(1500, 1575, 100)).toBe('1:45 /100 m');
+  });
+});
+
+describe('formatting a speed', () => {
+  it('shows kilometres per hour to one decimal, in the language shown', () => {
+    // 42 km in 1:40:00.
+    expect(formatSpeed(42_000, 6000, 'en')).toBe('25.2 km/h');
+    expect(formatSpeed(42_000, 6000, 'is')).toBe('25,2 km/h');
   });
 });

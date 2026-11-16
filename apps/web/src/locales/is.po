@@ -8,7 +8,7 @@ msgstr ""
 "Language: is\n"
 
 #. placeholder {0}: stone.laps.length
-#: src/stones/stone-card.tsx:27
+#: src/stones/stone-card.tsx:31
 msgid "{0, plural, one {# lap} other {# laps}}"
 msgstr "{0, plural, one {# hringur} other {# hringir}}"
 
@@ -37,23 +37,23 @@ msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 msgid "Cancel"
 msgstr "Hætta við"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:52
 msgid "Choose a watch file"
 msgstr "Velja úraskrá"
 
-#: src/stones/stone-card.tsx:63
+#: src/stones/stone-card.tsx:89
 msgid "Cycling"
 msgstr "Hjólreiðar"
 
-#: src/stones/stone-card.tsx:32
+#: src/stones/stone-card.tsx:36
 msgid "Distance"
 msgstr "Vegalengd"
 
-#: src/stones/placing-panel.tsx:41
+#: src/stones/placing-panel.tsx:38
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time."
 msgstr "Slepptu .fit-skránni sem úrið vistaði hér, eða veldu hana. Ein skrá í einu."
 
-#: src/stones/stone-card.tsx:35
+#: src/stones/stone-card.tsx:42
 msgid "Elapsed time"
 msgstr "Heildartími"
 
@@ -79,7 +79,7 @@ msgstr "Hvert hlaup, hjólatúr, sund eða æfing sem þú lýkur verður að st
 msgid "Hi, {name}"
 msgstr "Hæ, {name}"
 
-#: src/stones/stone-card.tsx:69
+#: src/stones/stone-card.tsx:95
 msgid "Hiking"
 msgstr "Fjallganga"
 
@@ -95,7 +95,7 @@ msgstr "Síðast notað"
 msgid "Main"
 msgstr "Aðalvalmynd"
 
-#: src/stones/stone-card.tsx:34
+#: src/stones/stone-card.tsx:38
 msgid "Moving time"
 msgstr "Hreyfitími"
 
@@ -119,9 +119,13 @@ msgstr "Ekki núna"
 msgid "One stone at a time."
 msgstr "Einn steinn í einu."
 
-#: src/stones/stone-card.tsx:73
+#: src/stones/stone-card.tsx:99
 msgid "Other"
 msgstr "Annað"
+
+#: src/stones/stone-card.tsx:40
+msgid "Pace"
+msgstr "Tempó"
 
 #: src/routes/_signed-in/settings.tsx:75
 #: src/sign-in/device-name.ts:33
@@ -134,11 +138,11 @@ msgstr "Aðgangslykill"
 msgid "Password"
 msgstr "Lykilorð"
 
-#: src/stones/placing-panel.tsx:38
+#: src/stones/placing-panel.tsx:35
 msgid "Place a stone"
 msgstr "Leggja stein"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:52
 msgid "Reading {reading}…"
 msgstr "Les {reading}…"
 
@@ -155,7 +159,7 @@ msgstr "Fjarlægja {name}"
 msgid "Remove {name}?"
 msgstr "Fjarlægja {name}?"
 
-#: src/stones/stone-card.tsx:53
+#: src/stones/stone-card.tsx:79
 msgid "Road running"
 msgstr "Götuhlaup"
 
@@ -190,13 +194,17 @@ msgstr "Nýskráning"
 msgid "Sign-in methods"
 msgstr "Innskráningarleiðir"
 
-#: src/stones/stone-card.tsx:67
+#: src/stones/stone-card.tsx:93
 msgid "Skiing"
 msgstr "Skíði"
 
 #: src/components/form.tsx:53
 msgid "Something went wrong, try again."
 msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
+
+#: src/stones/stone-card.tsx:40
+msgid "Speed"
+msgstr "Hraði"
 
 #: src/routes/_signed-in/stones.tsx:40
 msgid "Stone placed from {placedFrom}"
@@ -211,11 +219,11 @@ msgstr "Steinar"
 msgid "Stones: your completed activities"
 msgstr "Steinar: æfingarnar sem þú hefur lokið"
 
-#: src/stones/stone-card.tsx:61
+#: src/stones/stone-card.tsx:87
 msgid "Strength"
 msgstr "Styrkur"
 
-#: src/stones/stone-card.tsx:65
+#: src/stones/stone-card.tsx:91
 msgid "Swimming"
 msgstr "Sund"
 
@@ -231,15 +239,19 @@ msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "Þessi aðgangslykill skráir þig ekki lengur inn í Vörðu. Þú getur áfram skráð þig inn með lykilorðinu þínu."
 
-#: src/stones/stone-card.tsx:57
+#: src/stones/stone-card.tsx:31
+msgid "totals only"
+msgstr "aðeins heildartölur"
+
+#: src/stones/stone-card.tsx:83
 msgid "Track running"
 msgstr "Brautarhlaup"
 
-#: src/stones/stone-card.tsx:55
+#: src/stones/stone-card.tsx:81
 msgid "Trail running"
 msgstr "Utanvegahlaup"
 
-#: src/stones/stone-card.tsx:59
+#: src/stones/stone-card.tsx:85
 msgid "Treadmill running"
 msgstr "Hlaupabretti"
 
@@ -251,7 +263,7 @@ msgstr "Reyna aftur"
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn með lykilorðinu þínu."
 
-#: src/stones/stone-card.tsx:71
+#: src/stones/stone-card.tsx:97
 msgid "Walking"
 msgstr "Ganga"
 

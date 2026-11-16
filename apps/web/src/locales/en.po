@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 
 #. placeholder {0}: stone.laps.length
-#: src/stones/stone-card.tsx:27
+#: src/stones/stone-card.tsx:31
 msgid "{0, plural, one {# lap} other {# laps}}"
 msgstr "{0, plural, one {# lap} other {# laps}}"
 
@@ -37,23 +37,23 @@ msgstr "Already signed up? <0>Sign in</0>"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:52
 msgid "Choose a watch file"
 msgstr "Choose a watch file"
 
-#: src/stones/stone-card.tsx:63
+#: src/stones/stone-card.tsx:89
 msgid "Cycling"
 msgstr "Cycling"
 
-#: src/stones/stone-card.tsx:32
+#: src/stones/stone-card.tsx:36
 msgid "Distance"
 msgstr "Distance"
 
-#: src/stones/placing-panel.tsx:41
+#: src/stones/placing-panel.tsx:38
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time."
 msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time."
 
-#: src/stones/stone-card.tsx:35
+#: src/stones/stone-card.tsx:42
 msgid "Elapsed time"
 msgstr "Elapsed time"
 
@@ -79,7 +79,7 @@ msgstr "Every run, ride, swim or session you finish becomes a stone. Place one f
 msgid "Hi, {name}"
 msgstr "Hi, {name}"
 
-#: src/stones/stone-card.tsx:69
+#: src/stones/stone-card.tsx:95
 msgid "Hiking"
 msgstr "Hiking"
 
@@ -95,7 +95,7 @@ msgstr "Last used"
 msgid "Main"
 msgstr "Main"
 
-#: src/stones/stone-card.tsx:34
+#: src/stones/stone-card.tsx:38
 msgid "Moving time"
 msgstr "Moving time"
 
@@ -119,9 +119,13 @@ msgstr "Not now"
 msgid "One stone at a time."
 msgstr "One stone at a time."
 
-#: src/stones/stone-card.tsx:73
+#: src/stones/stone-card.tsx:99
 msgid "Other"
 msgstr "Other"
+
+#: src/stones/stone-card.tsx:40
+msgid "Pace"
+msgstr "Pace"
 
 #: src/routes/_signed-in/settings.tsx:75
 #: src/sign-in/device-name.ts:33
@@ -134,11 +138,11 @@ msgstr "Passkey"
 msgid "Password"
 msgstr "Password"
 
-#: src/stones/placing-panel.tsx:38
+#: src/stones/placing-panel.tsx:35
 msgid "Place a stone"
 msgstr "Place a stone"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:52
 msgid "Reading {reading}…"
 msgstr "Reading {reading}…"
 
@@ -155,7 +159,7 @@ msgstr "Remove {name}"
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
 
-#: src/stones/stone-card.tsx:53
+#: src/stones/stone-card.tsx:79
 msgid "Road running"
 msgstr "Road running"
 
@@ -190,13 +194,17 @@ msgstr "Sign up"
 msgid "Sign-in methods"
 msgstr "Sign-in methods"
 
-#: src/stones/stone-card.tsx:67
+#: src/stones/stone-card.tsx:93
 msgid "Skiing"
 msgstr "Skiing"
 
 #: src/components/form.tsx:53
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
+
+#: src/stones/stone-card.tsx:40
+msgid "Speed"
+msgstr "Speed"
 
 #: src/routes/_signed-in/stones.tsx:40
 msgid "Stone placed from {placedFrom}"
@@ -211,11 +219,11 @@ msgstr "Stones"
 msgid "Stones: your completed activities"
 msgstr "Stones: your completed activities"
 
-#: src/stones/stone-card.tsx:61
+#: src/stones/stone-card.tsx:87
 msgid "Strength"
 msgstr "Strength"
 
-#: src/stones/stone-card.tsx:65
+#: src/stones/stone-card.tsx:91
 msgid "Swimming"
 msgstr "Swimming"
 
@@ -231,15 +239,19 @@ msgstr "This email is already signed up. <0>Sign in instead?</0>"
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 
-#: src/stones/stone-card.tsx:57
+#: src/stones/stone-card.tsx:31
+msgid "totals only"
+msgstr "totals only"
+
+#: src/stones/stone-card.tsx:83
 msgid "Track running"
 msgstr "Track running"
 
-#: src/stones/stone-card.tsx:55
+#: src/stones/stone-card.tsx:81
 msgid "Trail running"
 msgstr "Trail running"
 
-#: src/stones/stone-card.tsx:59
+#: src/stones/stone-card.tsx:85
 msgid "Treadmill running"
 msgstr "Treadmill running"
 
@@ -251,7 +263,7 @@ msgstr "Try again"
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
 
-#: src/stones/stone-card.tsx:71
+#: src/stones/stone-card.tsx:97
 msgid "Walking"
 msgstr "Walking"
 

@@ -31,6 +31,25 @@ export function usePlaceStone() {
   );
 }
 
+/**
+ * Deletes a stone and its recording, then goes back to the stones, saying which was deleted.
+ * The stones loaded are fetched again first, so the deleted one never flashes up on the way back.
+ */
+export function useDeleteStone(stone: Pick<Stone, 'id' | 'fileName'>) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  return useMutation(
+    orpc.record.stones.delete.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: orpc.record.stones.list.key(), refetchType: 'all' });
+        await navigate({ to: '/stones', state: { deleted: stone.fileName } });
+        // Only once its screen is gone, or the screen would ask for the stone again and be told it's not found.
+        queryClient.removeQueries({ queryKey: orpc.record.stones.get.key({ input: { stoneId: stone.id } }) });
+      },
+    }),
+  );
+}
+
 /** One stone, with its laps and trace. Fails with `NOT_FOUND` for one that doesn't exist or can't be seen. */
 export const stoneQuery = (stoneId: string) => orpc.record.stones.get.queryOptions({ input: { stoneId } });
 

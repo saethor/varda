@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { formatDistance, formatDuration } from '@varda/ui/lib/format';
 import type { ReactNode } from 'react';
 import { type Stone, stoneQuery } from '../../lib/stones.ts';
+import { DeleteStone } from '../../stones/delete-stone.tsx';
 import { LapBars } from '../../stones/lap-bars.tsx';
 import { paceOrSpeed } from '../../stones/pace-or-speed.ts';
 import { SportName } from '../../stones/stone-card.tsx';
@@ -118,9 +119,12 @@ function StoneScreen() {
         )}
       </section>
 
-      <p className="border-t pt-6 text-muted-foreground">
-        <Trans>Placed from {fileName}</Trans>
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4 border-t pt-6">
+        <p className="text-muted-foreground">
+          <Trans>Placed from {fileName}</Trans>
+        </p>
+        <DeleteStone stone={stone} />
+      </div>
     </section>
   );
 }

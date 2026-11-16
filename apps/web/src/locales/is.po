@@ -12,6 +12,11 @@ msgstr ""
 msgid "{0, plural, one {# lap} other {# laps}}"
 msgstr "{0, plural, one {# hringur} other {# hringir}}"
 
+#. placeholder {0}: totals.stones
+#: src/stones/stones-calendar.tsx:182
+msgid "{0, plural, one {# stone} other {# stones}}"
+msgstr "{0, plural, one {# steinn} other {# steinar}}"
+
 #: src/sign-in/device-name.ts:32
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} á {operatingSystem}"
@@ -33,11 +38,15 @@ msgstr "Bætt við {added}"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 
+#: src/stones/stones-calendar.tsx:43
+msgid "Calendar"
+msgstr "Dagatal"
+
 #: src/routes/_signed-in/settings.tsx:104
 msgid "Cancel"
 msgstr "Hætta við"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:63
 msgid "Choose a watch file"
 msgstr "Velja úraskrá"
 
@@ -49,7 +58,7 @@ msgstr "Hjólreiðar"
 msgid "Distance"
 msgstr "Vegalengd"
 
-#: src/stones/placing-panel.tsx:41
+#: src/stones/placing-panel.tsx:49
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time."
 msgstr "Slepptu .fit-skránni sem úrið vistaði hér, eða veldu hana. Ein skrá í einu."
 
@@ -71,9 +80,13 @@ msgstr "Sláðu inn gilt netfang."
 msgid "Enter your name."
 msgstr "Sláðu inn nafnið þitt."
 
-#: src/routes/_signed-in/stones.tsx:66
+#: src/routes/_signed-in/stones.tsx:85
 msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 msgstr "Hvert hlaup, hjólatúr, sund eða æfing sem þú lýkur verður að steini. Leggðu stein úr .fit-skránni sem úrið vistaði."
+
+#: src/stones/stones-calendar.tsx:35
+msgid "Feed"
+msgstr "Straumur"
 
 #: src/routes/_signed-in/index.tsx:34
 msgid "Hi, {name}"
@@ -111,6 +124,10 @@ msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
 msgid "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 msgstr "Næst geturðu skráð þig inn með fingrafari, andliti eða PIN-númeri tækisins í stað lykilorðs. Þú getur líka bætt við aðgangslykli síðar í Stillingum."
 
+#: src/stones/stones-calendar.tsx:160
+msgid "No stones this week"
+msgstr "Engir steinar þessa viku"
+
 #: src/routes/_signed-in/add-a-passkey.tsx:50
 msgid "Not now"
 msgstr "Ekki núna"
@@ -134,11 +151,11 @@ msgstr "Aðgangslykill"
 msgid "Password"
 msgstr "Lykilorð"
 
-#: src/stones/placing-panel.tsx:38
+#: src/stones/placing-panel.tsx:46
 msgid "Place a stone"
 msgstr "Leggja stein"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:63
 msgid "Reading {reading}…"
 msgstr "Les {reading}…"
 
@@ -164,9 +181,13 @@ msgstr "Götuhlaup"
 msgid "Settings"
 msgstr "Stillingar"
 
-#: src/routes/_signed-in/stones.tsx:51
+#: src/routes/_signed-in/stones.tsx:70
 msgid "Show earlier"
 msgstr "Sýna eldri"
+
+#: src/stones/stones-calendar.tsx:33
+msgid "Show stones as"
+msgstr "Sýna steina sem"
 
 #: src/routes/sign-in.tsx:80
 #: src/routes/sign-in.tsx:115
@@ -198,16 +219,17 @@ msgstr "Skíði"
 msgid "Something went wrong, try again."
 msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
-#: src/routes/_signed-in/stones.tsx:40
+#: src/routes/_signed-in/stones.tsx:59
+#: src/stones/stones-calendar.tsx:66
 msgid "Stone placed from {placedFrom}"
 msgstr "Steinn lagður úr {placedFrom}"
 
 #: src/routes/_signed-in.tsx:28
-#: src/routes/_signed-in/stones.tsx:29
+#: src/stones/stones-calendar.tsx:19
 msgid "Stones"
 msgstr "Steinar"
 
-#: src/routes/_signed-in/stones.tsx:63
+#: src/routes/_signed-in/stones.tsx:82
 msgid "Stones: your completed activities"
 msgstr "Steinar: æfingarnar sem þú hefur lokið"
 
@@ -254,6 +276,10 @@ msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn
 #: src/stones/stone-card.tsx:71
 msgid "Walking"
 msgstr "Ganga"
+
+#: src/stones/stones-calendar.tsx:118
+msgid "Week"
+msgstr "Vika"
 
 #: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."

@@ -47,7 +47,7 @@ function Stat({ label, value }: { label: ReactNode; value: string }) {
   );
 }
 
-function SportName({ sport }: { sport: Sport }) {
+export function SportName({ sport }: { sport: Sport }) {
   switch (sport) {
     case 'road-running':
       return <Trans>Road running</Trans>;

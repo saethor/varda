@@ -28,6 +28,18 @@ _Avoid_: Edit, override
 A recorded section of a stone. Laps are matched to the workout steps of the workout the stone fulfils; the match can be corrected by hand.
 _Avoid_: Split (except for automatic per-kilometre splits)
 
+**Moving time**:
+How long a stone's or lap's timer ran, pauses excluded, as the watch recorded it. It is never worked out from speed.
+_Avoid_: Timer time, active time
+
+**Elapsed time**:
+How long a stone or lap took from start to finish, pauses included.
+_Avoid_: Total time, duration (unqualified)
+
+**Trace**:
+The line a stone traced over the ground, simplified from its recording's GPS. A stone without GPS (treadmill, pool, strength) has no trace.
+_Avoid_: Track (that is track running), route (planned), GPS track, map
+
 **Training load**:
 Varða's own measure of how much strain a stone put on the athlete, calculated the same way whatever its source.
 _Avoid_: TSS, training stress, Garmin load

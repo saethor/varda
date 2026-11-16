@@ -298,3 +298,66 @@ describe('opening a stone', () => {
     expect(stone.id).toBe(stoneId);
   });
 });
+
+describe('deleting a stone', () => {
+  it('deletes a stone so it is not found and no longer listed', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+
+    await client.stones.delete({ stoneId });
+
+    const { error, isDefined } = await safe(client.stones.get({ stoneId }));
+    expect(isDefined && error.code).toBe('NOT_FOUND');
+    expect(await client.stones.list({ from: '2026-11-02', to: '2026-11-02' })).toEqual([]);
+  });
+
+  it('leaves no recording behind, so the same file places a new stone', async () => {
+    const adapters = createRecordFakes();
+    const client = clientFor({ person: guðrún }, adapters);
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+
+    await client.stones.delete({ stoneId });
+    const placedAgain = await client.stones.place({ file: fitFile(watchFile()) });
+
+    expect(await adapters.recordings.get(stoneId)).toBeNull();
+    expect(placedAgain.stoneId).not.toBe(stoneId);
+    expect((await client.stones.get(placedAgain)).id).toBe(placedAgain.stoneId);
+  });
+
+  it("answers that another athlete's stone, or one that does not exist, is not found, and keeps it", async () => {
+    const adapters = createRecordFakes();
+    const client = clientFor({ person: guðrún }, adapters);
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+    const jón = clientFor({ person: '00000000-0000-7000-8000-0000000000b2' }, adapters);
+
+    const someoneElses = await safe(jón.stones.delete({ stoneId }));
+    const unknown = await safe(client.stones.delete({ stoneId: '00000000-0000-7000-8000-00000000ffff' }));
+
+    expect(someoneElses.isDefined && someoneElses.error.code).toBe('NOT_FOUND');
+    expect(unknown.isDefined && unknown.error.code).toBe('NOT_FOUND');
+    expect((await client.stones.get({ stoneId })).id).toBe(stoneId);
+    expect(await adapters.recordings.get(stoneId)).not.toBeNull();
+  });
+
+  it('deletes the stone even when its recording cannot be removed', async () => {
+    const adapters = createRecordFakes();
+    adapters.recordings.remove = async () => {
+      throw new Error('The disk is gone.');
+    };
+    const client = clientFor({ person: guðrún }, adapters);
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+
+    // Logs that the file was left behind.
+    await client.stones.delete({ stoneId });
+
+    const { error, isDefined } = await safe(client.stones.get({ stoneId }));
+    expect(isDefined && error.code).toBe('NOT_FOUND');
+  });
+
+  it('refuses someone who is not signed in with the typed error', async () => {
+    const { error, isDefined } = await safe(
+      clientFor({ person: null }).stones.delete({ stoneId: '00000000-0000-7000-8000-00000000ffff' }),
+    );
+    expect(isDefined && error.code).toBe('UNAUTHORIZED');
+  });
+});

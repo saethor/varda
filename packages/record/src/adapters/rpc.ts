@@ -1,5 +1,6 @@
 import { implement, ORPCError } from '@orpc/server';
 import { type SharedContext, sportGroupOf } from '@varda/shared';
+import { deleteStone } from '../application/delete-stone.ts';
 import { placeStone } from '../application/place-stone.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
 import { maxWatchFileBytes, recordContract } from '../contract.ts';
@@ -57,6 +58,9 @@ export function createRecordRouter(adapters: RecordAdapters) {
           throw errors.NOT_FOUND();
         }
         return shown(stone);
+      }),
+      delete: os.stones.delete.use(requirePerson).handler(async ({ context, input: { stoneId }, errors }) => {
+        if ((await deleteStone(adapters, context.person, stoneId)) === 'not-found') throw errors.NOT_FOUND();
       }),
     },
   });

@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/react/macro';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useRouterState } from '@tanstack/react-router';
+import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
 import { calendarQuery, feedQuery, usePlaceStone } from '../../lib/stones.ts';
 import { monthOf } from '../../stones/calendar-month.ts';
@@ -9,6 +10,13 @@ import { PlacingPanel } from '../../stones/placing-panel.tsx';
 import { StoneCard } from '../../stones/stone-card.tsx';
 import { StonesCalendar, StonesHeading } from '../../stones/stones-calendar.tsx';
 import { stonesSearch } from '../../stones/stones-view.ts';
+
+declare module '@tanstack/react-router' {
+  interface HistoryState {
+    /** Set when deleting a stone brings the athlete back here: the file it was placed from. */
+    deleted?: string;
+  }
+}
 
 export const Route = createFileRoute('/_signed-in/stones')({
   // Read once per visit, so every window of the feed counts back from the same day.
@@ -31,6 +39,7 @@ function FeedOrCalendar() {
   return (
     <section className="flex flex-col gap-6">
       <StonesHeading view="calendar" />
+      <JustDeleted />
       <StonesCalendar month={month ?? monthOf(today)} />
     </section>
   );
@@ -45,6 +54,7 @@ function Stones() {
   return (
     <section className="flex flex-col gap-6">
       <StonesHeading view="feed" />
+      <JustDeleted />
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <aside className="flex flex-col gap-4 lg:sticky lg:top-8 lg:order-2">
           <PlacingPanel placing={placing} stones={stones} />
@@ -62,6 +72,20 @@ function Stones() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Says which stone was deleted, when deleting one brought the athlete back here. */
+function JustDeleted() {
+  const fileName = useRouterState({ select: (state) => state.location.state.deleted });
+  if (fileName === undefined) return null;
+
+  return (
+    <Alert>
+      <AlertDescription>
+        <Trans>Stone deleted. You can place it again from {fileName}.</Trans>
+      </AlertDescription>
+    </Alert>
   );
 }
 

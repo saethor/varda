@@ -58,5 +58,12 @@ export const recordContract = {
       })
       .input(z.object({ stoneId: z.uuid() }))
       .output(StoneSchema),
+    /** Deletes the signed-in person's stone and its recording, so the same file can be placed again. */
+    delete: signedInProcedure
+      .errors({
+        /** There is no such stone, or it is not the signed-in person's: the two look the same. */
+        NOT_FOUND: { status: 404 },
+      })
+      .input(z.object({ stoneId: z.uuid() })),
   },
 };

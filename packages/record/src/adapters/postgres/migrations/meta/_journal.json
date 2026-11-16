@@ -8,6 +8,13 @@
       "when": 1794835499760,
       "tag": "0000_create_stones",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794836228198,
+      "tag": "0001_add_stone_trace",
+      "breakpoints": true
     }
   ]
 }

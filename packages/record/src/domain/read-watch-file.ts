@@ -1,8 +1,9 @@
 // Reading a watch file is pure domain code: @garmin/fitsdk only decodes bytes in memory (spec #60).
 // FIT words (activity, session, timer time) stay in this file; everything it returns is Record's.
-import { type ActivityMesg, Decoder, type LapMesg, type SessionMesg, Stream } from '@garmin/fitsdk';
+import { type ActivityMesg, Decoder, type LapMesg, type RecordMesg, type SessionMesg, Stream } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
-import type { Lap, LapTrigger, LocalDate, Session } from './stone.ts';
+import type { Lap, LapTrigger, LocalDate, Session, Trace } from './stone.ts';
+import { traceOf } from './trace.ts';
 
 /** Reads the session a watch file recorded. */
 export function readWatchFile(bytes: Uint8Array): Session {
@@ -24,8 +25,21 @@ export function readWatchFile(bytes: Uint8Array): Session {
     movingTime: session.totalTimerTime ?? 0,
     elapsedTime: session.totalElapsedTime ?? 0,
     laps,
+    trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
   };
 }
+
+/** The positions the watch recorded, in degrees, skipping records with none. */
+function positionsOf(records: RecordMesg[]): Trace {
+  return records.flatMap(({ positionLat, positionLong }) =>
+    typeof positionLat === 'number' && typeof positionLong === 'number'
+      ? [[degreesOf(positionLat), degreesOf(positionLong)] as Trace[number]]
+      : [],
+  );
+}
+
+/** FIT stores positions in semicircles: 2^31 of them make 180°. */
+const degreesOf = (semicircles: number) => (semicircles * 180) / 2 ** 31;
 
 /** The local date where the session started: its start shifted by the activity's local time offset. */
 function localDateOf(start: Date, activity: ActivityMesg | undefined): LocalDate {

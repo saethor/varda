@@ -53,6 +53,12 @@ describe('placing a stone', () => {
             trigger: 'distance',
           },
         ],
+        trace: [
+          [64.14661, -21.94264],
+          [64.14522, -21.93911],
+          [64.14309, -21.94018],
+          [64.14384, -21.94467],
+        ],
       },
     ]);
   });
@@ -60,6 +66,28 @@ describe('placing a stone', () => {
   it('refuses someone who is not signed in with the typed error', async () => {
     const { error, isDefined } = await safe(clientFor({ person: null }).stones.place({ file: fitFile(watchFile()) }));
     expect(isDefined && error.code).toBe('UNAUTHORIZED');
+  });
+});
+
+describe('the trace', () => {
+  const placedTrace = async (file: File) => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file });
+    const [stone] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+    return stone?.trace;
+  };
+
+  it('has none when the watch recorded no GPS', async () => {
+    expect(await placedTrace(fitFile(watchFile({ gps: false })))).toBeNull();
+  });
+
+  it('is simplified to at most 300 points, keeping where the session started and finished', async () => {
+    const trace = await placedTrace(fitFile(watchFile({ gpsPoints: 2000 })));
+
+    expect(trace?.length).toBeLessThanOrEqual(300);
+    expect(trace?.length).toBeGreaterThan(2);
+    expect(trace?.at(0)).toEqual([64.14661, -21.94264]);
+    expect(trace?.at(-1)).toEqual([64.14384, -21.94467]);
   });
 });
 

@@ -31,6 +31,8 @@ export const stones = record.table(
     movingTime: doublePrecision('moving_time').notNull(),
     elapsedTime: doublePrecision('elapsed_time').notNull(),
     laps: jsonb('laps').$type<StoredLap[]>().notNull(),
+    // `[lat, lon]` pairs in degrees, or null when the watch recorded no GPS.
+    trace: jsonb('trace').$type<[number, number][]>(),
   },
   (table) => [
     // A session is placed as a stone only once (Record glossary).

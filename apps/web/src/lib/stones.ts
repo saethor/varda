@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { type Month, monthOnScreen } from '../stones/calendar-month.ts';
 import { feedWindow, type LocalDate } from '../stones/feed-window.ts';
 import { type client, orpc } from './orpc.ts';
 
@@ -24,3 +25,6 @@ export function usePlaceStone() {
     }),
   );
 }
+
+/** The signed-in person's stones in the month the calendar shows: its whole Mon–Sun weeks. */
+export const calendarQuery = (month: Month) => orpc.record.stones.list.queryOptions({ input: monthOnScreen(month) });

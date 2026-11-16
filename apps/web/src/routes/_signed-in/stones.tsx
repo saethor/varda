@@ -3,18 +3,39 @@ import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
-import { feedQuery, usePlaceStone } from '../../lib/stones.ts';
+import { calendarQuery, feedQuery, usePlaceStone } from '../../lib/stones.ts';
+import { monthOf } from '../../stones/calendar-month.ts';
 import { todayHere } from '../../stones/feed-window.ts';
 import { PlacingPanel } from '../../stones/placing-panel.tsx';
 import { StoneCard } from '../../stones/stone-card.tsx';
+import { StonesCalendar, StonesHeading } from '../../stones/stones-calendar.tsx';
+import { stonesSearch } from '../../stones/stones-view.ts';
 
 export const Route = createFileRoute('/_signed-in/stones')({
   // Read once per visit, so every window of the feed counts back from the same day.
   beforeLoad: () => ({ today: todayHere(new Date()) }),
-  loader: async ({ context }) => await context.queryClient.ensureInfiniteQueryData(feedQuery(context.today)),
+  validateSearch: stonesSearch,
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context, deps }) =>
+    deps.view === 'calendar'
+      ? await context.queryClient.ensureQueryData(calendarQuery(deps.month ?? monthOf(context.today)))
+      : await context.queryClient.ensureInfiniteQueryData(feedQuery(context.today)),
   staticData: { layout: 'wide' },
-  component: Stones,
+  component: FeedOrCalendar,
 });
+
+function FeedOrCalendar() {
+  const { view, month } = Route.useSearch();
+  const { today } = Route.useRouteContext();
+  if (view !== 'calendar') return <Stones />;
+
+  return (
+    <section className="flex flex-col gap-6">
+      <StonesHeading view="calendar" />
+      <StonesCalendar month={month ?? monthOf(today)} />
+    </section>
+  );
+}
 
 function Stones() {
   const { today } = Route.useRouteContext();
@@ -25,9 +46,7 @@ function Stones() {
 
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">
-        <Trans>Stones</Trans>
-      </h1>
+      <StonesHeading view="feed" />
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <aside className="flex flex-col gap-4 lg:sticky lg:top-8 lg:order-2">
           <PlacingPanel placing={placing} stones={stones} />

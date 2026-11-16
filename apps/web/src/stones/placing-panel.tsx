@@ -10,9 +10,19 @@ import { PlacingRefusal, type Refusal } from './placing-refusal.tsx';
 
 /**
  * Where a stone is placed from a watch file: dropped on the panel, or chosen with the file picker.
- * `stones` is the feed as loaded, to name the stone a session was already placed as.
+ * `stones` are the stones as loaded (the feed, or the month on screen), to name the stone a session
+ * was already placed as.
  */
-export function PlacingPanel({ placing, stones }: { placing: ReturnType<typeof usePlaceStone>; stones: Stone[] }) {
+export function PlacingPanel({
+  placing,
+  stones,
+  className,
+}: {
+  placing: ReturnType<typeof usePlaceStone>;
+  stones: Stone[];
+  /** Lays the panel out where it sits: beside the feed, or as a slim bar above the calendar. */
+  className?: string;
+}) {
   const picker = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   // A file the browser turned away without sending it.
@@ -45,7 +55,11 @@ export function PlacingPanel({ placing, stones }: { placing: ReturnType<typeof u
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
-      className={cn('flex flex-col gap-3 rounded-xl border bg-card p-5', dragging && 'border-primary bg-primary/5')}
+      className={cn(
+        'flex flex-col gap-3 rounded-xl border bg-card p-5',
+        className,
+        dragging && 'border-primary bg-primary/5',
+      )}
     >
       <h2 id="place-a-stone" className="font-semibold">
         <Trans>Place a stone</Trans>

@@ -15,6 +15,7 @@
       "!docs/diagrams",
       "!.claude",
       "!.agents",
+      "!.impeccable",
       "!.github/skills"
     ]
   },

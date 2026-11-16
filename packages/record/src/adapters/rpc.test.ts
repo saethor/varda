@@ -116,6 +116,16 @@ describe('placing a stone', () => {
     expect(stones.map((stone) => stone.localDate)).toEqual(['2026-11-03']);
   });
 
+  it('refuses a session placed before, naming the stone already placed from it', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile(), 'run.fit') });
+
+    const { error, isDefined } = await safe(client.stones.place({ file: fitFile(watchFile(), 'copy.fit') }));
+
+    expect(isDefined && error.code === 'ALREADY_PLACED' && error.data).toEqual({ stoneId });
+    expect(await client.stones.list({ from: '2026-11-02', to: '2026-11-02' })).toHaveLength(1);
+  });
+
   it('refuses someone who is not signed in with the typed error', async () => {
     const { error, isDefined } = await safe(clientFor({ person: null }).stones.place({ file: fitFile(watchFile()) }));
     expect(isDefined && error.code).toBe('UNAUTHORIZED');

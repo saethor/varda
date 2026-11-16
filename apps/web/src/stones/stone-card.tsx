@@ -3,8 +3,9 @@ import { Card } from '@varda/ui/components/card';
 import { formatDistance, formatDuration } from '@varda/ui/lib/format';
 import type { ReactNode } from 'react';
 import type { Sport, Stone } from '../lib/stones.ts';
+import { TraceSvg } from './trace-svg.tsx';
 
-/** One stone in the feed: what it was, when, and its headline numbers. */
+/** One stone in the feed: what it was, when, its headline numbers and its trace. */
 export function StoneCard({ stone }: { stone: Stone }) {
   const { i18n } = useLingui();
   // A local date has no zone: shown as written, never shifted into the browser's.
@@ -19,13 +20,16 @@ export function StoneCard({ stone }: { stone: Stone }) {
 
   return (
     <Card className="gap-4 p-5">
-      <div>
-        <h2 className="text-lg font-semibold">
-          <SportName sport={stone.sport.sport} />
-        </h2>
-        <p className="text-muted-foreground">
-          {day} · {time} · <Plural value={stone.laps.length} one="# lap" other="# laps" />
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold">
+            <SportName sport={stone.sport.sport} />
+          </h2>
+          <p className="text-muted-foreground">
+            {day} · {time} · <Plural value={stone.laps.length} one="# lap" other="# laps" />
+          </p>
+        </div>
+        {stone.trace !== null && <TraceSvg trace={stone.trace} className="h-20 w-32 shrink-0 text-primary" />}
       </div>
       <dl className="grid grid-cols-2 gap-4 tabular-nums sm:grid-cols-3">
         {stone.distance !== null && (

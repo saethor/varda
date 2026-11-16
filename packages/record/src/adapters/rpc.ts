@@ -19,7 +19,7 @@ const requirePerson = os.middleware(async ({ context, next }) => {
 });
 
 /** A stone as the contract shows it. */
-function shown({ id, localDate, start, sport, fileName, distance, movingTime, elapsedTime, laps }: Stone) {
+function shown({ id, localDate, start, sport, fileName, distance, movingTime, elapsedTime, laps, trace }: Stone) {
   return {
     id,
     localDate,
@@ -30,6 +30,7 @@ function shown({ id, localDate, start, sport, fileName, distance, movingTime, el
     movingTime,
     elapsedTime,
     laps,
+    trace,
   };
 }
 

@@ -40,6 +40,7 @@ Canonical terms are themed English; Icelandic is a translation (see [ADR 0001](.
 
 - **Integration order:** manual watch-file upload (FIT/GPX) and manual entry first, then direct Garmin sync. The first target watch is the Garmin Forerunner 255.
 - **Send to watch targets Garmin structured workouts**, which map directly onto workout steps, repeat blocks and step targets.
+- **A watch file is at most 25 MB, counted as 25,000,000 bytes**, the way the athlete's computer shows file sizes. A file that can't be placed is turned away with its reason, and the message always says that nothing was kept.
 - **The original file of every stone is kept** (see [ADR 0002](../adr/0002-recordings-are-immutable-corrections-are-layered.md)), so new metrics can be calculated from old stones.
 - **Platform metrics the watch provides** (running power, HRV, Garmin's own load) are kept when present, as reference data.
 - **The app suggests which workout a stone fulfils and its workout outcome; the athlete confirms.**

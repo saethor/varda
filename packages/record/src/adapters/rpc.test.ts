@@ -115,6 +115,26 @@ describe('placing a stone', () => {
   });
 });
 
+describe('turning a watch file away', () => {
+  const notAFitFile = new TextEncoder().encode('lap,distance\n1,1000\n');
+
+  it.each([
+    ['not-a-fit-file', fitFile(notAFitFile, 'run.fit')],
+    ['broken', fitFile(watchFile({ brokenCrc: true }))],
+    ['not-a-session', fitFile(watchFile({ fileType: 'course' }))],
+    ['multisport', fitFile(watchFile({ multisport: true }))],
+    // 25 MB is the most Varða takes; this starts as a real watch file and is 1 byte over.
+    ['too-large', new File([watchFile() as Uint8Array<ArrayBuffer>, new Uint8Array(25_000_001)], 'huge.fit')],
+  ])('turns away a file that is %s, keeping nothing', async (reason, file) => {
+    const client = clientFor({ person: guðrún });
+
+    const { error, isDefined } = await safe(client.stones.place({ file }));
+
+    expect(isDefined && { code: error.code, data: error.data }).toEqual({ code: 'TURNED_AWAY', data: { reason } });
+    expect(await client.stones.list({ from: '2000-01-01', to: '2100-01-01' })).toEqual([]);
+  });
+});
+
 describe('listing stones', () => {
   const runOn = (day: string, time = '07:30') => fitFile(watchFile({ start: new Date(`${day}T${time}:00Z`) }));
 

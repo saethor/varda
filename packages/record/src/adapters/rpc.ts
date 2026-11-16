@@ -2,7 +2,7 @@ import { implement, ORPCError } from '@orpc/server';
 import { type SharedContext, sportGroupOf } from '@varda/shared';
 import { placeStone } from '../application/place-stone.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
-import { recordContract } from '../contract.ts';
+import { maxWatchFileBytes, recordContract } from '../contract.ts';
 import type { Stone } from '../domain/stone.ts';
 
 const os = implement(recordContract).$context<SharedContext>();
@@ -38,9 +38,12 @@ export function createRecordRouter(adapters: RecordAdapters) {
   return os.router({
     stones: {
       place: os.stones.place.use(requirePerson).handler(async ({ context, input: { file }, errors }) => {
+        // apps/api's body limit stops far larger bodies before they are read; this is the exact rule.
+        if (file.size > maxWatchFileBytes) throw errors.TURNED_AWAY({ data: { reason: 'too-large' } });
         const bytes = new Uint8Array(await file.arrayBuffer());
         const placing = await placeStone(adapters, context.person, { name: file.name, bytes });
         if ('alreadyPlaced' in placing) throw errors.ALREADY_PLACED({ data: { stoneId: placing.alreadyPlaced } });
+        if ('turnedAway' in placing) throw errors.TURNED_AWAY({ data: { reason: placing.turnedAway } });
         return { stoneId: placing.placed };
       }),
       list: os.stones.list

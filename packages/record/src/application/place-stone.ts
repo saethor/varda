@@ -1,9 +1,9 @@
 import { readWatchFile } from '../domain/read-watch-file.ts';
-import type { PersonId, StoneId } from '../domain/stone.ts';
+import type { PersonId, StoneId, TurnedAwayReason } from '../domain/stone.ts';
 import type { RecordAdapters } from './record-adapters.ts';
 
-/** How placing a stone went: placed, or refused because the session was already placed. */
-export type Placing = { placed: StoneId } | { alreadyPlaced: StoneId };
+/** How placing a stone went: placed, the session was placed before, or the file was turned away. */
+export type Placing = { placed: StoneId } | { alreadyPlaced: StoneId } | { turnedAway: TurnedAwayReason };
 
 /**
  * Places a stone for the athlete from a watch file, keeping the file as its recording.
@@ -15,7 +15,9 @@ export async function placeStone(
   athlete: PersonId,
   watchFile: { name: string; bytes: Uint8Array },
 ): Promise<Placing> {
-  const session = readWatchFile(watchFile.bytes);
+  const reading = readWatchFile(watchFile.bytes);
+  if ('turnedAway' in reading) return reading;
+  const { session } = reading;
   const placedBefore = await adapters.stones.withSessionKey(athlete, session.sessionKey);
   if (placedBefore !== null) return { alreadyPlaced: placedBefore.id };
 

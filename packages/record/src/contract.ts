@@ -28,6 +28,12 @@ const StoneSchema = z.object({
   laps: z.array(LapSchema),
 });
 
+/** The largest watch file a stone is placed from: 25 MB. The web app checks it before sending, too. */
+export const maxWatchFileBytes = 25_000_000;
+
+/** Why a watch file is turned away. */
+const turnedAwayReasons = ['not-a-fit-file', 'too-large', 'broken', 'not-a-session', 'multisport'] as const;
+
 export const recordContract = {
   stones: {
     /** Places a stone for the signed-in person from a watch file, keeping the file as its recording. */
@@ -35,6 +41,8 @@ export const recordContract = {
       .errors({
         /** The athlete already placed a stone from this session: that stone. */
         ALREADY_PLACED: { status: 409, data: z.object({ stoneId: z.uuid() }) },
+        /** The file can't be placed, and nothing of it was kept. */
+        TURNED_AWAY: { status: 422, data: z.object({ reason: z.enum(turnedAwayReasons) }) },
       })
       .input(z.object({ file: z.file() }))
       .output(z.object({ stoneId: z.uuid() })),

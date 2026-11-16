@@ -2,29 +2,50 @@
 // FIT words (activity, session, timer time) stay in this file; everything it returns is Record's.
 import { type ActivityMesg, Decoder, type FileIdMesg, type LapMesg, type SessionMesg, Stream } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
-import type { Lap, LapTrigger, LocalDate, Session, SessionKey } from './stone.ts';
+import type { Lap, LapTrigger, LocalDate, Session, SessionKey, TurnedAwayReason } from './stone.ts';
+
+/** What a watch file holds: a session that can be placed, or why it is turned away. */
+export type WatchFileReading = { session: Session } | { turnedAway: TurnedAwayReason };
 
 /** Reads the session a watch file recorded. */
-export function readWatchFile(bytes: Uint8Array): Session {
-  const { messages, errors } = new Decoder(Stream.fromByteArray(bytes)).read();
+export function readWatchFile(bytes: Uint8Array): WatchFileReading {
+  const decoder = new Decoder(Stream.fromByteArray(bytes));
+  // Known by its header bytes, never its name or type.
+  if (!decoder.isFIT()) return { turnedAway: 'not-a-fit-file' };
+  if (!decoder.checkIntegrity()) return { turnedAway: 'broken' };
+
+  const { messages, errors } = decoder.read();
+  if (errors.length > 0) return { turnedAway: 'broken' };
   const [fileId] = messages.fileIdMesgs ?? [];
   const [session] = messages.sessionMesgs ?? [];
-  if (errors.length > 0 || fileId === undefined || session === undefined) {
-    throw new Error('The watch file holds no session that can be read.');
-  }
+  // Only an activity holds a session; settings, courses and workouts hold no training.
+  if (fileId?.type !== 'activity' || session === undefined) return { turnedAway: 'not-a-session' };
+  if (isMultisport(messages.sessionMesgs ?? [], messages.activityMesgs?.[0])) return { turnedAway: 'multisport' };
 
   const start = dateOf(session.startTime);
   const laps = lapsOf(session, messages.lapMesgs ?? []);
   return {
-    sessionKey: sessionKeyOf(fileId, start),
-    start,
-    localDate: localDateOf(start, messages.activityMesgs?.[0]),
-    sport: sportOf(session),
-    distance: session.totalDistance || null,
-    movingTime: session.totalTimerTime ?? 0,
-    elapsedTime: session.totalElapsedTime ?? 0,
-    laps,
+    session: {
+      sessionKey: sessionKeyOf(fileId, start),
+      start,
+      localDate: localDateOf(start, messages.activityMesgs?.[0]),
+      sport: sportOf(session),
+      distance: session.totalDistance || null,
+      movingTime: session.totalTimerTime ?? 0,
+      elapsedTime: session.totalElapsedTime ?? 0,
+      laps,
+    },
   };
+}
+
+/** A triathlon, a brick or any other session of several sports in one file. Not placed yet (spec #60). */
+function isMultisport(sessions: SessionMesg[], activity: ActivityMesg | undefined): boolean {
+  const multisportSports: unknown[] = ['transition', 'multisport'];
+  return (
+    sessions.filter((session) => session.sport !== 'transition').length > 1 ||
+    (activity?.numSessions ?? 1) > 1 ||
+    sessions.some((session) => multisportSports.includes(session.sport))
+  );
 }
 
 /**

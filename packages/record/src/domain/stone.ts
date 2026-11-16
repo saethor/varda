@@ -24,6 +24,9 @@ export type Lap = {
  */
 export type SessionKey = string;
 
+/** Why a watch file's content is turned away. Nothing of a turned-away file is kept. */
+export type TurnedAwayReason = 'not-a-fit-file' | 'broken' | 'not-a-session' | 'multisport';
+
 /** A session read from a watch file, ready to be placed as a stone. */
 export type Session = {
   sessionKey: SessionKey;

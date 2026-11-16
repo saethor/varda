@@ -1,26 +1,24 @@
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Link } from '@tanstack/react-router';
 import { Card } from '@varda/ui/components/card';
-import { formatDistance, formatDuration } from '@varda/ui/lib/format';
-import type { ReactNode } from 'react';
 import type { Sport, Stone } from '../lib/stones.ts';
+import { HeadlineNumbers } from './headline-numbers.tsx';
 import { LapBars } from './lap-bars.tsx';
-import { paceOrSpeed } from './pace-or-speed.ts';
+import { localStartOf, midnightOf } from './local-date.ts';
 import { TraceSvg } from './trace-svg.tsx';
 
 /** One stone in the feed: what it was, when, its headline numbers and its trace. It opens the stone. */
 export function StoneCard({ stone }: { stone: Stone }) {
   const { i18n } = useLingui();
-  // A local date has no zone: shown as written, never shifted into the browser's.
-  const day = i18n.date(new Date(`${stone.localDate}T00:00:00Z`), {
+  // The day and time where the stone was done, never shifted into the browser's zone.
+  const day = i18n.date(midnightOf(stone.localDate), {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     timeZone: 'UTC',
   });
-  const time = i18n.date(stone.start, { timeStyle: 'short' });
-  const pace = paceOrSpeed(stone.sport.sport, stone.distance, stone.movingTime, i18n.locale);
+  const time = i18n.date(localStartOf(stone), { timeStyle: 'short', timeZone: 'UTC' });
 
   return (
     <Card className="relative gap-4 p-5 transition-colors has-[a:hover]:border-input">
@@ -47,27 +45,9 @@ export function StoneCard({ stone }: { stone: Stone }) {
         </div>
         {stone.trace !== null && <TraceSvg trace={stone.trace} className="h-20 w-32 shrink-0 text-primary" />}
       </div>
-      <dl className="grid grid-cols-2 gap-4 tabular-nums sm:grid-cols-4">
-        {stone.distance !== null && (
-          <Stat label={<Trans>Distance</Trans>} value={formatDistance(stone.distance, i18n.locale)} />
-        )}
-        <Stat label={<Trans>Moving time</Trans>} value={formatDuration(stone.movingTime)} />
-        {pace && (
-          <Stat label={pace.measure === 'pace' ? <Trans>Pace</Trans> : <Trans>Speed</Trans>} value={pace.value} />
-        )}
-        <Stat label={<Trans>Elapsed time</Trans>} value={formatDuration(stone.elapsedTime)} />
-      </dl>
+      <HeadlineNumbers stone={stone} size="card" className="gap-4 sm:grid-cols-4" />
       <LapBars laps={stone.laps} />
     </Card>
-  );
-}
-
-function Stat({ label, value }: { label: ReactNode; value: string }) {
-  return (
-    <div>
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-xl">{value}</dd>
-    </div>
   );
 }
 

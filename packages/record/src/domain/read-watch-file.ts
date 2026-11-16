@@ -11,7 +11,7 @@ import {
 } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
-import type { Lap, LapTrigger, LocalDate, Session, SessionKey, Trace } from './stone.ts';
+import type { Lap, LapTrigger, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
 
 /** Reads the session a watch file recorded. Throws `WatchFileTurnedAway` for a file that can't be placed. */
@@ -32,11 +32,13 @@ export function readWatchFile(bytes: Uint8Array): Session {
   }
 
   const start = dateOf(session.startTime);
+  const localOffset = localOffsetOf(messages.activityMesgs?.[0]);
   const laps = lapsOf(session, messages.lapMesgs ?? []);
   return {
     sessionKey: sessionKeyOf(fileId, start),
     start,
-    localDate: localDateOf(start, messages.activityMesgs?.[0]),
+    localOffset,
+    localDate: new Date(start.getTime() + localOffset * 1000).toISOString().slice(0, 10),
     sport: sportOf(session),
     distance: session.totalDistance || null,
     movingTime: session.totalTimerTime ?? 0,
@@ -78,11 +80,11 @@ function positionsOf(records: RecordMesg[]): Trace {
 /** FIT stores positions in semicircles: 2^31 of them make 180°. */
 const degreesOf = (semicircles: number) => (semicircles * 180) / 2 ** 31;
 
-/** The local date where the session started: its start shifted by the activity's local time offset. */
-function localDateOf(start: Date, activity: ActivityMesg | undefined): LocalDate {
-  const offset =
-    typeof activity?.localTimestamp === 'number' ? activity.localTimestamp - fitSeconds(dateOf(activity.timestamp)) : 0;
-  return new Date(start.getTime() + offset * 1000).toISOString().slice(0, 10);
+/** Seconds the activity's local time was ahead of UTC, or 0 (UTC) when the file has no local time. */
+function localOffsetOf(activity: ActivityMesg | undefined): number {
+  return typeof activity?.localTimestamp === 'number'
+    ? Math.round(activity.localTimestamp - fitSeconds(dateOf(activity.timestamp)))
+    : 0;
 }
 
 /** The session's laps, picked by its lap index and ordered by start. */

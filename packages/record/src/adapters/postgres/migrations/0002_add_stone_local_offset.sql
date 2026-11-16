@@ -1,0 +1,1 @@
+ALTER TABLE "record"."stones" ADD COLUMN "local_offset" integer DEFAULT 0 NOT NULL;

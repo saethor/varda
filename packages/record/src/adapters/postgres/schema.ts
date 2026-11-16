@@ -1,4 +1,15 @@
-import { date, doublePrecision, index, jsonb, pgSchema, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
+import {
+  date,
+  doublePrecision,
+  index,
+  integer,
+  jsonb,
+  pgSchema,
+  text,
+  timestamp,
+  unique,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 // The Record context's own Postgres schema (ADR 0005). Change it, then run
 // `pnpm --filter @varda/record db:generate` and commit the new migration.
@@ -23,6 +34,8 @@ export const stones = record.table(
     sessionKey: text('session_key').notNull(),
     fileName: text('file_name').notNull(),
     start: timestamp('start', { withTimezone: true }).notNull(),
+    // Seconds the local time was ahead of UTC; 0 for stones placed before it was kept, as UTC.
+    localOffset: integer('local_offset').notNull().default(0),
     localDate: date('local_date', { mode: 'string' }).notNull(),
     sport: text('sport').notNull(),
     // Metres, or null when the watch recorded none.

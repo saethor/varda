@@ -1,11 +1,6 @@
-/** A calendar date with no zone, `YYYY-MM-DD`, as the contract speaks of local dates. */
-export type LocalDate = string;
+import { type LocalDate, shiftDate as shift } from './local-date.ts';
 
 const weeksPerWindow = 4;
-const day = 24 * 60 * 60 * 1000;
-
-const shift = (date: LocalDate, days: number): LocalDate =>
-  new Date(Date.parse(`${date}T00:00:00Z`) + days * day).toISOString().slice(0, 10);
 
 /**
  * The local dates the feed loads at a time: 4 weeks, both ends included. Window 0 ends today;

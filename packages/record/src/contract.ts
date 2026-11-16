@@ -18,6 +18,11 @@ const StoneSchema = z.object({
   /** The local date where the stone started, `YYYY-MM-DD`. */
   localDate: z.iso.date(),
   start: z.date(),
+  /**
+   * Seconds the local time where the stone started was ahead of UTC (negative when behind): its
+   * start shifted by this is the time of day it was there. 0 when the watch file had no local time.
+   */
+  localOffset: z.number().int(),
   sport: SportSchema,
   /** The name of the watch file the stone was placed from. */
   fileName: z.string(),
@@ -35,6 +40,7 @@ export const maxWatchFileBytes = 25_000_000;
 
 /** Why a watch file is turned away. */
 const turnedAwayReasons = ['not-a-fit-file', 'too-large', 'broken', 'not-a-session', 'multisport'] as const;
+export type TurnedAwayReason = (typeof turnedAwayReasons)[number];
 
 export const recordContract = {
   stones: {

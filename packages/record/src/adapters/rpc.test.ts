@@ -26,6 +26,7 @@ describe('placing a stone', () => {
         id: stoneId,
         localDate: '2026-11-02',
         start: new Date('2026-11-02T07:30:00Z'),
+        localOffset: 0,
         sport: { sport: 'road-running', group: 'running' },
         fileName: 'morning-run.fit',
         distance: 3000,
@@ -151,7 +152,7 @@ describe('placing a stone', () => {
     expect(stone).toMatchObject({ sport: { sport: 'strength' }, distance: null, laps: [] });
   });
 
-  it('dates a stone by the local day it started on, even when that is another day in UTC', async () => {
+  it('dates a stone by the local day it started on, even when that is another day in UTC, keeping its offset', async () => {
     const client = clientFor({ person: guðrún });
     // 22:30 in New York (UTC−5) on the 2nd is 03:30 UTC on the 3rd.
     const lateEvening = watchFile({ start: new Date('2026-11-03T03:30:00Z'), localOffset: -5 * 3600 });
@@ -162,17 +163,20 @@ describe('placing a stone', () => {
     await client.stones.place({ file: fitFile(pastMidnight) });
     const stones = await client.stones.list({ from: '2026-11-01', to: '2026-11-05' });
 
-    expect(stones.map((stone) => stone.localDate)).toEqual(['2026-11-04', '2026-11-02']);
+    expect(stones.map((stone) => [stone.localDate, stone.localOffset])).toEqual([
+      ['2026-11-04', 3600],
+      ['2026-11-02', -5 * 3600],
+    ]);
   });
 
-  it('dates a stone by its UTC day when the watch file has no local time', async () => {
+  it('dates and times a stone in UTC when the watch file has no local time', async () => {
     const client = clientFor({ person: guðrún });
     const noLocalTime = watchFile({ start: new Date('2026-11-03T23:30:00Z'), localOffset: null });
 
     await client.stones.place({ file: fitFile(noLocalTime) });
     const stones = await client.stones.list({ from: '2026-11-01', to: '2026-11-05' });
 
-    expect(stones.map((stone) => stone.localDate)).toEqual(['2026-11-03']);
+    expect(stones.map((stone) => [stone.localDate, stone.localOffset])).toEqual([['2026-11-03', 0]]);
   });
 
   it('refuses someone who is not signed in with the typed error', async () => {

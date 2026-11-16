@@ -15,6 +15,13 @@
       "when": 1794836228198,
       "tag": "0001_add_stone_trace",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794838875858,
+      "tag": "0002_add_stone_local_offset",
+      "breakpoints": true
     }
   ]
 }

@@ -4,10 +4,11 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, notFound, useRouterState } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { formatDistance, formatDuration } from '@varda/ui/lib/format';
-import type { ReactNode } from 'react';
 import { type Stone, stoneQuery } from '../../lib/stones.ts';
 import { DeleteStone } from '../../stones/delete-stone.tsx';
+import { HeadlineNumbers } from '../../stones/headline-numbers.tsx';
 import { LapBars } from '../../stones/lap-bars.tsx';
+import { localStartOf, midnightOf } from '../../stones/local-date.ts';
 import { paceOrSpeed } from '../../stones/pace-or-speed.ts';
 import { SportName } from '../../stones/stone-card.tsx';
 import { TraceSvg } from '../../stones/trace-svg.tsx';
@@ -62,10 +63,9 @@ function StoneScreen() {
   const { data: stone } = useSuspenseQuery(stoneQuery(stoneId));
   const justPlaced = useRouterState({ select: (state) => state.location.state.placed === true });
   const { i18n } = useLingui();
-  // A local date has no zone: shown as written, never shifted into the browser's.
-  const day = i18n.date(new Date(`${stone.localDate}T00:00:00Z`), { dateStyle: 'full', timeZone: 'UTC' });
-  const time = i18n.date(stone.start, { timeStyle: 'short' });
-  const pace = paceOrSpeed(stone.sport.sport, stone.distance, stone.movingTime, i18n.locale);
+  // The day and time where the stone was done, never shifted into the browser's zone.
+  const day = i18n.date(midnightOf(stone.localDate), { dateStyle: 'full', timeZone: 'UTC' });
+  const time = i18n.date(localStartOf(stone), { timeStyle: 'short', timeZone: 'UTC' });
   const fileName = stone.fileName;
 
   return (
@@ -92,16 +92,7 @@ function StoneScreen() {
         {stone.trace !== null && <TraceSvg trace={stone.trace} className="h-24 w-40 shrink-0 text-primary" />}
       </div>
 
-      <dl className="grid grid-cols-2 gap-6 rounded-xl border bg-card p-6 tabular-nums md:grid-cols-4">
-        {stone.distance !== null && (
-          <Headline label={<Trans>Distance</Trans>} value={formatDistance(stone.distance, i18n.locale)} />
-        )}
-        <Headline label={<Trans>Moving time</Trans>} value={formatDuration(stone.movingTime)} />
-        {pace && (
-          <Headline label={pace.measure === 'pace' ? <Trans>Pace</Trans> : <Trans>Speed</Trans>} value={pace.value} />
-        )}
-        <Headline label={<Trans>Elapsed time</Trans>} value={formatDuration(stone.elapsedTime)} />
-      </dl>
+      <HeadlineNumbers stone={stone} size="screen" className="gap-6 rounded-xl border bg-card p-6 md:grid-cols-4" />
 
       <section aria-labelledby="laps" className="flex flex-col gap-3">
         <h2 id="laps" className="text-lg font-semibold">
@@ -126,15 +117,6 @@ function StoneScreen() {
         <DeleteStone stone={stone} />
       </div>
     </section>
-  );
-}
-
-function Headline({ label, value }: { label: ReactNode; value: string }) {
-  return (
-    <div>
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-3xl">{value}</dd>
-    </div>
   );
 }
 

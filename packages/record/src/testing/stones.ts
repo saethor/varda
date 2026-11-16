@@ -17,6 +17,7 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
     sessionKey: `garmin:3412345678:${start.toISOString()}`,
     fileName: 'run.fit',
     start,
+    localOffset: 0,
     localDate,
     sport: 'road-running',
     distance: 3000,
@@ -46,16 +47,16 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
  */
 export function describeStones(name: string, setup: () => Promise<StonesSetup>): void {
   describe(`Stones (${name})`, () => {
-    it('finds an added stone by its ID, with its laps and trace, or none', async () => {
+    it('finds an added stone by its ID, with its laps, trace and local offset, or none', async () => {
       const { stones, ids } = await setup();
       const added = stone(ids, ids.next(), '2026-11-02');
-      const indoors = { ...stone(ids, ids.next(), '2026-11-03'), trace: null };
+      const indoorsAbroad = { ...stone(ids, ids.next(), '2026-11-03'), trace: null, localOffset: -5 * 3600 };
 
       await stones.add(added);
-      await stones.add(indoors);
+      await stones.add(indoorsAbroad);
 
       expect(await stones.byId(added.id)).toEqual(added);
-      expect(await stones.byId(indoors.id)).toEqual(indoors);
+      expect(await stones.byId(indoorsAbroad.id)).toEqual(indoorsAbroad);
       expect(await stones.byId(ids.next())).toBeNull();
     });
 

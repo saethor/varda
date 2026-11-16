@@ -6,7 +6,7 @@ import { formatDistance, formatDuration } from '@varda/ui/lib/format';
 import { cn } from '@varda/ui/lib/utils';
 import { calendarQuery, type Stone, usePlaceStone } from '../lib/stones.ts';
 import { type CalendarWeek, calendarWeeks, type Month, otherMonth } from './calendar-month.ts';
-import type { LocalDate } from './feed-window.ts';
+import { type LocalDate, midnightOf } from './local-date.ts';
 import { PlacingPanel } from './placing-panel.tsx';
 import { SportName } from './stone-card.tsx';
 
@@ -80,8 +80,7 @@ export function StonesCalendar({ month }: { month: Month }) {
 /** The month on screen, with links to the months before and after it. */
 function MonthHeader({ month }: { month: Month }) {
   const { i18n } = useLingui();
-  const name = (m: Month) =>
-    i18n.date(new Date(`${m}-01T00:00:00Z`), { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const name = (m: Month) => i18n.date(midnightOf(`${m}-01`), { month: 'long', year: 'numeric', timeZone: 'UTC' });
   const before = otherMonth(month, -1);
   const after = otherMonth(month, 1);
   const step = buttonVariants({ variant: 'outline', size: 'sm' });
@@ -112,7 +111,7 @@ function WeekdayHeader({ week }: { week: CalendarWeek<Stone> | undefined }) {
     <div className={cn('hidden text-xs text-muted-foreground lg:grid', weekGrid)} aria-hidden>
       {week.days.map(({ date }) => (
         <span key={date} className="px-2">
-          {i18n.date(utc(date), { weekday: 'short', timeZone: 'UTC' })}
+          {i18n.date(midnightOf(date), { weekday: 'short', timeZone: 'UTC' })}
         </span>
       ))}
       <span className="px-2">
@@ -125,7 +124,7 @@ function WeekdayHeader({ week }: { week: CalendarWeek<Stone> | undefined }) {
 function Week({ week }: { week: CalendarWeek<Stone> }) {
   const { i18n } = useLingui();
   const short = (date: LocalDate | undefined) =>
-    date ? i18n.date(utc(date), { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
+    date ? i18n.date(midnightOf(date), { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '';
   const dates = `${short(week.days[0]?.date)} – ${short(week.days[6]?.date)}`;
   const stones = week.days.flatMap((d) => d.stones);
 
@@ -203,7 +202,13 @@ function CalendarStone({ stone, withDay = false }: { stone: Stone; withDay?: boo
         {withDay && (
           <>
             {' '}
-            · {i18n.date(utc(stone.localDate), { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })}
+            ·{' '}
+            {i18n.date(midnightOf(stone.localDate), {
+              weekday: 'short',
+              day: 'numeric',
+              month: 'short',
+              timeZone: 'UTC',
+            })}
           </>
         )}
       </span>
@@ -216,6 +221,3 @@ function CalendarStone({ stone, withDay = false }: { stone: Stone; withDay?: boo
     </Link>
   );
 }
-
-// A local date has no zone: shown as written, never shifted into the browser's.
-const utc = (date: LocalDate) => new Date(`${date}T00:00:00Z`);

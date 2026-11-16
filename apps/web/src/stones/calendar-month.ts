@@ -1,4 +1,4 @@
-import type { LocalDate } from './feed-window.ts';
+import { type LocalDate, midnightOf, shiftDate as shift } from './local-date.ts';
 
 /** A calendar month with no zone, `YYYY-MM`. */
 export type Month = string;
@@ -26,12 +26,8 @@ export interface CalendarWeek<S> {
   totals: { stones: number; distance: number | null; movingTime: number };
 }
 
-const day = 24 * 60 * 60 * 1000;
-const time = (date: LocalDate) => Date.parse(`${date}T00:00:00Z`);
-const shift = (date: LocalDate, days: number): LocalDate =>
-  new Date(time(date) + days * day).toISOString().slice(0, 10);
 /** Monday is 0, Sunday 6. */
-const weekday = (date: LocalDate) => (new Date(time(date)).getUTCDay() + 6) % 7;
+const weekday = (date: LocalDate) => (midnightOf(date).getUTCDay() + 6) % 7;
 const yearAndNumber = (month: Month) => month.split('-').map(Number) as [number, number];
 
 /** The month a local date falls in. */
@@ -56,7 +52,8 @@ export function monthOnScreen(month: Month): { from: LocalDate; to: LocalDate } 
 
 /**
  * The month on screen as Mon–Sun weeks, each stone on the day of its local date, with each week's
- * totals. Stones outside the month on screen are left out.
+ * totals. The first and last week are whole, so the days they carry of the months around this one
+ * show their stones, and count in their week's totals; stones outside those weeks are left out.
  */
 export function calendarWeeks<S extends CalendarStone>(month: Month, stones: readonly S[]): CalendarWeek<S>[] {
   const { from, to } = monthOnScreen(month);

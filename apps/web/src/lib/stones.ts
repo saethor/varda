@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { type Month, monthOnScreen } from '../stones/calendar-month.ts';
-import { feedWindow, type LocalDate } from '../stones/feed-window.ts';
+import { feedWindow } from '../stones/feed-window.ts';
+import type { LocalDate } from '../stones/local-date.ts';
 import { type client, orpc } from './orpc.ts';
 
 /** A stone as the contract shows it. */

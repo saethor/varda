@@ -37,6 +37,11 @@ export type TurnedAwayReason = 'not-a-fit-file' | 'broken' | 'not-a-session' | '
 export type Session = {
   sessionKey: SessionKey;
   start: Date;
+  /**
+   * Seconds the local time where the session started was ahead of UTC (negative when behind),
+   * so its start can be shown as the time of day it was there. 0 when the watch file has no local time.
+   */
+  localOffset: number;
   /** The local date where the session started. */
   localDate: LocalDate;
   sport: Sport;

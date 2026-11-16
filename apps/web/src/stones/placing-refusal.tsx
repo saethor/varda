@@ -1,13 +1,12 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from '@tanstack/react-router';
+import type { TurnedAwayReason } from '@varda/contract';
 import { Alert, AlertDescription, AlertTitle } from '@varda/ui/components/alert';
 import { linkClassName } from '../components/form.tsx';
 import type { Stone } from '../lib/stones.ts';
+import { midnightOf } from './local-date.ts';
 
-/** Why a watch file was turned away, by the browser or by the server. */
-export type TurnedAwayReason = 'not-a-fit-file' | 'too-large' | 'broken' | 'not-a-session' | 'multisport';
-
-/** Why a stone wasn't placed: the session already was, or the file was turned away. */
+/** Why a stone wasn't placed: the session already was, or the file was turned away, by the browser or the server. */
 export type Refusal = { alreadyPlaced: string } | { turnedAway: TurnedAwayReason };
 
 /**
@@ -57,7 +56,7 @@ export function PlacingRefusal({ refusal, stones }: { refusal: Refusal; stones: 
 function PlacedBefore({ stone }: { stone: Stone }) {
   const { i18n } = useLingui();
   // A local date has no zone: shown as written, never shifted into the browser's.
-  const day = i18n.date(new Date(`${stone.localDate}T00:00:00Z`), { dateStyle: 'medium', timeZone: 'UTC' });
+  const day = i18n.date(midnightOf(stone.localDate), { dateStyle: 'medium', timeZone: 'UTC' });
   const fileName = stone.fileName;
   return (
     <Trans>

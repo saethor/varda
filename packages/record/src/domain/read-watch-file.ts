@@ -1,30 +1,61 @@
 // Reading a watch file is pure domain code: @garmin/fitsdk only decodes bytes in memory (spec #60).
 // FIT words (activity, session, timer time) stay in this file; everything it returns is Record's.
-import { type ActivityMesg, Decoder, type LapMesg, type SessionMesg, Stream } from '@garmin/fitsdk';
+import { type ActivityMesg, Decoder, type FileIdMesg, type LapMesg, type SessionMesg, Stream } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
-import type { Lap, LapTrigger, LocalDate, Session } from './stone.ts';
+import type { Lap, LapTrigger, LocalDate, Session, SessionKey, TurnedAwayReason } from './stone.ts';
+
+/** What a watch file holds: a session that can be placed, or why it is turned away. */
+export type WatchFileReading = { session: Session } | { turnedAway: TurnedAwayReason };
 
 /** Reads the session a watch file recorded. */
-export function readWatchFile(bytes: Uint8Array): Session {
-  const { messages, errors } = new Decoder(Stream.fromByteArray(bytes)).read();
+export function readWatchFile(bytes: Uint8Array): WatchFileReading {
+  const decoder = new Decoder(Stream.fromByteArray(bytes));
+  // Known by its header bytes, never its name or type.
+  if (!decoder.isFIT()) return { turnedAway: 'not-a-fit-file' };
+  if (!decoder.checkIntegrity()) return { turnedAway: 'broken' };
+
+  const { messages, errors } = decoder.read();
+  if (errors.length > 0) return { turnedAway: 'broken' };
   const [fileId] = messages.fileIdMesgs ?? [];
   const [session] = messages.sessionMesgs ?? [];
-  if (errors.length > 0 || fileId === undefined || session === undefined) {
-    throw new Error('The watch file holds no session that can be read.');
-  }
+  // Only an activity holds a session; settings, courses and workouts hold no training.
+  if (fileId?.type !== 'activity' || session === undefined) return { turnedAway: 'not-a-session' };
+  if (isMultisport(messages.sessionMesgs ?? [], messages.activityMesgs?.[0])) return { turnedAway: 'multisport' };
 
   const start = dateOf(session.startTime);
   const laps = lapsOf(session, messages.lapMesgs ?? []);
   return {
-    sessionKey: [fileId.manufacturer, fileId.serialNumber, dateOf(fileId.timeCreated).toISOString()].join(':'),
-    start,
-    localDate: localDateOf(start, messages.activityMesgs?.[0]),
-    sport: sportOf(session),
-    distance: session.totalDistance || null,
-    movingTime: session.totalTimerTime ?? 0,
-    elapsedTime: session.totalElapsedTime ?? 0,
-    laps,
+    session: {
+      sessionKey: sessionKeyOf(fileId, start),
+      start,
+      localDate: localDateOf(start, messages.activityMesgs?.[0]),
+      sport: sportOf(session),
+      distance: session.totalDistance || null,
+      movingTime: session.totalTimerTime ?? 0,
+      elapsedTime: session.totalElapsedTime ?? 0,
+      laps,
+    },
   };
+}
+
+/** A triathlon, a brick or any other session of several sports in one file. Not placed yet (spec #60). */
+function isMultisport(sessions: SessionMesg[], activity: ActivityMesg | undefined): boolean {
+  const multisportSports: unknown[] = ['transition', 'multisport'];
+  return (
+    sessions.filter((session) => session.sport !== 'transition').length > 1 ||
+    (activity?.numSessions ?? 1) > 1 ||
+    sessions.some((session) => multisportSports.includes(session.sport))
+  );
+}
+
+/**
+ * The watch, and when it wrote the file. A watch with no serial number (0) can't be told apart
+ * from others of its model that way, so it falls back to the model and when the session started.
+ */
+function sessionKeyOf(fileId: FileIdMesg, start: Date): SessionKey {
+  return fileId.serialNumber
+    ? [fileId.manufacturer, fileId.serialNumber, dateOf(fileId.timeCreated).toISOString()].join(':')
+    : [fileId.manufacturer, fileId.product, start.toISOString()].join(':');
 }
 
 /** The local date where the session started: its start shifted by the activity's local time offset. */

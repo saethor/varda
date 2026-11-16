@@ -15,6 +15,16 @@ import {
 export type WatchFileOptions = {
   /** When the session started (UTC). */
   start?: Date;
+  /** The watch's serial number; 0 when the watch wrote none. */
+  serialNumber?: number;
+  /** When the file was written (UTC). By default when the session ended. */
+  timeCreated?: Date;
+  /** Spoil the file's CRC, as a file damaged on its way off the watch. */
+  brokenCrc?: boolean;
+  /** What kind of FIT file it is: an activity (a session), or settings, a course, a workout… */
+  fileType?: FileIdMesg['type'];
+  /** Follow the run with a transition and a ride in the same file, as a brick session. */
+  multisport?: boolean;
 };
 
 // Global FIT message numbers (FIT profile).
@@ -46,7 +56,14 @@ const positions: [number, number][] = [
  * A FIT activity file as a watch writes it. By default a road run with 3 laps, a few GPS points
  * and a local time offset of 0, started at 2026-11-02 07:30 UTC.
  */
-export function watchFile({ start = new Date('2026-11-02T07:30:00Z') }: WatchFileOptions = {}): Uint8Array {
+export function watchFile({
+  start = new Date('2026-11-02T07:30:00Z'),
+  serialNumber = 3_412_345_678,
+  timeCreated,
+  brokenCrc = false,
+  fileType = 'activity',
+  multisport = false,
+}: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const elapsedTime = lap.elapsedTime * lapCount;
   const end = at(elapsedTime);
@@ -55,11 +72,11 @@ export function watchFile({ start = new Date('2026-11-02T07:30:00Z') }: WatchFil
 
   write<FileIdMesg>({
     mesgNum: fileIdMesg,
-    type: 'activity',
+    type: fileType,
     manufacturer: garmin,
     product: forerunner255,
-    serialNumber: 3_412_345_678,
-    timeCreated: end,
+    serialNumber,
+    timeCreated: timeCreated ?? end,
   });
 
   positions.forEach(([lat, lon], i) => {
@@ -99,15 +116,45 @@ export function watchFile({ start = new Date('2026-11-02T07:30:00Z') }: WatchFil
     numLaps: lapCount,
   });
 
+  // A brick: the run, a transition, then a ride with no laps of its own.
+  const brick: (Pick<SessionMesg, 'sport' | 'totalElapsedTime' | 'totalTimerTime' | 'totalDistance'> & {
+    startTime: Date;
+    totalElapsedTime: number;
+  })[] = multisport
+    ? [
+        { sport: 'transition', startTime: end, totalElapsedTime: 60, totalTimerTime: 60, totalDistance: 0 },
+        {
+          sport: 'cycling',
+          startTime: at(elapsedTime + 60),
+          totalElapsedTime: 600,
+          totalTimerTime: 600,
+          totalDistance: 5000,
+        },
+      ]
+    : [];
+  brick.forEach((session, i) => {
+    write<SessionMesg>({
+      mesgNum: sessionMesg,
+      messageIndex: i + 1,
+      timestamp: new Date(session.startTime.getTime() + session.totalElapsedTime * 1000),
+      firstLapIndex: lapCount,
+      numLaps: 0,
+      ...session,
+    });
+  });
+
   write<ActivityMesg>({
     mesgNum: activityMesg,
     timestamp: end,
     // Local time as seconds since the FIT epoch, which the encoder only takes as a number.
     localTimestamp: end.getTime() / 1000 - fitEpoch,
-    numSessions: 1,
+    numSessions: 1 + brick.length,
     type: 'manual',
     totalTimerTime: lap.timerTime * lapCount,
   });
 
-  return encoder.close();
+  const bytes = encoder.close();
+  // The file's CRC is its last two bytes.
+  if (brokenCrc) bytes[bytes.length - 1] = (bytes[bytes.length - 1] ?? 0) ^ 0xff;
+  return bytes;
 }

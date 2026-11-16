@@ -57,9 +57,81 @@ describe('placing a stone', () => {
     ]);
   });
 
+  it('answers that a session already placed is placed, with the first stone', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+
+    const { error, isDefined } = await safe(client.stones.place({ file: fitFile(watchFile(), 'copy.fit') }));
+
+    expect(isDefined && { code: error.code, data: error.data }).toEqual({ code: 'ALREADY_PLACED', data: { stoneId } });
+  });
+
+  it('knows a session from a watch with no serial number by its start, whenever its file was written', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ serialNumber: 0 })) });
+    const exportedLater = watchFile({ serialNumber: 0, timeCreated: new Date('2026-11-20T12:00:00Z') });
+
+    const { error, isDefined } = await safe(client.stones.place({ file: fitFile(exportedLater) }));
+
+    expect(isDefined && { code: error.code, data: error.data }).toEqual({ code: 'ALREADY_PLACED', data: { stoneId } });
+  });
+
+  it('answers a lost race to place the same session with the stone that won it, keeping no recording', async () => {
+    const adapters = createRecordFakes();
+    const client = clientFor({ person: guðrún }, adapters);
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+    // The racing request looked before the winner's stone was there.
+    adapters.stones = { ...adapters.stones, withSessionKey: async () => null };
+    let loser = '';
+    const add = adapters.stones.add;
+    adapters.stones.add = async (stone) => {
+      loser = stone.id;
+      return await add(stone);
+    };
+
+    const { error, isDefined } = await safe(client.stones.place({ file: fitFile(watchFile()) }));
+
+    expect(isDefined && { code: error.code, data: error.data }).toEqual({ code: 'ALREADY_PLACED', data: { stoneId } });
+    expect(await adapters.recordings.get(loser)).toBeNull();
+  });
+
+  it('keeps no recording when the stone could not be added', async () => {
+    const adapters = createRecordFakes();
+    let tried = '';
+    adapters.stones.add = async (stone) => {
+      tried = stone.id;
+      throw new Error('The database is down.');
+    };
+
+    const { error } = await safe(clientFor({ person: guðrún }, adapters).stones.place({ file: fitFile(watchFile()) }));
+
+    expect(error).not.toBeNull();
+    expect(await adapters.recordings.get(tried)).toBeNull();
+  });
+
   it('refuses someone who is not signed in with the typed error', async () => {
     const { error, isDefined } = await safe(clientFor({ person: null }).stones.place({ file: fitFile(watchFile()) }));
     expect(isDefined && error.code).toBe('UNAUTHORIZED');
+  });
+});
+
+describe('turning a watch file away', () => {
+  const notAFitFile = new TextEncoder().encode('lap,distance\n1,1000\n');
+
+  it.each([
+    ['not-a-fit-file', fitFile(notAFitFile, 'run.fit')],
+    ['broken', fitFile(watchFile({ brokenCrc: true }))],
+    ['not-a-session', fitFile(watchFile({ fileType: 'course' }))],
+    ['multisport', fitFile(watchFile({ multisport: true }))],
+    // 25 MB is the most Varða takes; this starts as a real watch file and is 1 byte over.
+    ['too-large', new File([watchFile() as Uint8Array<ArrayBuffer>, new Uint8Array(25_000_001)], 'huge.fit')],
+  ])('turns away a file that is %s, keeping nothing', async (reason, file) => {
+    const client = clientFor({ person: guðrún });
+
+    const { error, isDefined } = await safe(client.stones.place({ file }));
+
+    expect(isDefined && { code: error.code, data: error.data }).toEqual({ code: 'TURNED_AWAY', data: { reason } });
+    expect(await client.stones.list({ from: '2000-01-01', to: '2100-01-01' })).toEqual([]);
   });
 });
 

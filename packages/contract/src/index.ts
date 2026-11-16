@@ -11,3 +11,6 @@ export const contract = {
 };
 
 export type Contract = typeof contract;
+
+// The limits both ends of the contract check.
+export { maxWatchFileBytes } from '@varda/record/contract';

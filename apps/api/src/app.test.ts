@@ -37,6 +37,19 @@ describe('api', () => {
     expect(stones.map(({ id, fileName }) => ({ id, fileName }))).toEqual([{ id: stoneId, fileName: 'run.fit' }]);
   });
 
+  it('turns away a body over the upload limit with the typed error', async () => {
+    const { client } = createTestApp({ as: guðrún });
+    const file = new File([new Uint8Array(26_000_000)], 'huge.fit');
+
+    const { error, isDefined } = await safe(client.record.stones.place({ file }));
+
+    expect(isDefined && { code: error.code, status: error.status, data: error.data }).toEqual({
+      code: 'TURNED_AWAY',
+      status: 413,
+      data: { reason: 'too-large' },
+    });
+  });
+
   it('refuses nobody signed in with the typed error', async () => {
     const { client } = createTestApp();
     const { error, isDefined } = await safe(client.shared.persons.me());

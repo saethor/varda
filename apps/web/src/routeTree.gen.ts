@@ -15,6 +15,8 @@ import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignedInIndexRouteImport } from './routes/_signed-in/index'
 import { Route as SignedInAddAPasskeyRouteImport } from './routes/_signed-in/add-a-passkey'
 import { Route as SignedInSettingsRouteImport } from './routes/_signed-in/settings'
+import { Route as SignedInStonesRouteImport } from './routes/_signed-in/stones'
+import { Route as SignedInStonesStoneIdRouteImport } from './routes/_signed-in/stones_.$stoneId'
 
 const SignedInRoute = SignedInRouteImport.update({
   id: '/_signed-in',
@@ -45,6 +47,16 @@ const SignedInSettingsRoute = SignedInSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => SignedInRoute,
 } as any)
+const SignedInStonesRoute = SignedInStonesRouteImport.update({
+  id: '/stones',
+  path: '/stones',
+  getParentRoute: () => SignedInRoute,
+} as any)
+const SignedInStonesStoneIdRoute = SignedInStonesStoneIdRouteImport.update({
+  id: '/stones_/$stoneId',
+  path: '/stones/$stoneId',
+  getParentRoute: () => SignedInRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SignedInIndexRoute
@@ -52,13 +64,17 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/add-a-passkey': typeof SignedInAddAPasskeyRoute
   '/settings': typeof SignedInSettingsRoute
+  '/stones': typeof SignedInStonesRoute
+  '/stones/$stoneId': typeof SignedInStonesStoneIdRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/add-a-passkey': typeof SignedInAddAPasskeyRoute
   '/settings': typeof SignedInSettingsRoute
+  '/stones': typeof SignedInStonesRoute
   '/': typeof SignedInIndexRoute
+  '/stones/$stoneId': typeof SignedInStonesStoneIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,13 +83,29 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/_signed-in/add-a-passkey': typeof SignedInAddAPasskeyRoute
   '/_signed-in/settings': typeof SignedInSettingsRoute
+  '/_signed-in/stones': typeof SignedInStonesRoute
   '/_signed-in/': typeof SignedInIndexRoute
+  '/_signed-in/stones_/$stoneId': typeof SignedInStonesStoneIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up' | '/add-a-passkey' | '/settings'
+  fullPaths:
+    | '/'
+    | '/sign-in'
+    | '/sign-up'
+    | '/add-a-passkey'
+    | '/settings'
+    | '/stones'
+    | '/stones/$stoneId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/add-a-passkey' | '/settings' | '/'
+  to:
+    | '/sign-in'
+    | '/sign-up'
+    | '/add-a-passkey'
+    | '/settings'
+    | '/stones'
+    | '/'
+    | '/stones/$stoneId'
   id:
     | '__root__'
     | '/_signed-in'
@@ -81,7 +113,9 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/_signed-in/add-a-passkey'
     | '/_signed-in/settings'
+    | '/_signed-in/stones'
     | '/_signed-in/'
+    | '/_signed-in/stones_/$stoneId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -134,19 +168,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignedInSettingsRouteImport
       parentRoute: typeof SignedInRoute
     }
+    '/_signed-in/stones': {
+      id: '/_signed-in/stones'
+      path: '/stones'
+      fullPath: '/stones'
+      preLoaderRoute: typeof SignedInStonesRouteImport
+      parentRoute: typeof SignedInRoute
+    }
+    '/_signed-in/stones_/$stoneId': {
+      id: '/_signed-in/stones_/$stoneId'
+      path: '/stones/$stoneId'
+      fullPath: '/stones/$stoneId'
+      preLoaderRoute: typeof SignedInStonesStoneIdRouteImport
+      parentRoute: typeof SignedInRoute
+    }
   }
 }
 
 interface SignedInRouteChildren {
   SignedInAddAPasskeyRoute: typeof SignedInAddAPasskeyRoute
   SignedInSettingsRoute: typeof SignedInSettingsRoute
+  SignedInStonesRoute: typeof SignedInStonesRoute
   SignedInIndexRoute: typeof SignedInIndexRoute
+  SignedInStonesStoneIdRoute: typeof SignedInStonesStoneIdRoute
 }
 
 const SignedInRouteChildren: SignedInRouteChildren = {
   SignedInAddAPasskeyRoute: SignedInAddAPasskeyRoute,
   SignedInSettingsRoute: SignedInSettingsRoute,
+  SignedInStonesRoute: SignedInStonesRoute,
   SignedInIndexRoute: SignedInIndexRoute,
+  SignedInStonesStoneIdRoute: SignedInStonesStoneIdRoute,
 }
 
 const SignedInRouteWithChildren = SignedInRoute._addFileChildren(

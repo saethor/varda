@@ -2,7 +2,8 @@ import { oc } from '@orpc/contract';
 import { z } from 'zod';
 import { type Sport, sportGroups, sports } from './domain/sport.ts';
 
-const SportSchema = z.object({
+/** A sport with its group, as every context's contract shows one. */
+export const SportSchema = z.object({
   sport: z.enum(sports as [Sport, ...Sport[]]),
   group: z.enum(sportGroups),
 });

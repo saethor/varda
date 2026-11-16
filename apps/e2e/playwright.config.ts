@@ -1,3 +1,6 @@
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 
 // Ports of their own, so a run never reuses an API or web app left running for development.
@@ -7,9 +10,15 @@ const webPort = 4174;
 // which Better Auth takes from BETTER_AUTH_URL, so passkeys only work on a host name.
 const webOrigin = `http://localhost:${webPort}`;
 
+// A fresh directory for the API's recordings on every run, removed by global-teardown.ts. Playwright
+// loads this file again in each worker, which inherits the environment, so a run makes only one.
+process.env.VARDA_E2E_RECORDINGS_DIR ??= mkdtempSync(join(tmpdir(), 'varda-e2e-recordings-'));
+const recordingsDir = process.env.VARDA_E2E_RECORDINGS_DIR;
+
 export default defineConfig({
   testDir: 'tests',
   forbidOnly: !!process.env.CI,
+  globalTeardown: './global-teardown.ts',
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['list']] : 'list',
   use: {
@@ -22,11 +31,17 @@ export default defineConfig({
       // DATABASE_URL, BETTER_AUTH_SECRET and VARDA_DEV_PASSWORD come from the environment, or
       // locally from the root .env. BETTER_AUTH_URL is the web app's origin, since Better Auth is
       // reached through its proxy and checks the Origin header. Set here, it wins over the .env's
-      // dev-server address. The seed adds the dev persons once and skips them on every later run,
-      // and VARDA_DEV_MENU serves the dev menu's endpoints, so the dev menu has persons to switch to.
+      // dev-server address. Recordings go to this run's temporary directory, never the developer's
+      // own. The seed adds the dev persons once and skips them on every later run, and
+      // VARDA_DEV_MENU serves the dev menu's endpoints, so the dev menu has persons to switch to.
       command: 'node --env-file-if-exists=../../.env src/seed.ts && node --env-file-if-exists=../../.env src/main.ts',
       cwd: '../api',
-      env: { PORT: String(apiPort), BETTER_AUTH_URL: webOrigin, VARDA_DEV_MENU: 'true' },
+      env: {
+        PORT: String(apiPort),
+        BETTER_AUTH_URL: webOrigin,
+        VARDA_DEV_MENU: 'true',
+        VARDA_RECORDINGS_DIR: recordingsDir,
+      },
       url: `http://127.0.0.1:${apiPort}/health`,
       reuseExistingServer: false,
     },

@@ -9,6 +9,7 @@
   "devDependencies": {
     "@playwright/test": "1.65.1",
     "@types/node": "24.19.2",
-    "@varda/config": "workspace:*"
+    "@varda/config": "workspace:*",
+    "@varda/record": "workspace:*"
   }
 }

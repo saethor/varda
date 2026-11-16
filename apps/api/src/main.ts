@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server';
+import { createRecordAdapters } from '@varda/record';
 import { createSharedAdapters, createSharedReaders } from '@varda/shared';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -11,10 +12,13 @@ import { createUuidV7Ids } from './ids.ts';
 const port = Number(process.env.PORT ?? 4000);
 
 const db = drizzle({ client: new Pool({ connectionString: required('DATABASE_URL') }) });
-const shared = createSharedAdapters({ db, ids: createUuidV7Ids() });
+const ids = createUuidV7Ids();
+const shared = createSharedAdapters({ db, ids });
+const record = createRecordAdapters({ db, ids, recordingsDir: required('VARDA_RECORDINGS_DIR') });
 
 const app = createApp({
   shared,
+  record,
   auth: createBetterAuthAdapter({
     db,
     secret: required('BETTER_AUTH_SECRET'),

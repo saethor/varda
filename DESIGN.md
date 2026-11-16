@@ -125,7 +125,7 @@ Rejected: a Strava-style social feed (bright orange, kudos, leaderboards), Garmi
 **Key Characteristics:**
 - Snow ground, basalt ink, deep-moss action, lichen as the light touch.
 - Flat and tonal: Ash Card lifts off Snow by value, with a hairline Pale Scree border.
-- One narrow, centred column on every screen today (28rem).
+- One narrow, centred column (28rem) on the focused screens; the stones screen goes wide (72rem).
 - The system sans at small sizes. Hierarchy comes from weight and a few steps of scale.
 - Light only. There is no dark mode.
 
@@ -183,7 +183,7 @@ The palette comes from the Icelandic highlands: volcanic rock, old snow, moss, l
 
 Today every screen is one centred column, at most 28rem wide, with 32px padding and a 24px gap between its blocks: the brand header, the nav, then a card. Inside a card, content insets 24px and fields stack 28px apart. Inline groups (nav links, a button with its badge) sit 16px apart, and tight pairs 8px apart. Spacing follows Tailwind's 4px step.
 
-Phones are the first scene: placing a stone right after a session. The column already fits a phone, and dialogs keep 16px clear of the screen edges. Dialog footers stack their buttons on phones (primary on top) and lay them out in a row, aligned right, from 640px. The planning and analysis screens on desktop (journey, stages, the Path) do not exist yet. When they arrive, widen the layout for those screens and leave the narrow column for the focused, one-action screens.
+Phones are the first scene: placing a stone right after a session. The column already fits a phone, and dialogs keep 16px clear of the screen edges. Dialog footers stack their buttons on phones (primary on top) and lay them out in a row, aligned right, from 640px. The planning and analysis screens on desktop (journey, stages, the Path) do not exist yet. When they arrive, widen the layout for those screens and leave the narrow column for the focused, one-action screens. The stones screen is the first wide one: a route sets `staticData: { layout: 'wide' }` and the column grows to 72rem (`max-w-6xl`), with the stones feed beside a 20rem placing panel from 1024px, and one column below that.
 
 Lists inside a card are a single bordered block with hairline dividers between rows (12px × 16px row padding), not separate cards.
 

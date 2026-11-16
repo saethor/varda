@@ -40,7 +40,10 @@ Canonical terms are themed English; Icelandic is a translation (see [ADR 0001](.
 
 - **Integration order:** manual watch-file upload (FIT/GPX) and manual entry first, then direct Garmin sync. The first target watch is the Garmin Forerunner 255.
 - **Send to watch targets Garmin structured workouts**, which map directly onto workout steps, repeat blocks and step targets.
+- **A watch file is at most 25 MB, counted as 25,000,000 bytes**, the way the athlete's computer shows file sizes. A file that can't be placed is turned away with its reason, and the message always says that nothing was kept.
 - **The original file of every stone is kept** (see [ADR 0002](../adr/0002-recordings-are-immutable-corrections-are-layered.md)), so new metrics can be calculated from old stones.
 - **Platform metrics the watch provides** (running power, HRV, Garmin's own load) are kept when present, as reference data.
 - **The app suggests which workout a stone fulfils and its workout outcome; the athlete confirms.**
 - **Deviation reasons are a short fixed list** (illness, niggle, fatigue, weather, time, conditions, felt good / did more, other), so a coach can see patterns; the story goes in the journal entry.
+- **Each sport's stones show how fast the way that sport talks** (#63): pace per km for running, walking and hiking, pace per 100 m for swimming, speed in km/h for cycling and skiing, and neither for strength and other. A stone with no laps says "totals only" (Icelandic _aðeins heildartölur_) where the lap count would be; pace is _tempó_ and speed _hraði_.
+- **A stone someone can't see is "not found", exactly like one that doesn't exist** (#64), so nobody can tell whether another athlete's stones exist. A placed stone opens on its own screen saying "Stone placed from <file>"; a session already placed links to its stone ("Open that stone", _Opna þann stein_).

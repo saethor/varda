@@ -3,6 +3,7 @@ import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import type { ContractRouterClient } from '@orpc/contract';
 import type { Contract } from '@varda/contract';
+import { createRecordFakes } from '@varda/record/testing';
 import type { Person } from '@varda/shared';
 import { createSharedFakes } from '@varda/shared/testing';
 import type { AppAdapters, Auth } from './adapters.ts';
@@ -24,7 +25,7 @@ export type TestAppOptions = {
 
 export function createTestApp({ as, overrides = {} }: TestAppOptions = {}): TestApp {
   const shared = overrides.shared ?? createSharedFakes();
-  const fakes: AppAdapters = { shared, auth: signedInAs(as, shared), ...overrides };
+  const fakes: AppAdapters = { shared, record: createRecordFakes(), auth: signedInAs(as, shared), ...overrides };
   const app = createApp(fakes);
   const client: ContractRouterClient<Contract> = createORPCClient(
     new RPCLink({ url: 'http://api.test/rpc', fetch: async (request) => await app.fetch(request) }),

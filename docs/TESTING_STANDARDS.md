@@ -53,7 +53,8 @@ tests by cost:
    `createTestApp`.
 2. **`pnpm test:adapters`**, run in CI. Each port's behaviour suite (exported
    from `./testing`) run against Postgres, so a fake can't drift from its real
-   adapter. Kept to an absolute minimum: about one case per port method,
+   adapter. Postgres here, and in the end-to-end flows, is TEST_DATABASE_URL
+   (`varda_test` locally), never the database `pnpm dev` uses. Kept to an absolute minimum: about one case per port method,
    showing the real adapter agrees with its fake. Edge cases are tested through
    the fakes in the default suite, never here.
 3. **Playwright end-to-end flows**, run in CI. A handful only: sign in, plan a

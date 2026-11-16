@@ -1,4 +1,4 @@
-import { mkdtempSync } from 'node:fs';
+import { existsSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
@@ -15,6 +15,17 @@ const webOrigin = `http://localhost:${webPort}`;
 process.env.VARDA_E2E_RECORDINGS_DIR ??= mkdtempSync(join(tmpdir(), 'varda-e2e-recordings-'));
 const recordingsDir = process.env.VARDA_E2E_RECORDINGS_DIR;
 
+// The API runs against TEST_DATABASE_URL, a database of the tests' own (`pnpm db:up` creates
+// varda_test), never the one `pnpm dev` uses: the flows sign up persons and place stones, and
+// nothing removes them.
+const rootEnv = new URL('../../.env', import.meta.url);
+if (existsSync(rootEnv)) process.loadEnvFile(rootEnv);
+const testDatabaseUrl = process.env.TEST_DATABASE_URL;
+if (!testDatabaseUrl) throw new Error('TEST_DATABASE_URL is not set (see .env.example).');
+if (testDatabaseUrl === process.env.DATABASE_URL) {
+  throw new Error('TEST_DATABASE_URL is the same as DATABASE_URL; the tests need a database of their own.');
+}
+
 export default defineConfig({
   testDir: 'tests',
   forbidOnly: !!process.env.CI,
@@ -28,15 +39,21 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      // DATABASE_URL, BETTER_AUTH_SECRET and VARDA_DEV_PASSWORD come from the environment, or
-      // locally from the root .env. BETTER_AUTH_URL is the web app's origin, since Better Auth is
-      // reached through its proxy and checks the Origin header. Set here, it wins over the .env's
-      // dev-server address. Recordings go to this run's temporary directory, never the developer's
-      // own. The seed adds the dev persons once and skips them on every later run, and
+      // BETTER_AUTH_SECRET and VARDA_DEV_PASSWORD come from the environment, or locally from the
+      // root .env. DATABASE_URL is the test database, migrated first. Set here, it and the rest of
+      // `env` win over the .env, since Node's --env-file never overrides a variable already set.
+      // BETTER_AUTH_URL is the web app's origin, since Better Auth is reached through its proxy
+      // and checks the Origin header. Recordings go to this run's temporary directory, never the
+      // developer's own. The seed adds the dev persons once and skips them on every later run, and
       // VARDA_DEV_MENU serves the dev menu's endpoints, so the dev menu has persons to switch to.
-      command: 'node --env-file-if-exists=../../.env src/seed.ts && node --env-file-if-exists=../../.env src/main.ts',
+      command: [
+        'node --env-file-if-exists=../../.env src/migrate.ts',
+        'node --env-file-if-exists=../../.env src/seed.ts',
+        'node --env-file-if-exists=../../.env src/main.ts',
+      ].join(' && '),
       cwd: '../api',
       env: {
+        DATABASE_URL: testDatabaseUrl,
         PORT: String(apiPort),
         BETTER_AUTH_URL: webOrigin,
         VARDA_DEV_MENU: 'true',

@@ -1,4 +1,4 @@
-import type { RecordAdapters } from '@varda/record';
+import type { RecordOwnAdapters } from '@varda/record';
 import type { SharedAdapters, SharedContext } from '@varda/shared';
 
 /** Login: who is asking, and the HTTP endpoints for signing up, in and out. */
@@ -12,10 +12,12 @@ export type Auth = {
 // Everything the application needs from the outside world (ADR 0008).
 // One group per context, typed by that context's own ports, plus the
 // cross-cutting `auth` adapter. The cross-cutting `ids` (and `clock`, when
-// first needed) sit inside each context's group, which uses them.
+// first needed) sit inside each context's group, which uses them. The ports a
+// context reads from another context are not here: createApp fills them with
+// the readers that context publishes.
 // main.ts passes the real adapters, tests pass in-memory fakes.
 export type AppAdapters = {
   shared: SharedAdapters;
-  record: RecordAdapters;
+  record: RecordOwnAdapters;
   auth: Auth;
 };

@@ -1,6 +1,6 @@
 import { readWatchFile } from '../domain/read-watch-file.ts';
 import type { PersonId, StoneId, TurnedAwayReason } from '../domain/stone.ts';
-import type { RecordAdapters } from './record-adapters.ts';
+import type { RecordOwnAdapters } from './record-adapters.ts';
 
 /** How placing a stone went: placed, the session was placed before, or the file was turned away. */
 export type Placing = { placed: StoneId } | { alreadyPlaced: StoneId } | { turnedAway: TurnedAwayReason };
@@ -11,7 +11,7 @@ export type Placing = { placed: StoneId } | { alreadyPlaced: StoneId } | { turne
  * stone isn't added after all, its recording is removed again (the worst case is an orphan file).
  */
 export async function placeStone(
-  adapters: RecordAdapters,
+  adapters: RecordOwnAdapters,
   athlete: PersonId,
   watchFile: { name: string; bytes: Uint8Array },
 ): Promise<Placing> {
@@ -23,7 +23,7 @@ export async function placeStone(
 
   const id = adapters.ids.next();
   await adapters.recordings.put(id, watchFile.bytes);
-  let added: Awaited<ReturnType<RecordAdapters['stones']['add']>>;
+  let added: Awaited<ReturnType<RecordOwnAdapters['stones']['add']>>;
   try {
     added = await adapters.stones.add({ ...session, id, athlete, fileName: watchFile.name });
   } catch (error) {
@@ -39,7 +39,7 @@ export async function placeStone(
 }
 
 /** Best effort: a recording left behind is only an orphan file, never a stone without one. */
-async function removeRecording(adapters: RecordAdapters, stoneId: StoneId): Promise<void> {
+async function removeRecording(adapters: RecordOwnAdapters, stoneId: StoneId): Promise<void> {
   try {
     await adapters.recordings.remove(stoneId);
   } catch {

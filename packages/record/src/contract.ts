@@ -50,5 +50,13 @@ export const recordContract = {
       .output(z.object({ stoneId: z.uuid() })),
     /** The signed-in person's own stones whose local date is within `from`–`to` (inclusive), newest first. */
     list: signedInProcedure.input(z.object({ from: z.iso.date(), to: z.iso.date() })).output(z.array(StoneSchema)),
+    /** The stone with its laps and trace. */
+    get: signedInProcedure
+      .errors({
+        /** There is no such stone, or it is one the signed-in person can't see: the two look the same. */
+        NOT_FOUND: { status: 404 },
+      })
+      .input(z.object({ stoneId: z.uuid() }))
+      .output(StoneSchema),
   },
 };

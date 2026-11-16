@@ -1,6 +1,7 @@
+import type { CoachingAccess } from '../adapters/readers.ts';
 import type { Ids, Persons } from '../application/ports.ts';
 import type { SharedAdapters } from '../application/shared-adapters.ts';
-import type { LoginAccountId, Person } from '../domain/person.ts';
+import type { LoginAccountId, Person, PersonId } from '../domain/person.ts';
 
 export function createInMemoryPersons(): Persons {
   const byLoginAccount = new Map<LoginAccountId, Person>();
@@ -37,4 +38,16 @@ export function createSequentialIds(): Ids {
 
 export function createSharedFakes(): SharedAdapters {
   return { persons: createInMemoryPersons(), ids: createSequentialIds() };
+}
+
+/**
+ * Coaching access in memory: an athlete sees their own training, and a viewer sees an athlete's
+ * when `grants` says so, so a test can stand in for a coach before coaching relationships exist.
+ */
+export function createFakeCoachingAccess(grants: { viewer: PersonId; athlete: PersonId }[] = []): CoachingAccess {
+  return {
+    async canSee(viewer, athlete) {
+      return viewer === athlete || grants.some((grant) => grant.viewer === viewer && grant.athlete === athlete);
+    },
+  };
 }

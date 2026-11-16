@@ -1,5 +1,6 @@
 import { createRouterClient, safe } from '@orpc/server';
 import type { SharedContext } from '@varda/shared';
+import { createFakeCoachingAccess } from '@varda/shared/testing';
 import { describe, expect, it } from 'vitest';
 import { createRecordFakes } from '../testing/index.ts';
 import { watchFile } from '../watch-files/index.ts';
@@ -247,5 +248,53 @@ describe('listing stones', () => {
     const jón = clientFor({ person: '00000000-0000-7000-8000-0000000000b2' }, adapters);
 
     expect(await jón.stones.list({ from: '2026-11-02', to: '2026-11-02' })).toEqual([]);
+  });
+});
+
+describe('opening a stone', () => {
+  it('opens a placed stone with its laps and trace, as the feed shows it', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile(), 'morning-run.fit') });
+
+    const stone = await client.stones.get({ stoneId });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+    expect(stone).toEqual(listed);
+    expect([stone.fileName, stone.laps.length, stone.trace?.length]).toEqual(['morning-run.fit', 3, 4]);
+  });
+
+  it('answers that a stone that does not exist is not found', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { error, isDefined } = await safe(client.stones.get({ stoneId: '00000000-0000-7000-8000-00000000ffff' }));
+
+    expect(isDefined && error.code).toBe('NOT_FOUND');
+  });
+
+  it("answers that another athlete's stone is not found, exactly as if it did not exist", async () => {
+    const adapters = createRecordFakes();
+    const { stoneId } = await clientFor({ person: guðrún }, adapters).stones.place({ file: fitFile(watchFile()) });
+    const jón = clientFor({ person: '00000000-0000-7000-8000-0000000000b2' }, adapters);
+
+    const { error, isDefined } = await safe(jón.stones.get({ stoneId }));
+
+    expect(isDefined && { code: error.code, status: error.status, data: error.data }).toEqual({
+      code: 'NOT_FOUND',
+      status: 404,
+      data: undefined,
+    });
+  });
+
+  it("opens another athlete's stone for someone coaching access lets see it", async () => {
+    const coach = '00000000-0000-7000-8000-0000000000c3';
+    const adapters = {
+      ...createRecordFakes(),
+      coachingAccess: createFakeCoachingAccess([{ viewer: coach, athlete: guðrún }]),
+    };
+    const { stoneId } = await clientFor({ person: guðrún }, adapters).stones.place({ file: fitFile(watchFile()) });
+
+    const stone = await clientFor({ person: coach }, adapters).stones.get({ stoneId });
+
+    expect(stone.id).toBe(stoneId);
   });
 });

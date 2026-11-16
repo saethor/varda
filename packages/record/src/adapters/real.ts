@@ -1,10 +1,10 @@
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type { RecordAdapters } from '../application/record-adapters.ts';
+import type { RecordOwnAdapters } from '../application/record-adapters.ts';
 import { createLocalDiskRecordings } from './local-disk/recordings.ts';
 import { createPostgresStones } from './postgres/stones.ts';
 
 /**
- * Record's real adapters (ADR 0006), on the connection, the cross-cutting `ids` adapter and the
+ * Record's own real adapters (ADR 0006), on the connection, the cross-cutting `ids` adapter and the
  * recordings directory main.ts opens, builds and reads.
  */
 export function createRecordAdapters({
@@ -13,8 +13,8 @@ export function createRecordAdapters({
   recordingsDir,
 }: {
   db: NodePgDatabase;
-  ids: RecordAdapters['ids'];
+  ids: RecordOwnAdapters['ids'];
   recordingsDir: string;
-}): RecordAdapters {
+}): RecordOwnAdapters {
   return { stones: createPostgresStones(db), recordings: createLocalDiskRecordings(recordingsDir), ids };
 }

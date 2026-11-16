@@ -1,3 +1,4 @@
+import { createFakeCoachingAccess } from '@varda/shared/testing';
 import type { Ids, Recordings, Stones } from '../application/ports.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
 import type { PersonId, SessionKey, Stone, StoneId } from '../domain/stone.ts';
@@ -54,5 +55,10 @@ export function createSequentialIds(): Ids {
 }
 
 export function createRecordFakes(): RecordAdapters {
-  return { stones: createInMemoryStones(), recordings: createInMemoryRecordings(), ids: createSequentialIds() };
+  return {
+    stones: createInMemoryStones(),
+    recordings: createInMemoryRecordings(),
+    ids: createSequentialIds(),
+    coachingAccess: createFakeCoachingAccess(),
+  };
 }

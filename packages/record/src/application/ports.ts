@@ -1,3 +1,5 @@
+export type { CoachingAccess } from '@varda/shared';
+
 import type { LocalDate, PersonId, SessionKey, Stone, StoneId } from '../domain/stone.ts';
 
 /** The athletes' stones. */

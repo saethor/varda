@@ -1,4 +1,4 @@
-import { placeStone, type RecordAdapters } from '@varda/record';
+import { placeStone, type RecordOwnAdapters } from '@varda/record';
 import { type WatchFileLap, type WatchFileOptions, watchFile } from '@varda/record/watch-files';
 
 /** `count` laps of `distance` metres in `timerTime` seconds, each with 10 s stopped. */
@@ -52,7 +52,7 @@ export async function seedStones({
   athletes,
   today,
 }: {
-  record: RecordAdapters;
+  record: RecordOwnAdapters;
   athletes: string[];
   today: Date;
 }): Promise<{ placed: number; alreadyPlaced: number }> {

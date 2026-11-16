@@ -19,6 +19,12 @@ export type Lap = {
 };
 
 /**
+ * The line a stone traced over the ground (Record glossary): `[lat, lon]` pairs in degrees,
+ * in order, simplified from the recording's GPS.
+ */
+export type Trace = [lat: number, lon: number][];
+
+/**
  * Identifies the session a stone was placed from, whatever copy of its watch file was used,
  * so the same session is placed only once.
  */
@@ -39,6 +45,8 @@ export type Session = {
   elapsedTime: number;
   /** In order of their start; possibly none. */
   laps: Lap[];
+  /** None when the watch recorded fewer than 2 positions (indoors, in a pool, in the gym). */
+  trace: Trace | null;
 };
 
 /** A training session the athlete actually did (Record glossary). */

@@ -26,6 +26,8 @@ const StoneSchema = z.object({
   elapsedTime: z.number(),
   /** In order of their start; empty when the watch recorded none. */
   laps: z.array(LapSchema),
+  /** The line the stone traced over the ground, `[lat, lon]` pairs in degrees, or none without GPS. */
+  trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
 });
 
 export const recordContract = {

@@ -32,6 +32,11 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
         trigger: 'manual',
       },
     ],
+    trace: [
+      [64.14661, -21.94264],
+      [64.14522, -21.93911],
+      [64.14384, -21.94467],
+    ],
   };
 }
 
@@ -41,13 +46,16 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
  */
 export function describeStones(name: string, setup: () => Promise<StonesSetup>): void {
   describe(`Stones (${name})`, () => {
-    it('finds an added stone by its ID, or none', async () => {
+    it('finds an added stone by its ID, with its laps and trace, or none', async () => {
       const { stones, ids } = await setup();
       const added = stone(ids, ids.next(), '2026-11-02');
+      const indoors = { ...stone(ids, ids.next(), '2026-11-03'), trace: null };
 
       await stones.add(added);
+      await stones.add(indoors);
 
       expect(await stones.byId(added.id)).toEqual(added);
+      expect(await stones.byId(indoors.id)).toEqual(indoors);
       expect(await stones.byId(ids.next())).toBeNull();
     });
 

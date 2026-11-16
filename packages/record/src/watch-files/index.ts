@@ -15,6 +15,10 @@ import {
 export type WatchFileOptions = {
   /** When the session started (UTC). */
   start?: Date;
+  /** Whether the watch recorded GPS positions. `false` is a session indoors: no trace. */
+  gps?: boolean;
+  /** How many GPS positions the watch recorded, zigzagging along the same route. Default 4. */
+  gpsPoints?: number;
 };
 
 // Global FIT message numbers (FIT profile).
@@ -35,18 +39,40 @@ const semicircles = (degrees: number) => Math.round((degrees * 2 ** 31) / 180);
 // A road run around Reykjavík's pond: 3 laps of 1 km in 5 minutes each, with 10 s stopped in each lap.
 const lap = { distance: 1000, timerTime: 300, elapsedTime: 310 };
 const lapCount = 3;
-const positions: [number, number][] = [
-  [64.1466, -21.9426],
-  [64.1452, -21.9391],
-  [64.1431, -21.9402],
-  [64.1438, -21.9447],
+const route: [number, number][] = [
+  [64.146612, -21.942637],
+  [64.145218, -21.939108],
+  [64.143091, -21.940183],
+  [64.143844, -21.944671],
 ];
+
+/**
+ * `count` positions along the route, from its start to its finish. Those in between zigzag
+ * about 30 m off it, so simplifying the trace can't drop them as being on a straight line.
+ */
+function positionsAlongRoute(count: number): [number, number][] {
+  if (count === route.length) return route;
+  const legs = route.length - 1;
+  return Array.from({ length: count }, (_, i) => {
+    const along = (i / (count - 1)) * legs;
+    const leg = Math.min(Math.floor(along), legs - 1);
+    const t = along - leg;
+    const [fromLat, fromLon] = route[leg] as [number, number];
+    const [toLat, toLon] = route[leg + 1] as [number, number];
+    const zigzag = i === 0 || i === count - 1 ? 0 : (i % 2 === 0 ? 1 : -1) * 0.0003;
+    return [fromLat + (toLat - fromLat) * t + zigzag, fromLon + (toLon - fromLon) * t];
+  });
+}
 
 /**
  * A FIT activity file as a watch writes it. By default a road run with 3 laps, a few GPS points
  * and a local time offset of 0, started at 2026-11-02 07:30 UTC.
  */
-export function watchFile({ start = new Date('2026-11-02T07:30:00Z') }: WatchFileOptions = {}): Uint8Array {
+export function watchFile({
+  start = new Date('2026-11-02T07:30:00Z'),
+  gps = true,
+  gpsPoints = route.length,
+}: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const elapsedTime = lap.elapsedTime * lapCount;
   const end = at(elapsedTime);
@@ -62,6 +88,10 @@ export function watchFile({ start = new Date('2026-11-02T07:30:00Z') }: WatchFil
     timeCreated: end,
   });
 
+  // Before the watch finds GPS, its records have no position.
+  write<RecordMesg>({ mesgNum: recordMesg, timestamp: start, distance: 0 });
+
+  const positions = gps ? positionsAlongRoute(gpsPoints) : [];
   positions.forEach(([lat, lon], i) => {
     write<RecordMesg>({
       mesgNum: recordMesg,

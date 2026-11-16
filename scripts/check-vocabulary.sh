@@ -7,11 +7,11 @@
 # dependency-cruiser sees imports, not identifiers, hence a grep.
 
 # Third-party names, not ours: settings named by their images, TanStack Router's
-# useRouter, useRouteContext and friends and React's useReducer (where "user" is only
-# "use" + "Route" or "Reducer"), the browser's navigator.userAgent, and the WebAuthn
+# useRouter, useRouteContext and friends and React's useReducer and useRef (where "user" is only
+# "use" + "Route", "Reducer" or "Ref"), the browser's navigator.userAgent, and the WebAuthn
 # options of Chromium's virtual authenticator in the end-to-end suite.
 # Only the names themselves are let through, not the rest of their line.
-allowed='POSTGRES_USER|useRoute|useReducer|userAgent|hasUserVerification|isUserVerified'
+allowed='POSTGRES_USER|useRoute|useReducer|useRef|userAgent|hasUserVerification|isUserVerified'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \

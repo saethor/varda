@@ -7,6 +7,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
+#. placeholder {0}: stone.laps.length
+#: src/stones/stone-card.tsx:27
+msgid "{0, plural, one {# lap} other {# laps}}"
+msgstr "{0, plural, one {# lap} other {# laps}}"
+
 #: src/sign-in/device-name.ts:32
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
@@ -32,6 +37,26 @@ msgstr "Already signed up? <0>Sign in</0>"
 msgid "Cancel"
 msgstr "Cancel"
 
+#: src/stones/placing-panel.tsx:55
+msgid "Choose a watch file"
+msgstr "Choose a watch file"
+
+#: src/stones/stone-card.tsx:63
+msgid "Cycling"
+msgstr "Cycling"
+
+#: src/stones/stone-card.tsx:32
+msgid "Distance"
+msgstr "Distance"
+
+#: src/stones/placing-panel.tsx:41
+msgid "Drop the .fit file your watch saved here, or choose it. One file at a time."
+msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time."
+
+#: src/stones/stone-card.tsx:35
+msgid "Elapsed time"
+msgstr "Elapsed time"
+
 #: src/routes/sign-in.tsx:97
 #: src/routes/sign-up.tsx:75
 msgid "Email"
@@ -46,9 +71,17 @@ msgstr "Enter a valid email address."
 msgid "Enter your name."
 msgstr "Enter your name."
 
+#: src/routes/_signed-in/stones.tsx:66
+msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
+msgstr "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
+
 #: src/routes/_signed-in/index.tsx:34
 msgid "Hi, {name}"
 msgstr "Hi, {name}"
+
+#: src/stones/stone-card.tsx:69
+msgid "Hiking"
+msgstr "Hiking"
 
 #: src/routes/_signed-in.tsx:25
 msgid "Home"
@@ -61,6 +94,10 @@ msgstr "Last used"
 #: src/routes/_signed-in.tsx:23
 msgid "Main"
 msgstr "Main"
+
+#: src/stones/stone-card.tsx:34
+msgid "Moving time"
+msgstr "Moving time"
 
 #: src/routes/sign-up.tsx:71
 msgid "Name"
@@ -78,9 +115,13 @@ msgstr "Next time, sign in with your fingerprint, face or device PIN instead of 
 msgid "Not now"
 msgstr "Not now"
 
-#: src/routes/__root.tsx:25
+#: src/routes/__root.tsx:44
 msgid "One stone at a time."
 msgstr "One stone at a time."
+
+#: src/stones/stone-card.tsx:73
+msgid "Other"
+msgstr "Other"
 
 #: src/routes/_signed-in/settings.tsx:75
 #: src/sign-in/device-name.ts:33
@@ -92,6 +133,14 @@ msgstr "Passkey"
 #: src/routes/sign-up.tsx:89
 msgid "Password"
 msgstr "Password"
+
+#: src/stones/placing-panel.tsx:38
+msgid "Place a stone"
+msgstr "Place a stone"
+
+#: src/stones/placing-panel.tsx:55
+msgid "Reading {reading}…"
+msgstr "Reading {reading}…"
 
 #: src/routes/_signed-in/settings.tsx:90
 #: src/routes/_signed-in/settings.tsx:107
@@ -106,10 +155,18 @@ msgstr "Remove {name}"
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
 
-#: src/routes/_signed-in.tsx:28
+#: src/stones/stone-card.tsx:53
+msgid "Road running"
+msgstr "Road running"
+
+#: src/routes/_signed-in.tsx:31
 #: src/routes/_signed-in/settings.tsx:32
 msgid "Settings"
 msgstr "Settings"
+
+#: src/routes/_signed-in/stones.tsx:51
+msgid "Show earlier"
+msgstr "Show earlier"
 
 #: src/routes/sign-in.tsx:80
 #: src/routes/sign-in.tsx:115
@@ -133,9 +190,34 @@ msgstr "Sign up"
 msgid "Sign-in methods"
 msgstr "Sign-in methods"
 
+#: src/stones/stone-card.tsx:67
+msgid "Skiing"
+msgstr "Skiing"
+
 #: src/components/form.tsx:53
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
+
+#: src/routes/_signed-in/stones.tsx:40
+msgid "Stone placed from {placedFrom}"
+msgstr "Stone placed from {placedFrom}"
+
+#: src/routes/_signed-in.tsx:28
+#: src/routes/_signed-in/stones.tsx:29
+msgid "Stones"
+msgstr "Stones"
+
+#: src/routes/_signed-in/stones.tsx:63
+msgid "Stones: your completed activities"
+msgstr "Stones: your completed activities"
+
+#: src/stones/stone-card.tsx:61
+msgid "Strength"
+msgstr "Strength"
+
+#: src/stones/stone-card.tsx:65
+msgid "Swimming"
+msgstr "Swimming"
 
 #: src/routes/sign-in.tsx:230
 msgid "That email and password don't match."
@@ -149,13 +231,29 @@ msgstr "This email is already signed up. <0>Sign in instead?</0>"
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 
-#: src/routes/__root.tsx:40
+#: src/stones/stone-card.tsx:57
+msgid "Track running"
+msgstr "Track running"
+
+#: src/stones/stone-card.tsx:55
+msgid "Trail running"
+msgstr "Trail running"
+
+#: src/stones/stone-card.tsx:59
+msgid "Treadmill running"
+msgstr "Treadmill running"
+
+#: src/routes/__root.tsx:64
 msgid "Try again"
 msgstr "Try again"
 
 #: src/routes/sign-in.tsx:232
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
+
+#: src/stones/stone-card.tsx:71
+msgid "Walking"
+msgstr "Walking"
 
 #: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."

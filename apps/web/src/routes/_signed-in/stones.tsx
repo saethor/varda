@@ -30,7 +30,7 @@ function Stones() {
       </h1>
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <aside className="flex flex-col gap-4 lg:sticky lg:top-8 lg:order-2">
-          <PlacingPanel placing={placing} />
+          <PlacingPanel placing={placing} stones={stones} />
         </aside>
         <div className="flex flex-col gap-4 lg:order-1">
           {/* Until a stone opens on its own screen, the feed says where the new one came from. */}

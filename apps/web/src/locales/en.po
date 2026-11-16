@@ -29,6 +29,10 @@ msgstr "Add a passkey?"
 msgid "Added {added}"
 msgstr "Added {added}"
 
+#: src/stones/placing-refusal.tsx:21
+msgid "Already placed"
+msgstr "Already placed"
+
 #: src/routes/sign-up.tsx:104
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
@@ -37,7 +41,7 @@ msgstr "Already signed up? <0>Sign in</0>"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:68
 msgid "Choose a watch file"
 msgstr "Choose a watch file"
 
@@ -49,9 +53,9 @@ msgstr "Cycling"
 msgid "Distance"
 msgstr "Distance"
 
-#: src/stones/placing-panel.tsx:41
-msgid "Drop the .fit file your watch saved here, or choose it. One file at a time."
-msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time."
+#: src/stones/placing-panel.tsx:54
+msgid "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
+msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 
 #: src/stones/stone-card.tsx:35
 msgid "Elapsed time"
@@ -115,6 +119,10 @@ msgstr "Next time, sign in with your fingerprint, face or device PIN instead of 
 msgid "Not now"
 msgstr "Not now"
 
+#: src/stones/placing-refusal.tsx:43
+msgid "Nothing was kept."
+msgstr "Nothing was kept."
+
 #: src/routes/__root.tsx:44
 msgid "One stone at a time."
 msgstr "One stone at a time."
@@ -134,11 +142,11 @@ msgstr "Passkey"
 msgid "Password"
 msgstr "Password"
 
-#: src/stones/placing-panel.tsx:38
+#: src/stones/placing-panel.tsx:51
 msgid "Place a stone"
 msgstr "Place a stone"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:68
 msgid "Reading {reading}…"
 msgstr "Reading {reading}…"
 
@@ -227,6 +235,26 @@ msgstr "That email and password don't match."
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "This email is already signed up. <0>Sign in instead?</0>"
 
+#: src/stones/placing-refusal.tsx:67
+msgid "This file is larger than 25 MB."
+msgstr "This file is larger than 25 MB."
+
+#: src/stones/placing-refusal.tsx:71
+msgid "This FIT file holds no session, such as settings, a course or a workout."
+msgstr "This FIT file holds no session, such as settings, a course or a workout."
+
+#: src/stones/placing-refusal.tsx:69
+msgid "This FIT file is broken. Copy it off your watch again."
+msgstr "This FIT file is broken. Copy it off your watch again."
+
+#: src/stones/placing-refusal.tsx:73
+msgid "This is a multisport session, such as a triathlon. Varða can't place those yet."
+msgstr "This is a multisport session, such as a triathlon. Varða can't place those yet."
+
+#: src/stones/placing-refusal.tsx:65
+msgid "This isn't a FIT file. Choose the .fit file your watch saved."
+msgstr "This isn't a FIT file. Choose the .fit file your watch saved."
+
 #: src/routes/_signed-in/settings.tsx:99
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
@@ -247,6 +275,10 @@ msgstr "Treadmill running"
 msgid "Try again"
 msgstr "Try again"
 
+#: src/stones/placing-refusal.tsx:36
+msgid "Turned away"
+msgstr "Turned away"
+
 #: src/routes/sign-in.tsx:232
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
@@ -254,6 +286,14 @@ msgstr "Varða doesn't recognise that passkey. Sign in with your password instea
 #: src/stones/stone-card.tsx:71
 msgid "Walking"
 msgstr "Walking"
+
+#: src/stones/placing-refusal.tsx:56
+msgid "You already placed a stone from this session: the one placed from {fileName}, on {day}."
+msgstr "You already placed a stone from this session: the one placed from {fileName}, on {day}."
+
+#: src/stones/placing-refusal.tsx:27
+msgid "You already placed a stone from this session."
+msgstr "You already placed a stone from this session."
 
 #: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."

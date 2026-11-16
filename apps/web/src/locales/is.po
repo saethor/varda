@@ -29,6 +29,10 @@ msgstr "Bæta við aðgangslykli?"
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
+#: src/stones/placing-refusal.tsx:21
+msgid "Already placed"
+msgstr "Þegar lagður"
+
 #: src/routes/sign-up.tsx:104
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
@@ -37,7 +41,7 @@ msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 msgid "Cancel"
 msgstr "Hætta við"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:68
 msgid "Choose a watch file"
 msgstr "Velja úraskrá"
 
@@ -49,9 +53,9 @@ msgstr "Hjólreiðar"
 msgid "Distance"
 msgstr "Vegalengd"
 
-#: src/stones/placing-panel.tsx:41
-msgid "Drop the .fit file your watch saved here, or choose it. One file at a time."
-msgstr "Slepptu .fit-skránni sem úrið vistaði hér, eða veldu hana. Ein skrá í einu."
+#: src/stones/placing-panel.tsx:54
+msgid "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
+msgstr "Slepptu .fit-skránni sem úrið vistaði hér, eða veldu hana. Ein skrá í einu, mest 25 MB."
 
 #: src/stones/stone-card.tsx:35
 msgid "Elapsed time"
@@ -115,6 +119,10 @@ msgstr "Næst geturðu skráð þig inn með fingrafari, andliti eða PIN-númer
 msgid "Not now"
 msgstr "Ekki núna"
 
+#: src/stones/placing-refusal.tsx:43
+msgid "Nothing was kept."
+msgstr "Ekkert var geymt."
+
 #: src/routes/__root.tsx:44
 msgid "One stone at a time."
 msgstr "Einn steinn í einu."
@@ -134,11 +142,11 @@ msgstr "Aðgangslykill"
 msgid "Password"
 msgstr "Lykilorð"
 
-#: src/stones/placing-panel.tsx:38
+#: src/stones/placing-panel.tsx:51
 msgid "Place a stone"
 msgstr "Leggja stein"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:68
 msgid "Reading {reading}…"
 msgstr "Les {reading}…"
 
@@ -227,6 +235,26 @@ msgstr "Netfangið og lykilorðið passa ekki saman."
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
 
+#: src/stones/placing-refusal.tsx:67
+msgid "This file is larger than 25 MB."
+msgstr "Þessi skrá er stærri en 25 MB."
+
+#: src/stones/placing-refusal.tsx:71
+msgid "This FIT file holds no session, such as settings, a course or a workout."
+msgstr "Þessi FIT-skrá geymir enga æfingu, heldur til dæmis stillingar, leið eða æfingaáætlun."
+
+#: src/stones/placing-refusal.tsx:69
+msgid "This FIT file is broken. Copy it off your watch again."
+msgstr "Þessi FIT-skrá er biluð. Afritaðu hana aftur af úrinu."
+
+#: src/stones/placing-refusal.tsx:73
+msgid "This is a multisport session, such as a triathlon. Varða can't place those yet."
+msgstr "Þetta er fjölgreinaæfing, til dæmis þríþraut. Varða getur ekki lagt slíkar enn."
+
+#: src/stones/placing-refusal.tsx:65
+msgid "This isn't a FIT file. Choose the .fit file your watch saved."
+msgstr "Þetta er ekki FIT-skrá. Veldu .fit-skrána sem úrið vistaði."
+
 #: src/routes/_signed-in/settings.tsx:99
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "Þessi aðgangslykill skráir þig ekki lengur inn í Vörðu. Þú getur áfram skráð þig inn með lykilorðinu þínu."
@@ -247,6 +275,10 @@ msgstr "Hlaupabretti"
 msgid "Try again"
 msgstr "Reyna aftur"
 
+#: src/stones/placing-refusal.tsx:36
+msgid "Turned away"
+msgstr "Hafnað"
+
 #: src/routes/sign-in.tsx:232
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn með lykilorðinu þínu."
@@ -254,6 +286,14 @@ msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn
 #: src/stones/stone-card.tsx:71
 msgid "Walking"
 msgstr "Ganga"
+
+#: src/stones/placing-refusal.tsx:56
+msgid "You already placed a stone from this session: the one placed from {fileName}, on {day}."
+msgstr "Þú hefur þegar lagt stein úr þessari æfingu: steininn sem var lagður úr {fileName}, {day}."
+
+#: src/stones/placing-refusal.tsx:27
+msgid "You already placed a stone from this session."
+msgstr "Þú hefur þegar lagt stein úr þessari æfingu."
 
 #: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."

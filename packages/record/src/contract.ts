@@ -31,7 +31,13 @@ const StoneSchema = z.object({
 export const recordContract = {
   stones: {
     /** Places a stone for the signed-in person from a watch file, keeping the file as its recording. */
-    place: signedInProcedure.input(z.object({ file: z.file() })).output(z.object({ stoneId: z.uuid() })),
+    place: signedInProcedure
+      .errors({
+        /** The athlete already placed a stone from this session: that stone. */
+        ALREADY_PLACED: { status: 409, data: z.object({ stoneId: z.uuid() }) },
+      })
+      .input(z.object({ file: z.file() }))
+      .output(z.object({ stoneId: z.uuid() })),
     /** The signed-in person's own stones whose local date is within `from`–`to` (inclusive), newest first. */
     list: signedInProcedure.input(z.object({ from: z.iso.date(), to: z.iso.date() })).output(z.array(StoneSchema)),
   },

@@ -1,12 +1,17 @@
 import type { Ids, Recordings, Stones } from '../application/ports.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
-import type { Stone, StoneId } from '../domain/stone.ts';
+import type { PersonId, SessionKey, Stone, StoneId } from '../domain/stone.ts';
 
 export function createInMemoryStones(): Stones {
   const byId = new Map<StoneId, Stone>();
+  const withSessionKey = (athlete: PersonId, sessionKey: SessionKey) =>
+    [...byId.values()].find((stone) => stone.athlete === athlete && stone.sessionKey === sessionKey) ?? null;
   return {
     async add(stone) {
+      const placedBefore = withSessionKey(stone.athlete, stone.sessionKey);
+      if (placedBefore !== null) return { alreadyPlaced: placedBefore.id };
       byId.set(stone.id, stone);
+      return 'added';
     },
     async byId(id) {
       return byId.get(id) ?? null;
@@ -17,7 +22,7 @@ export function createInMemoryStones(): Stones {
         .sort((a, b) => b.localDate.localeCompare(a.localDate) || b.start.getTime() - a.start.getTime());
     },
     async withSessionKey(athlete, sessionKey) {
-      return [...byId.values()].find((stone) => stone.athlete === athlete && stone.sessionKey === sessionKey) ?? null;
+      return withSessionKey(athlete, sessionKey);
     },
     async remove(id) {
       byId.delete(id);

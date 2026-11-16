@@ -15,6 +15,10 @@ import {
 export type WatchFileOptions = {
   /** When the session started (UTC). */
   start?: Date;
+  /** The watch's serial number; 0 when the watch wrote none. */
+  serialNumber?: number;
+  /** When the file was written (UTC). By default when the session ended. */
+  timeCreated?: Date;
 };
 
 // Global FIT message numbers (FIT profile).
@@ -46,7 +50,11 @@ const positions: [number, number][] = [
  * A FIT activity file as a watch writes it. By default a road run with 3 laps, a few GPS points
  * and a local time offset of 0, started at 2026-11-02 07:30 UTC.
  */
-export function watchFile({ start = new Date('2026-11-02T07:30:00Z') }: WatchFileOptions = {}): Uint8Array {
+export function watchFile({
+  start = new Date('2026-11-02T07:30:00Z'),
+  serialNumber = 3_412_345_678,
+  timeCreated,
+}: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const elapsedTime = lap.elapsedTime * lapCount;
   const end = at(elapsedTime);
@@ -58,8 +66,8 @@ export function watchFile({ start = new Date('2026-11-02T07:30:00Z') }: WatchFil
     type: 'activity',
     manufacturer: garmin,
     product: forerunner255,
-    serialNumber: 3_412_345_678,
-    timeCreated: end,
+    serialNumber,
+    timeCreated: timeCreated ?? end,
   });
 
   positions.forEach(([lat, lon], i) => {

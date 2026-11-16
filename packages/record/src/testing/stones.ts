@@ -77,6 +77,19 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       expect(await stones.withSessionKey(ids.next(), added.sessionKey)).toBeNull();
     });
 
+    it("refuses a second stone from the same session of the athlete's, answering the first", async () => {
+      const { stones, ids } = await setup();
+      const athlete = ids.next();
+      const first = stone(ids, athlete, '2026-11-02');
+      const second = { ...stone(ids, athlete, '2026-11-02'), sessionKey: first.sessionKey };
+      const someoneElses = { ...stone(ids, ids.next(), '2026-11-02'), sessionKey: first.sessionKey };
+
+      expect(await stones.add(first)).toBe('added');
+      expect(await stones.add(second)).toEqual({ alreadyPlaced: first.id });
+      expect(await stones.add(someoneElses)).toBe('added');
+      expect(await stones.byId(second.id)).toBeNull();
+    });
+
     it('removes a stone', async () => {
       const { stones, ids } = await setup();
       const added = stone(ids, ids.next(), '2026-11-02');

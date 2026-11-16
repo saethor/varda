@@ -37,9 +37,11 @@ function shown({ id, localDate, start, sport, fileName, distance, movingTime, el
 export function createRecordRouter(adapters: RecordAdapters) {
   return os.router({
     stones: {
-      place: os.stones.place.use(requirePerson).handler(async ({ context, input: { file } }) => {
+      place: os.stones.place.use(requirePerson).handler(async ({ context, input: { file }, errors }) => {
         const bytes = new Uint8Array(await file.arrayBuffer());
-        return { stoneId: await placeStone(adapters, context.person, { name: file.name, bytes }) };
+        const placing = await placeStone(adapters, context.person, { name: file.name, bytes });
+        if ('alreadyPlaced' in placing) throw errors.ALREADY_PLACED({ data: { stoneId: placing.alreadyPlaced } });
+        return { stoneId: placing.placed };
       }),
       list: os.stones.list
         .use(requirePerson)

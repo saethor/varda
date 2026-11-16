@@ -1,8 +1,8 @@
 // Reading a watch file is pure domain code: @garmin/fitsdk only decodes bytes in memory (spec #60).
 // FIT words (activity, session, timer time) stay in this file; everything it returns is Record's.
-import { type ActivityMesg, Decoder, type LapMesg, type SessionMesg, Stream } from '@garmin/fitsdk';
+import { type ActivityMesg, Decoder, type FileIdMesg, type LapMesg, type SessionMesg, Stream } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
-import type { Lap, LapTrigger, LocalDate, Session } from './stone.ts';
+import type { Lap, LapTrigger, LocalDate, Session, SessionKey } from './stone.ts';
 
 /** Reads the session a watch file recorded. */
 export function readWatchFile(bytes: Uint8Array): Session {
@@ -16,7 +16,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
   const start = dateOf(session.startTime);
   const laps = lapsOf(session, messages.lapMesgs ?? []);
   return {
-    sessionKey: [fileId.manufacturer, fileId.serialNumber, dateOf(fileId.timeCreated).toISOString()].join(':'),
+    sessionKey: sessionKeyOf(fileId, start),
     start,
     localDate: localDateOf(start, messages.activityMesgs?.[0]),
     sport: sportOf(session),
@@ -25,6 +25,16 @@ export function readWatchFile(bytes: Uint8Array): Session {
     elapsedTime: session.totalElapsedTime ?? 0,
     laps,
   };
+}
+
+/**
+ * The watch, and when it wrote the file. A watch with no serial number (0) can't be told apart
+ * from others of its model that way, so it falls back to the model and when the session started.
+ */
+function sessionKeyOf(fileId: FileIdMesg, start: Date): SessionKey {
+  return fileId.serialNumber
+    ? [fileId.manufacturer, fileId.serialNumber, dateOf(fileId.timeCreated).toISOString()].join(':')
+    : [fileId.manufacturer, fileId.product, start.toISOString()].join(':');
 }
 
 /** The local date where the session started: its start shifted by the activity's local time offset. */

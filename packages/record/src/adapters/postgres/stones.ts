@@ -16,11 +16,26 @@ function toStone({ laps, sport, ...row }: Row): Stone {
 }
 
 export function createPostgresStones(db: NodePgDatabase): Stones {
+  const withSessionKey: Stones['withSessionKey'] = async (athlete, sessionKey) => {
+    const [found] = await db
+      .select()
+      .from(stones)
+      .where(and(eq(stones.athlete, athlete), eq(stones.sessionKey, sessionKey)));
+    return found ? toStone(found) : null;
+  };
+
   return {
     async add({ laps, ...stone }) {
-      await db
+      // The unique (athlete, session key) constraint decides a race; the loser adds nothing.
+      const added = await db
         .insert(stones)
-        .values({ ...stone, laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })) });
+        .values({ ...stone, laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })) })
+        .onConflictDoNothing({ target: [stones.athlete, stones.sessionKey] })
+        .returning({ id: stones.id });
+      if (added.length > 0) return 'added';
+      const placedBefore = await withSessionKey(stone.athlete, stone.sessionKey);
+      if (placedBefore === null) throw new Error('A stone from this session was there a moment ago, and is gone.');
+      return { alreadyPlaced: placedBefore.id };
     },
     async byId(id) {
       const [found] = await db.select().from(stones).where(eq(stones.id, id));
@@ -34,13 +49,7 @@ export function createPostgresStones(db: NodePgDatabase): Stones {
         .orderBy(desc(stones.localDate), desc(stones.start));
       return rows.map(toStone);
     },
-    async withSessionKey(athlete, sessionKey) {
-      const [found] = await db
-        .select()
-        .from(stones)
-        .where(and(eq(stones.athlete, athlete), eq(stones.sessionKey, sessionKey)));
-      return found ? toStone(found) : null;
-    },
+    withSessionKey,
     async remove(id) {
       await db.delete(stones).where(eq(stones.id, id));
     },

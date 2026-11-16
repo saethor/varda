@@ -2,7 +2,11 @@ import type { LocalDate, PersonId, SessionKey, Stone, StoneId } from '../domain/
 
 /** The athletes' stones. */
 export type Stones = {
-  add(stone: Stone): Promise<void>;
+  /**
+   * Adds the stone, unless the athlete already has one placed from its session (even one added
+   * a moment ago by a racing request): then nothing is added and the answer is that stone.
+   */
+  add(stone: Stone): Promise<'added' | { alreadyPlaced: StoneId }>;
   /** The stone with this ID, or null when there is none. */
   byId(id: StoneId): Promise<Stone | null>;
   /** The athlete's stones whose local date is within `from`–`to` (inclusive), newest first. */

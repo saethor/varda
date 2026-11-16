@@ -10,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres:/var/lib/postgresql
+      # Creates varda_test, the test suites' database, next to varda (first start only).
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
 
 volumes:
   postgres:

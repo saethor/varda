@@ -42,7 +42,8 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      DATABASE_URL: postgres://varda:varda@localhost:5432/varda
+      # The suites migrate it themselves. A throwaway service, so the default database will do.
+      TEST_DATABASE_URL: postgres://varda:varda@localhost:5432/varda
       BETTER_AUTH_SECRET: ci-only-secret-of-at-least-32-characters
       BETTER_AUTH_URL: http://localhost:4000
       VARDA_DEV_PASSWORD: ci-only-dev-password
@@ -54,7 +55,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm db:migrate
       - run: pnpm test:adapters
 
   e2e:
@@ -74,7 +74,8 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      DATABASE_URL: postgres://varda:varda@localhost:5432/varda
+      # The suites migrate it themselves. A throwaway service, so the default database will do.
+      TEST_DATABASE_URL: postgres://varda:varda@localhost:5432/varda
       BETTER_AUTH_SECRET: ci-only-secret-of-at-least-32-characters
       VARDA_DEV_PASSWORD: ci-only-dev-password
     steps:
@@ -85,7 +86,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm db:migrate
       - run: pnpm --filter @varda/e2e exec playwright install --with-deps chromium
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v5

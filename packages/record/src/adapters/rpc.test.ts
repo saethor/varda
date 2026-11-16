@@ -199,6 +199,19 @@ describe('turning a watch file away', () => {
     expect(isDefined && { code: error.code, data: error.data }).toEqual({ code: 'TURNED_AWAY', data: { reason } });
     expect(await client.stones.list({ from: '2000-01-01', to: '2100-01-01' })).toEqual([]);
   });
+
+  it('turns away a file missing when its session started as broken', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { error, isDefined } = await safe(
+      client.stones.place({ file: fitFile(watchFile({ missingStartTime: true })) }),
+    );
+
+    expect(isDefined && { code: error.code, data: error.data }).toEqual({
+      code: 'TURNED_AWAY',
+      data: { reason: 'broken' },
+    });
+  });
 });
 
 describe('the trace', () => {

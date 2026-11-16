@@ -1,6 +1,13 @@
-export type { CoachingAccess } from '@varda/shared';
-
 import type { LocalDate, PersonId, SessionKey, Stone, StoneId } from '../domain/stone.ts';
+
+/**
+ * Who may see an athlete's stones: Record's own question, which apps/api answers with the
+ * coaching access reader Shared publishes (ADR 0005).
+ */
+export type CoachingAccess = {
+  /** Whether `viewer` may see `athlete`'s stones. */
+  canSee(viewer: PersonId, athlete: PersonId): Promise<boolean>;
+};
 
 /** The athletes' stones. */
 export type Stones = {

@@ -10,41 +10,39 @@ import {
   Stream,
 } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
-import type { Lap, LapTrigger, LocalDate, Session, SessionKey, Trace, TurnedAwayReason } from './stone.ts';
+import { WatchFileTurnedAway } from './errors.ts';
+import type { Lap, LapTrigger, LocalDate, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
 
-/** What a watch file holds: a session that can be placed, or why it is turned away. */
-export type WatchFileReading = { session: Session } | { turnedAway: TurnedAwayReason };
-
-/** Reads the session a watch file recorded. */
-export function readWatchFile(bytes: Uint8Array): WatchFileReading {
+/** Reads the session a watch file recorded. Throws `WatchFileTurnedAway` for a file that can't be placed. */
+export function readWatchFile(bytes: Uint8Array): Session {
   const decoder = new Decoder(Stream.fromByteArray(bytes));
   // Known by its header bytes, never its name or type.
-  if (!decoder.isFIT()) return { turnedAway: 'not-a-fit-file' };
-  if (!decoder.checkIntegrity()) return { turnedAway: 'broken' };
+  if (!decoder.isFIT()) throw new WatchFileTurnedAway('not-a-fit-file');
+  if (!decoder.checkIntegrity()) throw new WatchFileTurnedAway('broken');
 
   const { messages, errors } = decoder.read();
-  if (errors.length > 0) return { turnedAway: 'broken' };
+  if (errors.length > 0) throw new WatchFileTurnedAway('broken');
   const [fileId] = messages.fileIdMesgs ?? [];
   const [session] = messages.sessionMesgs ?? [];
   // Only an activity holds a session; settings, courses and workouts hold no training.
-  if (fileId?.type !== 'activity' || session === undefined) return { turnedAway: 'not-a-session' };
-  if (isMultisport(messages.sessionMesgs ?? [], messages.activityMesgs?.[0])) return { turnedAway: 'multisport' };
+  if (fileId?.type !== 'activity' || session === undefined) throw new WatchFileTurnedAway('not-a-session');
+  if (isMultisport(messages.sessionMesgs ?? [], messages.activityMesgs?.[0])) {
+    throw new WatchFileTurnedAway('multisport');
+  }
 
   const start = dateOf(session.startTime);
   const laps = lapsOf(session, messages.lapMesgs ?? []);
   return {
-    session: {
-      sessionKey: sessionKeyOf(fileId, start),
-      start,
-      localDate: localDateOf(start, messages.activityMesgs?.[0]),
-      sport: sportOf(session),
-      distance: session.totalDistance || null,
-      movingTime: session.totalTimerTime ?? 0,
-      elapsedTime: session.totalElapsedTime ?? 0,
-      laps,
-      trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
-    },
+    sessionKey: sessionKeyOf(fileId, start),
+    start,
+    localDate: localDateOf(start, messages.activityMesgs?.[0]),
+    sport: sportOf(session),
+    distance: session.totalDistance || null,
+    movingTime: session.totalTimerTime ?? 0,
+    elapsedTime: session.totalElapsedTime ?? 0,
+    laps,
+    trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
   };
 }
 
@@ -140,13 +138,16 @@ function sportOf({ sport, subSport }: SessionMesg): Sport {
 }
 
 /** 1989-12-31T00:00:00Z, the FIT epoch, in Unix seconds. */
-const fitEpoch = 631_065_600;
+export const fitEpoch = 631_065_600;
 
 const fitSeconds = (date: Date) => date.getTime() / 1000 - fitEpoch;
 
-/** The decoder turns FIT date-times into `Date`s; a bare number is seconds since the FIT epoch. */
+/**
+ * The decoder turns FIT date-times into `Date`s; a bare number is seconds since the FIT epoch.
+ * A file missing a time it needs is broken.
+ */
 function dateOf(value: unknown): Date {
   if (value instanceof Date) return value;
   if (typeof value === 'number') return new Date((value + fitEpoch) * 1000);
-  throw new Error('The watch file is missing a time it needs.');
+  throw new WatchFileTurnedAway('broken');
 }

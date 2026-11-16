@@ -10,6 +10,7 @@ import {
   type RecordMesg,
   type SessionMesg,
 } from '@garmin/fitsdk';
+import { fitEpoch } from '../domain/read-watch-file.ts';
 
 /** What a test or the seed can change about a watch file. Everything else is a road run. */
 export type WatchFileOptions = {
@@ -45,6 +46,8 @@ export type WatchFileOptions = {
    * with no local time at all.
    */
   localOffset?: number | null;
+  /** Leave out when the session started, as a file damaged in a way its CRC doesn't catch. */
+  missingStartTime?: true;
 };
 
 /** A lap: metres, and seconds of timer and of elapsed time. */
@@ -57,8 +60,6 @@ const lapMesg = 19;
 const recordMesg = 20;
 const activityMesg = 34;
 
-/** 1989-12-31T00:00:00Z, the FIT epoch, in Unix seconds. */
-const fitEpoch = 631_065_600;
 const garmin = 1;
 const forerunner255 = 3992;
 
@@ -111,6 +112,7 @@ export function watchFile({
   laps = roadRunLaps,
   distance,
   localOffset = 0,
+  missingStartTime,
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const total = (key: keyof WatchFileLap) => sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
@@ -162,7 +164,7 @@ export function watchFile({
   write<SessionMesg>({
     mesgNum: sessionMesg,
     messageIndex: 0,
-    startTime: start,
+    ...(missingStartTime ? {} : { startTime: start }),
     timestamp: end,
     sport,
     subSport,

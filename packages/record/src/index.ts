@@ -3,3 +3,4 @@
 export { createRecordAdapters } from './adapters/real.ts';
 export { createRecordRouter } from './adapters/rpc.ts';
 export type { RecordAdapters } from './application/record-adapters.ts';
+export { maxWatchFileBytes } from './contract.ts';

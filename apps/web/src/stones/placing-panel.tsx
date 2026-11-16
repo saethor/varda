@@ -6,7 +6,14 @@ import { SomethingWentWrongAlert } from '../components/form.tsx';
 import type { usePlaceStone } from '../lib/stones.ts';
 
 /** Where a stone is placed from a watch file: dropped on the panel, or chosen with the file picker. */
-export function PlacingPanel({ placing }: { placing: ReturnType<typeof usePlaceStone> }) {
+export function PlacingPanel({
+  placing,
+  className,
+}: {
+  placing: ReturnType<typeof usePlaceStone>;
+  /** Lays the panel out where it sits: beside the feed, or as a slim bar above the calendar. */
+  className?: string;
+}) {
   const picker = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const place = (file: File | undefined) => {
@@ -29,7 +36,11 @@ export function PlacingPanel({ placing }: { placing: ReturnType<typeof usePlaceS
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
-      className={cn('flex flex-col gap-3 rounded-xl border bg-card p-5', dragging && 'border-primary bg-primary/5')}
+      className={cn(
+        'flex flex-col gap-3 rounded-xl border bg-card p-5',
+        className,
+        dragging && 'border-primary bg-primary/5',
+      )}
     >
       <h2 id="place-a-stone" className="font-semibold">
         <Trans>Place a stone</Trans>

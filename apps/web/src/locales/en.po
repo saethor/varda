@@ -12,6 +12,11 @@ msgstr ""
 msgid "{0, plural, one {# lap} other {# laps}}"
 msgstr "{0, plural, one {# lap} other {# laps}}"
 
+#. placeholder {0}: totals.stones
+#: src/stones/stones-calendar.tsx:189
+msgid "{0, plural, one {# stone} other {# stones}}"
+msgstr "{0, plural, one {# stone} other {# stones}}"
+
 #: src/sign-in/device-name.ts:32
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
@@ -33,11 +38,15 @@ msgstr "Added {added}"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
+#: src/stones/stones-calendar.tsx:48
+msgid "Calendar"
+msgstr "Calendar"
+
 #: src/routes/_signed-in/settings.tsx:104
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:63
 msgid "Choose a watch file"
 msgstr "Choose a watch file"
 
@@ -49,7 +58,7 @@ msgstr "Cycling"
 msgid "Distance"
 msgstr "Distance"
 
-#: src/stones/placing-panel.tsx:41
+#: src/stones/placing-panel.tsx:49
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time."
 msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time."
 
@@ -71,9 +80,13 @@ msgstr "Enter a valid email address."
 msgid "Enter your name."
 msgstr "Enter your name."
 
-#: src/routes/_signed-in/stones.tsx:66
+#: src/routes/_signed-in/stones.tsx:85
 msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 msgstr "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
+
+#: src/stones/stones-calendar.tsx:40
+msgid "Feed"
+msgstr "Feed"
 
 #: src/routes/_signed-in/index.tsx:34
 msgid "Hi, {name}"
@@ -111,6 +124,10 @@ msgstr "New to Varða? <0>Sign up</0>"
 msgid "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 msgstr "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 
+#: src/stones/stones-calendar.tsx:167
+msgid "No stones this week"
+msgstr "No stones this week"
+
 #: src/routes/_signed-in/add-a-passkey.tsx:50
 msgid "Not now"
 msgstr "Not now"
@@ -134,11 +151,11 @@ msgstr "Passkey"
 msgid "Password"
 msgstr "Password"
 
-#: src/stones/placing-panel.tsx:38
+#: src/stones/placing-panel.tsx:46
 msgid "Place a stone"
 msgstr "Place a stone"
 
-#: src/stones/placing-panel.tsx:55
+#: src/stones/placing-panel.tsx:63
 msgid "Reading {reading}…"
 msgstr "Reading {reading}…"
 
@@ -164,9 +181,13 @@ msgstr "Road running"
 msgid "Settings"
 msgstr "Settings"
 
-#: src/routes/_signed-in/stones.tsx:51
+#: src/routes/_signed-in/stones.tsx:70
 msgid "Show earlier"
 msgstr "Show earlier"
+
+#: src/stones/stones-calendar.tsx:33
+msgid "Show stones as"
+msgstr "Show stones as"
 
 #: src/routes/sign-in.tsx:80
 #: src/routes/sign-in.tsx:115
@@ -198,16 +219,17 @@ msgstr "Skiing"
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
 
-#: src/routes/_signed-in/stones.tsx:40
+#: src/routes/_signed-in/stones.tsx:59
+#: src/stones/stones-calendar.tsx:71
 msgid "Stone placed from {placedFrom}"
 msgstr "Stone placed from {placedFrom}"
 
 #: src/routes/_signed-in.tsx:28
-#: src/routes/_signed-in/stones.tsx:29
+#: src/stones/stones-calendar.tsx:19
 msgid "Stones"
 msgstr "Stones"
 
-#: src/routes/_signed-in/stones.tsx:63
+#: src/routes/_signed-in/stones.tsx:82
 msgid "Stones: your completed activities"
 msgstr "Stones: your completed activities"
 
@@ -254,6 +276,10 @@ msgstr "Varða doesn't recognise that passkey. Sign in with your password instea
 #: src/stones/stone-card.tsx:71
 msgid "Walking"
 msgstr "Walking"
+
+#: src/stones/stones-calendar.tsx:125
+msgid "Week"
+msgstr "Week"
 
 #: src/sign-in/password.ts:14
 msgid "Your password can have at most {max} characters."

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { lapStrip } from './lap-strip.ts';
 
-const lap = (distance: number | null, movingTime: number) => ({ distance, movingTime });
+/** A lap with 10 s stopped. */
+const lap = (distance: number | null, movingTime: number) => ({ distance, movingTime, elapsedTime: movingTime + 10 });
 
 describe('the lap strip', () => {
   it('gives each lap a bar as wide as its share of the distance', () => {
@@ -23,13 +24,28 @@ describe('the lap strip', () => {
     expect(bars.map((bar) => bar.height)).toEqual([0.7, 0.7]);
   });
 
-  it('draws nothing for fewer than two laps', () => {
+  it('draws a single lap as one bar across the strip, and no laps as none', () => {
+    expect(lapStrip([lap(5000, 1500)])).toEqual([{ width: 1, height: 0.7, hasSpeed: true }]);
     expect(lapStrip([])).toEqual([]);
-    expect(lapStrip([lap(5000, 1500)])).toEqual([]);
   });
 
-  it('draws nothing when a lap has no distance or no moving time, so it has no speed', () => {
-    expect(lapStrip([lap(1000, 300), lap(null, 300)])).toEqual([]);
-    expect(lapStrip([lap(1000, 300), lap(1000, 0)])).toEqual([]);
+  it('still draws a bar for every lap when one has no distance, each as wide as its share of the time', () => {
+    // Moving 300 s of 310 elapsed, then a 600 s lap with no distance (a rest, a manual lap indoors).
+    const bars = lapStrip([lap(1000, 300), { distance: null, movingTime: 600, elapsedTime: 620 }]);
+
+    expect(bars).toEqual([
+      { width: 0.333, height: 0.7, hasSpeed: true },
+      { width: 0.667, height: 0.7, hasSpeed: false },
+    ]);
+  });
+
+  it('draws laps with no distance or no moving time without a speed, at the middle height', () => {
+    const bars = lapStrip([lap(1000, 250), lap(1000, 400), lap(1000, 0)]);
+
+    expect(bars.map(({ height, hasSpeed }) => ({ height, hasSpeed }))).toEqual([
+      { height: 1, hasSpeed: true },
+      { height: 0.3, hasSpeed: true },
+      { height: 0.7, hasSpeed: false },
+    ]);
   });
 });

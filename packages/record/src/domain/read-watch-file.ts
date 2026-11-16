@@ -109,8 +109,34 @@ function triggerOf(trigger: LapMesg['lapTrigger']): LapTrigger {
   return triggers[String(trigger)] ?? 'other';
 }
 
-function sportOf(session: SessionMesg): Sport {
-  return session.sport === 'running' ? 'road-running' : 'other';
+// Spec #60's sport table. The FIT `sport` decides; `sub_sport` only splits running, so a new
+// Garmin sub-sport never moves a session out of its sport. An unknown running sub-sport is road.
+const runningBySubSport: Partial<Record<string, Sport>> = {
+  trail: 'trail-running',
+  ultra: 'trail-running',
+  track: 'track-running',
+  treadmill: 'treadmill-running',
+  indoorRunning: 'treadmill-running',
+  virtualActivity: 'treadmill-running',
+};
+
+const bySport: Partial<Record<string, Sport>> = {
+  cycling: 'cycling',
+  eBiking: 'cycling',
+  swimming: 'swimming',
+  crossCountrySkiing: 'skiing',
+  alpineSkiing: 'skiing',
+  snowboarding: 'skiing',
+  hiking: 'hiking',
+  mountaineering: 'hiking',
+  snowshoeing: 'hiking',
+  walking: 'walking',
+};
+
+function sportOf({ sport, subSport }: SessionMesg): Sport {
+  if (sport === 'running') return runningBySubSport[String(subSport)] ?? 'road-running';
+  if (sport === 'training' && subSport === 'strengthTraining') return 'strength';
+  return bySport[String(sport)] ?? 'other';
 }
 
 /** 1989-12-31T00:00:00Z, the FIT epoch, in Unix seconds. */

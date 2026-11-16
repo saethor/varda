@@ -29,7 +29,26 @@ export type WatchFileOptions = {
   gps?: boolean;
   /** How many GPS positions the watch recorded, zigzagging along the same route. Default 4. */
   gpsPoints?: number;
+  /** The FIT sport, as the decoder spells it (`'running'`, `'eBiking'`, …). */
+  sport?: SessionMesg['sport'];
+  /** The FIT sub-sport, as the decoder spells it (`'trail'`, `'indoorRunning'`, …). */
+  subSport?: SessionMesg['subSport'];
+  /**
+   * The laps the watch wrote, in order. None (`[]`) for a session with totals only, which then
+   * lasts as long as the default run.
+   */
+  laps?: WatchFileLap[];
+  /** `false` when the watch recorded no distance, on the session or its laps. */
+  distance?: false;
+  /**
+   * Seconds the watch's local time was ahead of UTC (negative when behind), or `null` for a file
+   * with no local time at all.
+   */
+  localOffset?: number | null;
 };
+
+/** A lap: metres, and seconds of timer and of elapsed time. */
+export type WatchFileLap = { distance: number; timerTime: number; elapsedTime: number };
 
 // Global FIT message numbers (FIT profile).
 const fileIdMesg = 0;
@@ -47,8 +66,8 @@ const forerunner255 = 3992;
 const semicircles = (degrees: number) => Math.round((degrees * 2 ** 31) / 180);
 
 // A road run around Reykjavík's pond: 3 laps of 1 km in 5 minutes each, with 10 s stopped in each lap.
-const lap = { distance: 1000, timerTime: 300, elapsedTime: 310 };
-const lapCount = 3;
+const roadRunLap: WatchFileLap = { distance: 1000, timerTime: 300, elapsedTime: 310 };
+const roadRunLaps = [roadRunLap, roadRunLap, roadRunLap];
 const route: [number, number][] = [
   [64.146612, -21.942637],
   [64.145218, -21.939108],
@@ -87,9 +106,17 @@ export function watchFile({
   multisport = false,
   gps = true,
   gpsPoints = route.length,
+  sport = 'running',
+  subSport = 'generic',
+  laps = roadRunLaps,
+  distance,
+  localOffset = 0,
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
-  const elapsedTime = lap.elapsedTime * lapCount;
+  const total = (key: keyof WatchFileLap) => sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
+  // Spread into a message: a field the watch didn't record is left out, never written as 0.
+  const metres = (value: number) => (distance === false ? {} : { totalDistance: value });
+  const elapsedTime = total('elapsedTime');
   const end = at(elapsedTime);
   const encoder = new Encoder();
   const write = <M extends Mesg>(mesg: Encodable<M>) => encoder.writeMesg(mesg);
@@ -116,32 +143,34 @@ export function watchFile({
     });
   });
 
-  for (let i = 0; i < lapCount; i++) {
+  let lapStart = 0;
+  laps.forEach((lap, i) => {
     write<LapMesg>({
       mesgNum: lapMesg,
       messageIndex: i,
-      startTime: at(lap.elapsedTime * i),
-      timestamp: at(lap.elapsedTime * (i + 1)),
+      startTime: at(lapStart),
+      timestamp: at(lapStart + lap.elapsedTime),
       totalElapsedTime: lap.elapsedTime,
       totalTimerTime: lap.timerTime,
-      totalDistance: lap.distance,
+      ...metres(lap.distance),
       lapTrigger: 'distance',
-      sport: 'running',
+      sport,
     });
-  }
+    lapStart += lap.elapsedTime;
+  });
 
   write<SessionMesg>({
     mesgNum: sessionMesg,
     messageIndex: 0,
     startTime: start,
     timestamp: end,
-    sport: 'running',
-    subSport: 'generic',
+    sport,
+    subSport,
     totalElapsedTime: elapsedTime,
-    totalTimerTime: lap.timerTime * lapCount,
-    totalDistance: lap.distance * lapCount,
+    totalTimerTime: total('timerTime'),
+    ...metres(total('distance')),
     firstLapIndex: 0,
-    numLaps: lapCount,
+    numLaps: laps.length,
   });
 
   // A brick: the run, a transition, then a ride with no laps of its own.
@@ -165,7 +194,7 @@ export function watchFile({
       mesgNum: sessionMesg,
       messageIndex: i + 1,
       timestamp: new Date(session.startTime.getTime() + session.totalElapsedTime * 1000),
-      firstLapIndex: lapCount,
+      firstLapIndex: laps.length,
       numLaps: 0,
       ...session,
     });
@@ -175,10 +204,10 @@ export function watchFile({
     mesgNum: activityMesg,
     timestamp: end,
     // Local time as seconds since the FIT epoch, which the encoder only takes as a number.
-    localTimestamp: end.getTime() / 1000 - fitEpoch,
+    ...(localOffset === null ? {} : { localTimestamp: end.getTime() / 1000 - fitEpoch + localOffset }),
     numSessions: 1 + brick.length,
     type: 'manual',
-    totalTimerTime: lap.timerTime * lapCount,
+    totalTimerTime: total('timerTime'),
   });
 
   const bytes = encoder.close();
@@ -186,3 +215,5 @@ export function watchFile({
   if (brokenCrc) bytes[bytes.length - 1] = (bytes[bytes.length - 1] ?? 0) ^ 0xff;
   return bytes;
 }
+
+const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);

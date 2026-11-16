@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 
 #. placeholder {0}: stone.laps.length
-#: src/stones/stone-card.tsx:29
+#: src/stones/stone-card.tsx:36
 msgid "{0, plural, one {# lap} other {# laps}}"
 msgstr "{0, plural, one {# lap} other {# laps}}"
 
@@ -54,11 +54,11 @@ msgstr "Cancel"
 msgid "Choose a watch file"
 msgstr "Choose a watch file"
 
-#: src/stones/stone-card.tsx:67
+#: src/stones/stone-card.tsx:97
 msgid "Cycling"
 msgstr "Cycling"
 
-#: src/stones/stone-card.tsx:36
+#: src/stones/stone-card.tsx:44
 msgid "Distance"
 msgstr "Distance"
 
@@ -66,7 +66,7 @@ msgstr "Distance"
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 
-#: src/stones/stone-card.tsx:39
+#: src/stones/stone-card.tsx:50
 msgid "Elapsed time"
 msgstr "Elapsed time"
 
@@ -96,7 +96,7 @@ msgstr "Feed"
 msgid "Hi, {name}"
 msgstr "Hi, {name}"
 
-#: src/stones/stone-card.tsx:73
+#: src/stones/stone-card.tsx:103
 msgid "Hiking"
 msgstr "Hiking"
 
@@ -112,7 +112,7 @@ msgstr "Last used"
 msgid "Main"
 msgstr "Main"
 
-#: src/stones/stone-card.tsx:38
+#: src/stones/stone-card.tsx:46
 msgid "Moving time"
 msgstr "Moving time"
 
@@ -144,9 +144,13 @@ msgstr "Nothing was kept."
 msgid "One stone at a time."
 msgstr "One stone at a time."
 
-#: src/stones/stone-card.tsx:77
+#: src/stones/stone-card.tsx:107
 msgid "Other"
 msgstr "Other"
+
+#: src/stones/stone-card.tsx:48
+msgid "Pace"
+msgstr "Pace"
 
 #: src/routes/_signed-in/settings.tsx:75
 #: src/sign-in/device-name.ts:33
@@ -180,7 +184,7 @@ msgstr "Remove {name}"
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
 
-#: src/stones/stone-card.tsx:57
+#: src/stones/stone-card.tsx:87
 msgid "Road running"
 msgstr "Road running"
 
@@ -219,13 +223,17 @@ msgstr "Sign up"
 msgid "Sign-in methods"
 msgstr "Sign-in methods"
 
-#: src/stones/stone-card.tsx:71
+#: src/stones/stone-card.tsx:101
 msgid "Skiing"
 msgstr "Skiing"
 
 #: src/components/form.tsx:53
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
+
+#: src/stones/stone-card.tsx:48
+msgid "Speed"
+msgstr "Speed"
 
 #: src/routes/_signed-in/stones.tsx:59
 #: src/stones/stones-calendar.tsx:75
@@ -241,11 +249,11 @@ msgstr "Stones"
 msgid "Stones: your completed activities"
 msgstr "Stones: your completed activities"
 
-#: src/stones/stone-card.tsx:65
+#: src/stones/stone-card.tsx:95
 msgid "Strength"
 msgstr "Strength"
 
-#: src/stones/stone-card.tsx:69
+#: src/stones/stone-card.tsx:99
 msgid "Swimming"
 msgstr "Swimming"
 
@@ -281,15 +289,19 @@ msgstr "This isn't a FIT file. Choose the .fit file your watch saved."
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 
-#: src/stones/stone-card.tsx:61
+#: src/stones/stone-card.tsx:34
+msgid "totals only"
+msgstr "totals only"
+
+#: src/stones/stone-card.tsx:91
 msgid "Track running"
 msgstr "Track running"
 
-#: src/stones/stone-card.tsx:59
+#: src/stones/stone-card.tsx:89
 msgid "Trail running"
 msgstr "Trail running"
 
-#: src/stones/stone-card.tsx:63
+#: src/stones/stone-card.tsx:93
 msgid "Treadmill running"
 msgstr "Treadmill running"
 
@@ -305,7 +317,7 @@ msgstr "Turned away"
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
 
-#: src/stones/stone-card.tsx:75
+#: src/stones/stone-card.tsx:105
 msgid "Walking"
 msgstr "Walking"
 

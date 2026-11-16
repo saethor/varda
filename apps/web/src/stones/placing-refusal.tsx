@@ -1,5 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
+import { Link } from '@tanstack/react-router';
 import { Alert, AlertDescription, AlertTitle } from '@varda/ui/components/alert';
+import { linkClassName } from '../components/form.tsx';
 import type { Stone } from '../lib/stones.ts';
 
 /** Why a watch file was turned away, by the browser or by the server. */
@@ -9,8 +11,8 @@ export type TurnedAwayReason = 'not-a-fit-file' | 'too-large' | 'broken' | 'not-
 export type Refusal = { alreadyPlaced: string } | { turnedAway: TurnedAwayReason };
 
 /**
- * Says why a stone wasn't placed. The stone already placed from the session is named when the
- * feed has it loaded.
+ * Says why a stone wasn't placed. The stone already placed from the session is linked, and named
+ * when the feed has it loaded.
  */
 export function PlacingRefusal({ refusal, stones }: { refusal: Refusal; stones: Stone[] }) {
   if ('alreadyPlaced' in refusal) {
@@ -21,11 +23,16 @@ export function PlacingRefusal({ refusal, stones }: { refusal: Refusal; stones: 
           <Trans>Already placed</Trans>
         </AlertTitle>
         <AlertDescription>
-          {placedBefore ? (
-            <PlacedBefore stone={placedBefore} />
-          ) : (
-            <Trans>You already placed a stone from this session.</Trans>
-          )}
+          <p>
+            {placedBefore ? (
+              <PlacedBefore stone={placedBefore} />
+            ) : (
+              <Trans>You already placed a stone from this session.</Trans>
+            )}
+          </p>
+          <Link to="/stones/$stoneId" params={{ stoneId: refusal.alreadyPlaced }} className={linkClassName}>
+            <Trans>Open that stone</Trans>
+          </Link>
         </AlertDescription>
       </Alert>
     );

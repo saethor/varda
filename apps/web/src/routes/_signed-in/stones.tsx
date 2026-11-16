@@ -1,7 +1,6 @@
 import { Trans } from '@lingui/react/macro';
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
 import { calendarQuery, feedQuery, usePlaceStone } from '../../lib/stones.ts';
 import { monthOf } from '../../stones/calendar-month.ts';
@@ -42,7 +41,6 @@ function Stones() {
   const feed = useSuspenseInfiniteQuery(feedQuery(today));
   const placing = usePlaceStone();
   const stones = feed.data.pages.flat();
-  const placedFrom = placing.isSuccess ? placing.variables.file.name : null;
 
   return (
     <section className="flex flex-col gap-6">
@@ -52,14 +50,6 @@ function Stones() {
           <PlacingPanel placing={placing} stones={stones} />
         </aside>
         <div className="flex flex-col gap-4 lg:order-1">
-          {/* Until a stone opens on its own screen, the feed says where the new one came from. */}
-          {placedFrom !== null && (
-            <Alert>
-              <AlertDescription>
-                <Trans>Stone placed from {placedFrom}</Trans>
-              </AlertDescription>
-            </Alert>
-          )}
           {stones.length === 0 ? <NoStones /> : stones.map((stone) => <StoneCard key={stone.id} stone={stone} />)}
           <Button
             variant="secondary"

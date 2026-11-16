@@ -50,6 +50,14 @@ export function createRecordRouter(adapters: RecordAdapters) {
       list: os.stones.list
         .use(requirePerson)
         .handler(async ({ context, input }) => (await adapters.stones.ofAthlete(context.person, input)).map(shown)),
+      get: os.stones.get.use(requirePerson).handler(async ({ context, input: { stoneId }, errors }) => {
+        const stone = await adapters.stones.byId(stoneId);
+        // One the signed-in person can't see looks exactly like one that doesn't exist (spec #60).
+        if (stone === null || !(await adapters.coachingAccess.canSee(context.person, stone.athlete))) {
+          throw errors.NOT_FOUND();
+        }
+        return shown(stone);
+      }),
     },
   });
 }

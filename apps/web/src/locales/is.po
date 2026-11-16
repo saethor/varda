@@ -8,18 +8,22 @@ msgstr ""
 "Language: is\n"
 
 #. placeholder {0}: stone.laps.length
-#: src/stones/stone-card.tsx:36
+#: src/stones/stone-card.tsx:44
 msgid "{0, plural, one {# lap} other {# laps}}"
 msgstr "{0, plural, one {# hringur} other {# hringir}}"
 
 #. placeholder {0}: totals.stones
-#: src/stones/stones-calendar.tsx:193
+#: src/stones/stones-calendar.tsx:183
 msgid "{0, plural, one {# stone} other {# stones}}"
 msgstr "{0, plural, one {# steinn} other {# steinar}}"
 
 #: src/sign-in/device-name.ts:32
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} á {operatingSystem}"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:86
+msgid "{day} · started {time}"
+msgstr "{day} · hófst {time}"
 
 #: src/routes/_signed-in/add-a-passkey.tsx:45
 #: src/routes/_signed-in/settings.tsx:65
@@ -34,7 +38,7 @@ msgstr "Bæta við aðgangslykli?"
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
-#: src/stones/placing-refusal.tsx:21
+#: src/stones/placing-refusal.tsx:23
 msgid "Already placed"
 msgstr "Þegar lagður"
 
@@ -42,7 +46,7 @@ msgstr "Þegar lagður"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 
-#: src/stones/stones-calendar.tsx:48
+#: src/stones/stones-calendar.tsx:47
 msgid "Calendar"
 msgstr "Dagatal"
 
@@ -54,11 +58,13 @@ msgstr "Hætta við"
 msgid "Choose a watch file"
 msgstr "Velja úraskrá"
 
-#: src/stones/stone-card.tsx:97
+#: src/stones/stone-card.tsx:87
 msgid "Cycling"
 msgstr "Hjólreiðar"
 
-#: src/stones/stone-card.tsx:44
+#: src/routes/_signed-in/stones_.$stoneId.tsx:96
+#: src/routes/_signed-in/stones_.$stoneId.tsx:152
+#: src/stones/stone-card.tsx:52
 msgid "Distance"
 msgstr "Vegalengd"
 
@@ -66,7 +72,9 @@ msgstr "Vegalengd"
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 msgstr "Slepptu .fit-skránni sem úrið vistaði hér, eða veldu hana. Ein skrá í einu, mest 25 MB."
 
-#: src/stones/stone-card.tsx:50
+#: src/routes/_signed-in/stones_.$stoneId.tsx:102
+#: src/routes/_signed-in/stones_.$stoneId.tsx:163
+#: src/stones/stone-card.tsx:58
 msgid "Elapsed time"
 msgstr "Heildartími"
 
@@ -84,11 +92,11 @@ msgstr "Sláðu inn gilt netfang."
 msgid "Enter your name."
 msgstr "Sláðu inn nafnið þitt."
 
-#: src/routes/_signed-in/stones.tsx:85
+#: src/routes/_signed-in/stones.tsx:75
 msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 msgstr "Hvert hlaup, hjólatúr, sund eða æfing sem þú lýkur verður að steini. Leggðu stein úr .fit-skránni sem úrið vistaði."
 
-#: src/stones/stones-calendar.tsx:40
+#: src/stones/stones-calendar.tsx:39
 msgid "Feed"
 msgstr "Straumur"
 
@@ -96,13 +104,21 @@ msgstr "Straumur"
 msgid "Hi, {name}"
 msgstr "Hæ, {name}"
 
-#: src/stones/stone-card.tsx:103
+#: src/stones/stone-card.tsx:93
 msgid "Hiking"
 msgstr "Fjallganga"
 
 #: src/routes/_signed-in.tsx:25
 msgid "Home"
 msgstr "Forsíða"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:149
+msgid "Lap"
+msgstr "Hringur"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:107
+msgid "Laps"
+msgstr "Hringir"
 
 #: src/routes/sign-in.tsx:166
 msgid "Last used"
@@ -112,7 +128,9 @@ msgstr "Síðast notað"
 msgid "Main"
 msgstr "Aðalvalmynd"
 
-#: src/stones/stone-card.tsx:46
+#: src/routes/_signed-in/stones_.$stoneId.tsx:98
+#: src/routes/_signed-in/stones_.$stoneId.tsx:155
+#: src/stones/stone-card.tsx:54
 msgid "Moving time"
 msgstr "Hreyfitími"
 
@@ -128,7 +146,7 @@ msgstr "Fyrsta sinn í Vörðu? <0>Nýskráning</0>"
 msgid "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 msgstr "Næst geturðu skráð þig inn með fingrafari, andliti eða PIN-númeri tækisins í stað lykilorðs. Þú getur líka bætt við aðgangslykli síðar í Stillingum."
 
-#: src/stones/stones-calendar.tsx:171
+#: src/stones/stones-calendar.tsx:161
 msgid "No stones this week"
 msgstr "Engir steinar þessa viku"
 
@@ -136,7 +154,7 @@ msgstr "Engir steinar þessa viku"
 msgid "Not now"
 msgstr "Ekki núna"
 
-#: src/stones/placing-refusal.tsx:43
+#: src/stones/placing-refusal.tsx:50
 msgid "Nothing was kept."
 msgstr "Ekkert var geymt."
 
@@ -144,11 +162,17 @@ msgstr "Ekkert var geymt."
 msgid "One stone at a time."
 msgstr "Einn steinn í einu."
 
-#: src/stones/stone-card.tsx:107
+#: src/stones/placing-refusal.tsx:34
+msgid "Open that stone"
+msgstr "Opna þann stein"
+
+#: src/stones/stone-card.tsx:97
 msgid "Other"
 msgstr "Annað"
 
-#: src/stones/stone-card.tsx:48
+#: src/routes/_signed-in/stones_.$stoneId.tsx:100
+#: src/routes/_signed-in/stones_.$stoneId.tsx:159
+#: src/stones/stone-card.tsx:56
 msgid "Pace"
 msgstr "Tempó"
 
@@ -167,6 +191,10 @@ msgstr "Lykilorð"
 msgid "Place a stone"
 msgstr "Leggja stein"
 
+#: src/routes/_signed-in/stones_.$stoneId.tsx:122
+msgid "Placed from {fileName}"
+msgstr "Lagður úr {fileName}"
+
 #: src/stones/placing-panel.tsx:82
 msgid "Reading {reading}…"
 msgstr "Les {reading}…"
@@ -184,7 +212,7 @@ msgstr "Fjarlægja {name}"
 msgid "Remove {name}?"
 msgstr "Fjarlægja {name}?"
 
-#: src/stones/stone-card.tsx:87
+#: src/stones/stone-card.tsx:77
 msgid "Road running"
 msgstr "Götuhlaup"
 
@@ -193,11 +221,11 @@ msgstr "Götuhlaup"
 msgid "Settings"
 msgstr "Stillingar"
 
-#: src/routes/_signed-in/stones.tsx:70
+#: src/routes/_signed-in/stones.tsx:60
 msgid "Show earlier"
 msgstr "Sýna eldri"
 
-#: src/stones/stones-calendar.tsx:33
+#: src/stones/stones-calendar.tsx:32
 msgid "Show stones as"
 msgstr "Sýna steina sem"
 
@@ -223,7 +251,7 @@ msgstr "Nýskráning"
 msgid "Sign-in methods"
 msgstr "Innskráningarleiðir"
 
-#: src/stones/stone-card.tsx:101
+#: src/stones/stone-card.tsx:91
 msgid "Skiing"
 msgstr "Skíði"
 
@@ -231,29 +259,35 @@ msgstr "Skíði"
 msgid "Something went wrong, try again."
 msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
-#: src/stones/stone-card.tsx:48
+#: src/routes/_signed-in/stones_.$stoneId.tsx:100
+#: src/routes/_signed-in/stones_.$stoneId.tsx:159
+#: src/stones/stone-card.tsx:56
 msgid "Speed"
 msgstr "Hraði"
 
-#: src/routes/_signed-in/stones.tsx:59
-#: src/stones/stones-calendar.tsx:75
-msgid "Stone placed from {placedFrom}"
-msgstr "Steinn lagður úr {placedFrom}"
+#: src/routes/_signed-in/stones_.$stoneId.tsx:49
+msgid "Stone not found"
+msgstr "Steinn fannst ekki"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:76
+msgid "Stone placed from {fileName}"
+msgstr "Steinn lagður úr {fileName}"
 
 #: src/routes/_signed-in.tsx:28
-#: src/stones/stones-calendar.tsx:19
+#: src/routes/_signed-in/stones_.$stoneId.tsx:39
+#: src/stones/stones-calendar.tsx:18
 msgid "Stones"
 msgstr "Steinar"
 
-#: src/routes/_signed-in/stones.tsx:82
+#: src/routes/_signed-in/stones.tsx:72
 msgid "Stones: your completed activities"
 msgstr "Steinar: æfingarnar sem þú hefur lokið"
 
-#: src/stones/stone-card.tsx:95
+#: src/stones/stone-card.tsx:85
 msgid "Strength"
 msgstr "Styrkur"
 
-#: src/stones/stone-card.tsx:99
+#: src/stones/stone-card.tsx:89
 msgid "Swimming"
 msgstr "Sund"
 
@@ -261,27 +295,35 @@ msgstr "Sund"
 msgid "That email and password don't match."
 msgstr "Netfangið og lykilorðið passa ekki saman."
 
+#: src/routes/_signed-in/stones_.$stoneId.tsx:111
+msgid "The watch recorded no laps: this stone keeps its totals only."
+msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur."
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:52
+msgid "There's no such stone. It may have been deleted, or the link may be wrong."
+msgstr "Þessi steinn er ekki til. Honum gæti hafa verið eytt, eða hlekkurinn er rangur."
+
 #: src/routes/sign-up.tsx:77
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "Þetta netfang er þegar skráð. <0>Viltu skrá þig inn?</0>"
 
-#: src/stones/placing-refusal.tsx:67
+#: src/stones/placing-refusal.tsx:74
 msgid "This file is larger than 25 MB."
 msgstr "Þessi skrá er stærri en 25 MB."
 
-#: src/stones/placing-refusal.tsx:71
+#: src/stones/placing-refusal.tsx:78
 msgid "This FIT file holds no session, such as settings, a course or a workout."
 msgstr "Þessi FIT-skrá geymir enga æfingu, heldur til dæmis stillingar, leið eða æfingaáætlun."
 
-#: src/stones/placing-refusal.tsx:69
+#: src/stones/placing-refusal.tsx:76
 msgid "This FIT file is broken. Copy it off your watch again."
 msgstr "Þessi FIT-skrá er biluð. Afritaðu hana aftur af úrinu."
 
-#: src/stones/placing-refusal.tsx:73
+#: src/stones/placing-refusal.tsx:80
 msgid "This is a multisport session, such as a triathlon. Varða can't place those yet."
 msgstr "Þetta er fjölgreinaæfing, til dæmis þríþraut. Varða getur ekki lagt slíkar enn."
 
-#: src/stones/placing-refusal.tsx:65
+#: src/stones/placing-refusal.tsx:72
 msgid "This isn't a FIT file. Choose the .fit file your watch saved."
 msgstr "Þetta er ekki FIT-skrá. Veldu .fit-skrána sem úrið vistaði."
 
@@ -289,19 +331,19 @@ msgstr "Þetta er ekki FIT-skrá. Veldu .fit-skrána sem úrið vistaði."
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "Þessi aðgangslykill skráir þig ekki lengur inn í Vörðu. Þú getur áfram skráð þig inn með lykilorðinu þínu."
 
-#: src/stones/stone-card.tsx:34
+#: src/stones/stone-card.tsx:42
 msgid "totals only"
 msgstr "aðeins heildartölur"
 
-#: src/stones/stone-card.tsx:91
+#: src/stones/stone-card.tsx:81
 msgid "Track running"
 msgstr "Brautarhlaup"
 
-#: src/stones/stone-card.tsx:89
+#: src/stones/stone-card.tsx:79
 msgid "Trail running"
 msgstr "Utanvegahlaup"
 
-#: src/stones/stone-card.tsx:93
+#: src/stones/stone-card.tsx:83
 msgid "Treadmill running"
 msgstr "Hlaupabretti"
 
@@ -309,7 +351,7 @@ msgstr "Hlaupabretti"
 msgid "Try again"
 msgstr "Reyna aftur"
 
-#: src/stones/placing-refusal.tsx:36
+#: src/stones/placing-refusal.tsx:43
 msgid "Turned away"
 msgstr "Hafnað"
 
@@ -317,19 +359,19 @@ msgstr "Hafnað"
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn með lykilorðinu þínu."
 
-#: src/stones/stone-card.tsx:105
+#: src/stones/stone-card.tsx:95
 msgid "Walking"
 msgstr "Ganga"
 
-#: src/stones/stones-calendar.tsx:129
+#: src/stones/stones-calendar.tsx:119
 msgid "Week"
 msgstr "Vika"
 
-#: src/stones/placing-refusal.tsx:56
+#: src/stones/placing-refusal.tsx:63
 msgid "You already placed a stone from this session: the one placed from {fileName}, on {day}."
 msgstr "Þú hefur þegar lagt stein úr þessari æfingu: steininn sem var lagður úr {fileName}, {day}."
 
-#: src/stones/placing-refusal.tsx:27
+#: src/stones/placing-refusal.tsx:30
 msgid "You already placed a stone from this session."
 msgstr "Þú hefur þegar lagt stein úr þessari æfingu."
 

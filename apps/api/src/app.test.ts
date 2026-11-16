@@ -37,6 +37,23 @@ describe('api', () => {
     expect(stones.map(({ id, fileName }) => ({ id, fileName }))).toEqual([{ id: stoneId, fileName: 'run.fit' }]);
   });
 
+  // Record asks Shared's coaching access reader who may open a stone.
+  it("opens a stone for its athlete, and answers another person's stone as not found", async () => {
+    const { client, fakes } = createTestApp({ as: guðrún });
+    const { stoneId } = await client.record.stones.place({
+      file: new File([watchFile() as Uint8Array<ArrayBuffer>], 'run.fit'),
+    });
+    const jón = createTestApp({
+      as: { id: '00000000-0000-7000-8000-000000000002', name: 'Jón' },
+      overrides: { shared: fakes.shared, record: fakes.record },
+    });
+
+    const opened = await client.record.stones.get({ stoneId });
+    const { error, isDefined } = await safe(jón.client.record.stones.get({ stoneId }));
+
+    expect([opened.id, isDefined && error.code]).toEqual([stoneId, 'NOT_FOUND']);
+  });
+
   it('turns away a body over the upload limit with the typed error', async () => {
     const { client } = createTestApp({ as: guðrún });
     const file = new File([new Uint8Array(26_000_000)], 'huge.fit');

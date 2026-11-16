@@ -1,7 +1,6 @@
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { buttonVariants } from '@varda/ui/components/button';
 import { formatDistance, formatDuration } from '@varda/ui/lib/format';
 import { cn } from '@varda/ui/lib/utils';
@@ -59,7 +58,6 @@ export function StonesCalendar({ month }: { month: Month }) {
   const { data: stones } = useSuspenseQuery(calendarQuery(month));
   const placing = usePlaceStone();
   const weeks = calendarWeeks(month, stones);
-  const placedFrom = placing.isSuccess ? placing.variables.file.name : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -68,14 +66,6 @@ export function StonesCalendar({ month }: { month: Month }) {
         stones={stones}
         className="lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:py-3"
       />
-      {/* Until a stone opens on its own screen, the calendar says where the new one came from. */}
-      {placedFrom !== null && (
-        <Alert>
-          <AlertDescription>
-            <Trans>Stone placed from {placedFrom}</Trans>
-          </AlertDescription>
-        </Alert>
-      )}
       <MonthHeader month={month} />
       <WeekdayHeader week={weeks[0]} />
       <div className="flex flex-col gap-6 lg:gap-1.5">
@@ -202,9 +192,12 @@ function WeekTotals({ totals, className }: { totals: CalendarWeek<Stone>['totals
 function CalendarStone({ stone, withDay = false }: { stone: Stone; withDay?: boolean }) {
   const { i18n } = useLingui();
 
-  // Opens the stone once "Open a stone" (#64) lands: make this a <Link to="/stones/$stoneId">.
   return (
-    <div className="flex flex-col rounded-md border bg-card px-2 py-1.5 text-sm">
+    <Link
+      to="/stones/$stoneId"
+      params={{ stoneId: stone.id }}
+      className="flex flex-col rounded-md border bg-card px-2 py-1.5 text-sm transition-colors hover:border-input"
+    >
       <span className="truncate text-xs text-muted-foreground">
         <SportName sport={stone.sport.sport} />
         {withDay && (
@@ -220,7 +213,7 @@ function CalendarStone({ stone, withDay = false }: { stone: Stone; withDay?: boo
           <span className="text-xs text-muted-foreground"> · {formatDuration(stone.movingTime)}</span>
         )}
       </span>
-    </div>
+    </Link>
   );
 }
 

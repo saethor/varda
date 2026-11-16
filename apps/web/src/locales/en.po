@@ -8,18 +8,22 @@ msgstr ""
 "Language: en\n"
 
 #. placeholder {0}: stone.laps.length
-#: src/stones/stone-card.tsx:36
+#: src/stones/stone-card.tsx:44
 msgid "{0, plural, one {# lap} other {# laps}}"
 msgstr "{0, plural, one {# lap} other {# laps}}"
 
 #. placeholder {0}: totals.stones
-#: src/stones/stones-calendar.tsx:193
+#: src/stones/stones-calendar.tsx:183
 msgid "{0, plural, one {# stone} other {# stones}}"
 msgstr "{0, plural, one {# stone} other {# stones}}"
 
 #: src/sign-in/device-name.ts:32
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:86
+msgid "{day} · started {time}"
+msgstr "{day} · started {time}"
 
 #: src/routes/_signed-in/add-a-passkey.tsx:45
 #: src/routes/_signed-in/settings.tsx:65
@@ -34,7 +38,7 @@ msgstr "Add a passkey?"
 msgid "Added {added}"
 msgstr "Added {added}"
 
-#: src/stones/placing-refusal.tsx:21
+#: src/stones/placing-refusal.tsx:23
 msgid "Already placed"
 msgstr "Already placed"
 
@@ -42,7 +46,7 @@ msgstr "Already placed"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
-#: src/stones/stones-calendar.tsx:48
+#: src/stones/stones-calendar.tsx:47
 msgid "Calendar"
 msgstr "Calendar"
 
@@ -54,11 +58,13 @@ msgstr "Cancel"
 msgid "Choose a watch file"
 msgstr "Choose a watch file"
 
-#: src/stones/stone-card.tsx:97
+#: src/stones/stone-card.tsx:87
 msgid "Cycling"
 msgstr "Cycling"
 
-#: src/stones/stone-card.tsx:44
+#: src/routes/_signed-in/stones_.$stoneId.tsx:96
+#: src/routes/_signed-in/stones_.$stoneId.tsx:152
+#: src/stones/stone-card.tsx:52
 msgid "Distance"
 msgstr "Distance"
 
@@ -66,7 +72,9 @@ msgstr "Distance"
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 
-#: src/stones/stone-card.tsx:50
+#: src/routes/_signed-in/stones_.$stoneId.tsx:102
+#: src/routes/_signed-in/stones_.$stoneId.tsx:163
+#: src/stones/stone-card.tsx:58
 msgid "Elapsed time"
 msgstr "Elapsed time"
 
@@ -84,11 +92,11 @@ msgstr "Enter a valid email address."
 msgid "Enter your name."
 msgstr "Enter your name."
 
-#: src/routes/_signed-in/stones.tsx:85
+#: src/routes/_signed-in/stones.tsx:75
 msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 msgstr "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 
-#: src/stones/stones-calendar.tsx:40
+#: src/stones/stones-calendar.tsx:39
 msgid "Feed"
 msgstr "Feed"
 
@@ -96,13 +104,21 @@ msgstr "Feed"
 msgid "Hi, {name}"
 msgstr "Hi, {name}"
 
-#: src/stones/stone-card.tsx:103
+#: src/stones/stone-card.tsx:93
 msgid "Hiking"
 msgstr "Hiking"
 
 #: src/routes/_signed-in.tsx:25
 msgid "Home"
 msgstr "Home"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:149
+msgid "Lap"
+msgstr "Lap"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:107
+msgid "Laps"
+msgstr "Laps"
 
 #: src/routes/sign-in.tsx:166
 msgid "Last used"
@@ -112,7 +128,9 @@ msgstr "Last used"
 msgid "Main"
 msgstr "Main"
 
-#: src/stones/stone-card.tsx:46
+#: src/routes/_signed-in/stones_.$stoneId.tsx:98
+#: src/routes/_signed-in/stones_.$stoneId.tsx:155
+#: src/stones/stone-card.tsx:54
 msgid "Moving time"
 msgstr "Moving time"
 
@@ -128,7 +146,7 @@ msgstr "New to Varða? <0>Sign up</0>"
 msgid "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 msgstr "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 
-#: src/stones/stones-calendar.tsx:171
+#: src/stones/stones-calendar.tsx:161
 msgid "No stones this week"
 msgstr "No stones this week"
 
@@ -136,7 +154,7 @@ msgstr "No stones this week"
 msgid "Not now"
 msgstr "Not now"
 
-#: src/stones/placing-refusal.tsx:43
+#: src/stones/placing-refusal.tsx:50
 msgid "Nothing was kept."
 msgstr "Nothing was kept."
 
@@ -144,11 +162,17 @@ msgstr "Nothing was kept."
 msgid "One stone at a time."
 msgstr "One stone at a time."
 
-#: src/stones/stone-card.tsx:107
+#: src/stones/placing-refusal.tsx:34
+msgid "Open that stone"
+msgstr "Open that stone"
+
+#: src/stones/stone-card.tsx:97
 msgid "Other"
 msgstr "Other"
 
-#: src/stones/stone-card.tsx:48
+#: src/routes/_signed-in/stones_.$stoneId.tsx:100
+#: src/routes/_signed-in/stones_.$stoneId.tsx:159
+#: src/stones/stone-card.tsx:56
 msgid "Pace"
 msgstr "Pace"
 
@@ -167,6 +191,10 @@ msgstr "Password"
 msgid "Place a stone"
 msgstr "Place a stone"
 
+#: src/routes/_signed-in/stones_.$stoneId.tsx:122
+msgid "Placed from {fileName}"
+msgstr "Placed from {fileName}"
+
 #: src/stones/placing-panel.tsx:82
 msgid "Reading {reading}…"
 msgstr "Reading {reading}…"
@@ -184,7 +212,7 @@ msgstr "Remove {name}"
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
 
-#: src/stones/stone-card.tsx:87
+#: src/stones/stone-card.tsx:77
 msgid "Road running"
 msgstr "Road running"
 
@@ -193,11 +221,11 @@ msgstr "Road running"
 msgid "Settings"
 msgstr "Settings"
 
-#: src/routes/_signed-in/stones.tsx:70
+#: src/routes/_signed-in/stones.tsx:60
 msgid "Show earlier"
 msgstr "Show earlier"
 
-#: src/stones/stones-calendar.tsx:33
+#: src/stones/stones-calendar.tsx:32
 msgid "Show stones as"
 msgstr "Show stones as"
 
@@ -223,7 +251,7 @@ msgstr "Sign up"
 msgid "Sign-in methods"
 msgstr "Sign-in methods"
 
-#: src/stones/stone-card.tsx:101
+#: src/stones/stone-card.tsx:91
 msgid "Skiing"
 msgstr "Skiing"
 
@@ -231,29 +259,35 @@ msgstr "Skiing"
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
 
-#: src/stones/stone-card.tsx:48
+#: src/routes/_signed-in/stones_.$stoneId.tsx:100
+#: src/routes/_signed-in/stones_.$stoneId.tsx:159
+#: src/stones/stone-card.tsx:56
 msgid "Speed"
 msgstr "Speed"
 
-#: src/routes/_signed-in/stones.tsx:59
-#: src/stones/stones-calendar.tsx:75
-msgid "Stone placed from {placedFrom}"
-msgstr "Stone placed from {placedFrom}"
+#: src/routes/_signed-in/stones_.$stoneId.tsx:49
+msgid "Stone not found"
+msgstr "Stone not found"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:76
+msgid "Stone placed from {fileName}"
+msgstr "Stone placed from {fileName}"
 
 #: src/routes/_signed-in.tsx:28
-#: src/stones/stones-calendar.tsx:19
+#: src/routes/_signed-in/stones_.$stoneId.tsx:39
+#: src/stones/stones-calendar.tsx:18
 msgid "Stones"
 msgstr "Stones"
 
-#: src/routes/_signed-in/stones.tsx:82
+#: src/routes/_signed-in/stones.tsx:72
 msgid "Stones: your completed activities"
 msgstr "Stones: your completed activities"
 
-#: src/stones/stone-card.tsx:95
+#: src/stones/stone-card.tsx:85
 msgid "Strength"
 msgstr "Strength"
 
-#: src/stones/stone-card.tsx:99
+#: src/stones/stone-card.tsx:89
 msgid "Swimming"
 msgstr "Swimming"
 
@@ -261,27 +295,35 @@ msgstr "Swimming"
 msgid "That email and password don't match."
 msgstr "That email and password don't match."
 
+#: src/routes/_signed-in/stones_.$stoneId.tsx:111
+msgid "The watch recorded no laps: this stone keeps its totals only."
+msgstr "The watch recorded no laps: this stone keeps its totals only."
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:52
+msgid "There's no such stone. It may have been deleted, or the link may be wrong."
+msgstr "There's no such stone. It may have been deleted, or the link may be wrong."
+
 #: src/routes/sign-up.tsx:77
 msgid "This email is already signed up. <0>Sign in instead?</0>"
 msgstr "This email is already signed up. <0>Sign in instead?</0>"
 
-#: src/stones/placing-refusal.tsx:67
+#: src/stones/placing-refusal.tsx:74
 msgid "This file is larger than 25 MB."
 msgstr "This file is larger than 25 MB."
 
-#: src/stones/placing-refusal.tsx:71
+#: src/stones/placing-refusal.tsx:78
 msgid "This FIT file holds no session, such as settings, a course or a workout."
 msgstr "This FIT file holds no session, such as settings, a course or a workout."
 
-#: src/stones/placing-refusal.tsx:69
+#: src/stones/placing-refusal.tsx:76
 msgid "This FIT file is broken. Copy it off your watch again."
 msgstr "This FIT file is broken. Copy it off your watch again."
 
-#: src/stones/placing-refusal.tsx:73
+#: src/stones/placing-refusal.tsx:80
 msgid "This is a multisport session, such as a triathlon. Varða can't place those yet."
 msgstr "This is a multisport session, such as a triathlon. Varða can't place those yet."
 
-#: src/stones/placing-refusal.tsx:65
+#: src/stones/placing-refusal.tsx:72
 msgid "This isn't a FIT file. Choose the .fit file your watch saved."
 msgstr "This isn't a FIT file. Choose the .fit file your watch saved."
 
@@ -289,19 +331,19 @@ msgstr "This isn't a FIT file. Choose the .fit file your watch saved."
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 
-#: src/stones/stone-card.tsx:34
+#: src/stones/stone-card.tsx:42
 msgid "totals only"
 msgstr "totals only"
 
-#: src/stones/stone-card.tsx:91
+#: src/stones/stone-card.tsx:81
 msgid "Track running"
 msgstr "Track running"
 
-#: src/stones/stone-card.tsx:89
+#: src/stones/stone-card.tsx:79
 msgid "Trail running"
 msgstr "Trail running"
 
-#: src/stones/stone-card.tsx:93
+#: src/stones/stone-card.tsx:83
 msgid "Treadmill running"
 msgstr "Treadmill running"
 
@@ -309,7 +351,7 @@ msgstr "Treadmill running"
 msgid "Try again"
 msgstr "Try again"
 
-#: src/stones/placing-refusal.tsx:36
+#: src/stones/placing-refusal.tsx:43
 msgid "Turned away"
 msgstr "Turned away"
 
@@ -317,19 +359,19 @@ msgstr "Turned away"
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
 
-#: src/stones/stone-card.tsx:105
+#: src/stones/stone-card.tsx:95
 msgid "Walking"
 msgstr "Walking"
 
-#: src/stones/stones-calendar.tsx:129
+#: src/stones/stones-calendar.tsx:119
 msgid "Week"
 msgstr "Week"
 
-#: src/stones/placing-refusal.tsx:56
+#: src/stones/placing-refusal.tsx:63
 msgid "You already placed a stone from this session: the one placed from {fileName}, on {day}."
 msgstr "You already placed a stone from this session: the one placed from {fileName}, on {day}."
 
-#: src/stones/placing-refusal.tsx:27
+#: src/stones/placing-refusal.tsx:30
 msgid "You already placed a stone from this session."
 msgstr "You already placed a stone from this session."
 

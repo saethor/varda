@@ -1,13 +1,14 @@
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
+import { Link } from '@tanstack/react-router';
 import { Card } from '@varda/ui/components/card';
 import { formatDistance, formatDuration } from '@varda/ui/lib/format';
 import type { ReactNode } from 'react';
 import type { Sport, Stone } from '../lib/stones.ts';
-import { lapStrip } from './lap-strip.ts';
+import { LapBars } from './lap-bars.tsx';
 import { paceOrSpeed } from './pace-or-speed.ts';
 import { TraceSvg } from './trace-svg.tsx';
 
-/** One stone in the feed: what it was, when, its headline numbers and its trace. */
+/** One stone in the feed: what it was, when, its headline numbers and its trace. It opens the stone. */
 export function StoneCard({ stone }: { stone: Stone }) {
   const { i18n } = useLingui();
   // A local date has no zone: shown as written, never shifted into the browser's.
@@ -22,11 +23,18 @@ export function StoneCard({ stone }: { stone: Stone }) {
   const pace = paceOrSpeed(stone.sport.sport, stone.distance, stone.movingTime, i18n.locale);
 
   return (
-    <Card className="gap-4 p-5">
+    <Card className="relative gap-4 p-5 transition-colors has-[a:hover]:border-input">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">
-            <SportName sport={stone.sport.sport} />
+            {/* The whole card is the link's target; its name is the sport alone. */}
+            <Link
+              to="/stones/$stoneId"
+              params={{ stoneId: stone.id }}
+              className="rounded-sm after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50"
+            >
+              <SportName sport={stone.sport.sport} />
+            </Link>
           </h2>
           <p className="text-muted-foreground">
             {day} · {time} ·{' '}
@@ -49,7 +57,7 @@ export function StoneCard({ stone }: { stone: Stone }) {
         )}
         <Stat label={<Trans>Elapsed time</Trans>} value={formatDuration(stone.elapsedTime)} />
       </dl>
-      <LapStrip laps={stone.laps} />
+      <LapBars laps={stone.laps} />
     </Card>
   );
 }
@@ -59,24 +67,6 @@ function Stat({ label, value }: { label: ReactNode; value: string }) {
     <div>
       <dt className="text-xs text-muted-foreground">{label}</dt>
       <dd className="text-xl">{value}</dd>
-    </div>
-  );
-}
-
-/** Each lap as a bar: width by distance, height by speed. Decorative: the lap count says it in words. */
-function LapStrip({ laps }: { laps: Stone['laps'] }) {
-  const bars = lapStrip(laps);
-  if (bars.length === 0) return null;
-  return (
-    <div className="flex h-12 items-end gap-0.5" aria-hidden>
-      {bars.map((bar, i) => (
-        <div
-          // biome-ignore lint/suspicious/noArrayIndexKey: laps are positional and never reorder
-          key={i}
-          className="rounded-t-sm bg-primary/70"
-          style={{ flexGrow: bar.width, flexBasis: 0, height: `${bar.height * 100}%` }}
-        />
-      ))}
     </div>
   );
 }

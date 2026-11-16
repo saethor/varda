@@ -96,6 +96,9 @@ importers:
       '@varda/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@varda/record':
+        specifier: workspace:*
+        version: link:../../packages/record
 
   apps/web:
     dependencies:

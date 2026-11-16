@@ -1,5 +1,6 @@
 // Checks how the app is put together. Each context tests its own part of the contract (ADR 0008).
 import { safe } from '@orpc/client';
+import { watchFile } from '@varda/record/watch-files';
 import { describe, expect, it } from 'vitest';
 import { createTestApp } from './testing.ts';
 
@@ -23,6 +24,17 @@ describe('api', () => {
   it('passes the signed-in person into the request context', async () => {
     const { client } = createTestApp({ as: guðrún });
     expect(await client.shared.persons.me()).toEqual(guðrún);
+  });
+
+  // Also shows a watch file travels to Record as a file (multipart) through /rpc.
+  it('mounts the record router under /rpc', async () => {
+    const { client } = createTestApp({ as: guðrún });
+    const file = new File([watchFile() as Uint8Array<ArrayBuffer>], 'run.fit');
+
+    const { stoneId } = await client.record.stones.place({ file });
+
+    const stones = await client.record.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+    expect(stones.map(({ id, fileName }) => ({ id, fileName }))).toEqual([{ id: stoneId, fileName: 'run.fit' }]);
   });
 
   it('refuses nobody signed in with the typed error', async () => {

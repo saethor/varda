@@ -1,5 +1,8 @@
 // Module boundaries (ADR 0005). Run with `pnpm depcruise`.
 const contexts = 'shared|plan|record';
+// @garmin/fitsdk is not on this list: it only decodes and encodes bytes in memory, with no file,
+// network or database, so reading a watch file is pure Record domain code (#41, spec #60). That
+// loosens nothing ADR 0007 asks for: a test that reads a watch file still touches no I/O.
 const ioPackages = [
   'drizzle-orm',
   'pg',
@@ -10,7 +13,6 @@ const ioPackages = [
   '@orpc/server',
   'better-auth',
   '@aws-sdk/',
-  '@garmin/fitsdk',
 ].join('|');
 
 /** @type {import('dependency-cruiser').IConfiguration} */
@@ -55,7 +57,8 @@ module.exports = {
     {
       name: 'no-io-packages-in-domain-or-application',
       severity: 'error',
-      comment: 'Only adapters touch the database, HTTP, storage or Garmin (ADR 0007).',
+      comment:
+        'Only adapters touch the database, HTTP, storage or Garmin (ADR 0007). Decoding FIT bytes in memory is not I/O, so @garmin/fitsdk is allowed.',
       from: { path: `^packages/(${contexts})/src/(domain|application)/` },
       to: { path: `node_modules/(${ioPackages})` },
     },

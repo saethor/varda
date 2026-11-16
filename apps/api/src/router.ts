@@ -1,5 +1,6 @@
 import { implement } from '@orpc/server';
 import { contract } from '@varda/contract';
+import { createRecordRouter } from '@varda/record';
 import { createSharedRouter, type SharedContext } from '@varda/shared';
 import type { AppAdapters } from './adapters.ts';
 
@@ -10,6 +11,6 @@ export function createRouter(adapters: AppAdapters) {
   return os.router({
     shared: createSharedRouter(adapters.shared),
     plan: {},
-    record: {},
+    record: createRecordRouter(adapters.record),
   });
 }

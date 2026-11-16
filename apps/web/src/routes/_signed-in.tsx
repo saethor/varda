@@ -24,6 +24,9 @@ function SignedIn() {
         <Link to="/" className={navLinkClassName} activeOptions={{ exact: true }}>
           <Trans>Home</Trans>
         </Link>
+        <Link to="/stones" className={navLinkClassName}>
+          <Trans>Stones</Trans>
+        </Link>
         <Link to="/settings" className={navLinkClassName}>
           <Trans>Settings</Trans>
         </Link>

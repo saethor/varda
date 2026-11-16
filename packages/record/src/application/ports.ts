@@ -1,0 +1,26 @@
+import type { LocalDate, PersonId, SessionKey, Stone, StoneId } from '../domain/stone.ts';
+
+/** The athletes' stones. */
+export type Stones = {
+  add(stone: Stone): Promise<void>;
+  /** The stone with this ID, or null when there is none. */
+  byId(id: StoneId): Promise<Stone | null>;
+  /** The athlete's stones whose local date is within `from`–`to` (inclusive), newest first. */
+  ofAthlete(athlete: PersonId, range: { from: LocalDate; to: LocalDate }): Promise<Stone[]>;
+  /** The athlete's stone placed from this session, or null when there is none. */
+  withSessionKey(athlete: PersonId, sessionKey: SessionKey): Promise<Stone | null>;
+  /** Removes the stone. Nothing happens when there is none. */
+  remove(id: StoneId): Promise<void>;
+};
+
+/** The recordings stones were placed from: the original watch files, kept untouched (ADR 0002). */
+export type Recordings = {
+  put(stoneId: StoneId, bytes: Uint8Array): Promise<void>;
+  /** The recording of this stone, or null when there is none. */
+  get(stoneId: StoneId): Promise<Uint8Array | null>;
+  /** Removes the recording. Nothing happens when there is none. */
+  remove(stoneId: StoneId): Promise<void>;
+};
+
+/** New IDs (UUIDv7), generated in application code (ADR 0006). A cross-cutting adapter. */
+export type Ids = { next(): string };

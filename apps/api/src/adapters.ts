@@ -1,3 +1,4 @@
+import type { RecordAdapters } from '@varda/record';
 import type { SharedAdapters, SharedContext } from '@varda/shared';
 
 /** Login: who is asking, and the HTTP endpoints for signing up, in and out. */
@@ -15,5 +16,6 @@ export type Auth = {
 // main.ts passes the real adapters, tests pass in-memory fakes.
 export type AppAdapters = {
   shared: SharedAdapters;
+  record: RecordAdapters;
   auth: Auth;
 };

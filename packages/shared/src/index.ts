@@ -7,4 +7,4 @@ export type { SharedAdapters } from './application/shared-adapters.ts';
 // The read model the published readers return.
 export type { Person } from './domain/person.ts';
 // Shared vocabulary, also used by the Plan and Record domains.
-export type { Sport, SportGroup } from './domain/sport.ts';
+export { type Sport, type SportGroup, sportGroupOf } from './domain/sport.ts';

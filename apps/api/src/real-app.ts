@@ -1,9 +1,13 @@
 // Test-only: the real app for the adapter tests, built exactly as main.ts builds it, against a
 // migrated database (DATABASE_URL). The adapter suite's counterpart of createTestApp.
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import type { ContractRouterClient } from '@orpc/contract';
 import type { Contract } from '@varda/contract';
+import { createRecordAdapters } from '@varda/record';
 import { createSharedAdapters, createSharedReaders } from '@varda/shared';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -26,14 +30,21 @@ export type RealApp = {
   clientFor(signedIn: Response): ContractRouterClient<Contract>;
 };
 
-/** Builds the real app, with VARDA_DEV_MENU on or off. Its connection pool closes after the file's tests. */
+/**
+ * Builds the real app, with VARDA_DEV_MENU on or off. Its connection pool closes, and its
+ * temporary recordings directory is removed, after the file's tests.
+ */
 export function createRealApp({ devMenu }: { devMenu: boolean }): RealApp {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   afterAll(async () => await pool.end());
 
   const db = drizzle({ client: pool });
   const baseURL = 'http://localhost:4000';
-  const shared = createSharedAdapters({ db, ids: createUuidV7Ids() });
+  const ids = createUuidV7Ids();
+  const shared = createSharedAdapters({ db, ids });
+  const recordingsDir = mkdtempSync(join(tmpdir(), 'varda-recordings-'));
+  afterAll(() => rmSync(recordingsDir, { recursive: true, force: true }));
+  const record = createRecordAdapters({ db, ids, recordingsDir });
   const auth = createBetterAuthAdapter({
     db,
     secret: 'adapter-test-secret-at-least-32-characters',
@@ -41,7 +52,7 @@ export function createRealApp({ devMenu }: { devMenu: boolean }): RealApp {
     persons: createSharedReaders(shared).persons,
     devMenu,
   });
-  const app = createApp({ shared, auth });
+  const app = createApp({ shared, record, auth });
 
   return {
     shared,

@@ -6,6 +6,9 @@ dist/
 *.tsbuildinfo
 .env
 
+# Local recordings (VARDA_RECORDINGS_DIR).
+.data/
+
 # Lingui compiles the catalogs at build time (`lingui compile --strict` only checks them).
 apps/web/src/locales/*.js
 

@@ -4,17 +4,28 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./contract": "./src/contract.ts"
+    "./contract": "./src/contract.ts",
+    "./testing": "./src/testing/index.ts",
+    "./watch-files": "./src/watch-files/index.ts",
+    "./migrations": "./src/adapters/postgres/migrations.ts"
   },
   "scripts": {
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "@garmin/fitsdk": "21.221.0",
     "@orpc/contract": "1.16.2",
+    "@orpc/server": "1.16.2",
     "@varda/shared": "workspace:*",
+    "drizzle-orm": "0.45.4",
     "zod": "4.6.6"
   },
   "devDependencies": {
-    "@varda/config": "workspace:*"
+    "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
+    "@varda/config": "workspace:*",
+    "drizzle-kit": "0.31.11"
   }
 }

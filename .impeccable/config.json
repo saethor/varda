@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "apps/web/.impeccable/mocks/decision/*.html"
+        ],
+        "createdAt": "2026-11-15T21:41:04.485Z",
+        "reason": "Project palette: snow #f3f1ec is the committed background in packages/ui/src/styles.css; sketches inherit it"
+      }
+    ]
+  }
+}

@@ -15,3 +15,8 @@ apps/e2e/playwright-report/
 
 # Impeccable downloads its platform binary on first run.
 **/skills/impeccable/scripts/bin/
+
+# Impeccable's per-machine state. `.impeccable/config.json` is shared and stays tracked;
+# mocks/, questions/ and review/ ignore themselves.
+.impeccable/config.local.json
+**/.impeccable/hook.cache.json

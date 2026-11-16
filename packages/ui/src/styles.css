@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* The enter and exit animations shadcn components use (animate-in, fade-in-0, zoom-in-95). */
+@import "tw-animate-css";
 
 /* Apps import this file, so Tailwind must also scan the components here. */
 @source "./components";
@@ -45,5 +47,22 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+  }
+}
+
+/*
+ * tw-animate-css ignores reduced motion: keep its fades, drop the zooms, slides and spins.
+ * Unlayered on purpose, so it wins over the animation utilities without !important.
+ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    --tw-enter-scale: 1;
+    --tw-enter-rotate: 0;
+    --tw-enter-translate-x: 0;
+    --tw-enter-translate-y: 0;
+    --tw-exit-scale: 1;
+    --tw-exit-rotate: 0;
+    --tw-exit-translate-x: 0;
+    --tw-exit-translate-y: 0;
   }
 }

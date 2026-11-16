@@ -57,6 +57,65 @@ describe('placing a stone', () => {
     ]);
   });
 
+  // The rows of spec #60's sport table that carry a decision, not the whole table.
+  it.each([
+    ['running', 'street', 'road-running'],
+    ['running', 'trail', 'trail-running'],
+    ['running', 'ultra', 'trail-running'],
+    ['running', 'track', 'track-running'],
+    ['running', 'treadmill', 'treadmill-running'],
+    ['running', 'indoorRunning', 'treadmill-running'],
+    ['running', 'virtualActivity', 'treadmill-running'],
+    ['running', 'obstacle', 'road-running'],
+    ['eBiking', 'generic', 'cycling'],
+    ['snowboarding', 'generic', 'skiing'],
+    ['mountaineering', 'generic', 'hiking'],
+    ['snowshoeing', 'generic', 'hiking'],
+    ['training', 'yoga', 'other'],
+    ['golf', 'generic', 'other'],
+  ] as const)('places a %s (%s) session as %s', async (sport, subSport, expected) => {
+    const client = clientFor({ person: guðrún });
+
+    await client.stones.place({ file: fitFile(watchFile({ sport, subSport })) });
+    const [stone] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(stone?.sport.sport).toBe(expected);
+  });
+
+  it('places a strength session with no laps and no distance', async () => {
+    const client = clientFor({ person: guðrún });
+    const strength = watchFile({ sport: 'training', subSport: 'strengthTraining', laps: [], distance: false });
+
+    await client.stones.place({ file: fitFile(strength) });
+    const [stone] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(stone).toMatchObject({ sport: { sport: 'strength' }, distance: null, laps: [] });
+  });
+
+  it('dates a stone by the local day it started on, even when that is another day in UTC', async () => {
+    const client = clientFor({ person: guðrún });
+    // 22:30 in New York (UTC−5) on the 2nd is 03:30 UTC on the 3rd.
+    const lateEvening = watchFile({ start: new Date('2026-11-03T03:30:00Z'), localOffset: -5 * 3600 });
+    // 00:30 in Oslo (UTC+1) on the 4th is 23:30 UTC on the 3rd.
+    const pastMidnight = watchFile({ start: new Date('2026-11-03T23:30:00Z'), localOffset: 3600 });
+
+    await client.stones.place({ file: fitFile(lateEvening) });
+    await client.stones.place({ file: fitFile(pastMidnight) });
+    const stones = await client.stones.list({ from: '2026-11-01', to: '2026-11-05' });
+
+    expect(stones.map((stone) => stone.localDate)).toEqual(['2026-11-04', '2026-11-02']);
+  });
+
+  it('dates a stone by its UTC day when the watch file has no local time', async () => {
+    const client = clientFor({ person: guðrún });
+    const noLocalTime = watchFile({ start: new Date('2026-11-03T23:30:00Z'), localOffset: null });
+
+    await client.stones.place({ file: fitFile(noLocalTime) });
+    const stones = await client.stones.list({ from: '2026-11-01', to: '2026-11-05' });
+
+    expect(stones.map((stone) => stone.localDate)).toEqual(['2026-11-03']);
+  });
+
   it('refuses someone who is not signed in with the typed error', async () => {
     const { error, isDefined } = await safe(clientFor({ person: null }).stones.place({ file: fitFile(watchFile()) }));
     expect(isDefined && error.code).toBe('UNAUTHORIZED');

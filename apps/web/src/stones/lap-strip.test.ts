@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lapStrip } from './lap-strip.ts';
+import { lapEvery, lapStrip } from './lap-strip.ts';
 
 /** A lap with 10 s stopped. */
 const lap = (distance: number | null, movingTime: number) => ({ distance, movingTime, elapsedTime: movingTime + 10 });
@@ -47,5 +47,21 @@ describe('the lap strip', () => {
       { height: 0.3, hasSpeed: true },
       { height: 0.7, hasSpeed: false },
     ]);
+  });
+});
+
+describe('the distance the watch lapped at', () => {
+  it('is the length every lap but the last shares, the last ending wherever the stone did', () => {
+    expect(lapEvery([lap(1000, 300), lap(1000, 290), lap(1000, 280), lap(400, 130)])).toBe(1000);
+  });
+
+  it('holds when every lap is the same length, the last included', () => {
+    expect(lapEvery([lap(1000, 300), lap(1000, 300), lap(1000, 300)])).toBe(1000);
+  });
+
+  it('is none for laps of different lengths, a lap with no distance, or a single lap', () => {
+    expect(lapEvery([lap(1000, 300), lap(400, 90), lap(1000, 300)])).toBeNull();
+    expect(lapEvery([lap(null, 300), lap(null, 300), lap(null, 300)])).toBeNull();
+    expect(lapEvery([lap(5000, 1500)])).toBeNull();
   });
 });

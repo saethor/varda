@@ -40,3 +40,16 @@ function sharesOf(amounts: number[]): number[] {
 }
 
 const round = (fraction: number) => Math.round(fraction * 1000) / 1000;
+
+/**
+ * The distance the watch lapped at, when every lap but the last (which ends wherever the stone did)
+ * is the same length to the metre: an auto lap, e.g. every kilometre. None for one lap, or laps of
+ * different lengths, or any lap with no distance.
+ */
+export function lapEvery(laps: { distance: number | null }[]): number | null {
+  if (laps.length < 2) return null;
+  const whole = laps.slice(0, -1).map((lap) => lap.distance);
+  const first = whole[0];
+  if (first === null || first === undefined || first <= 0) return null;
+  return whole.every((d) => d !== null && Math.round(d) === Math.round(first)) ? Math.round(first) : null;
+}

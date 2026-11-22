@@ -1,4 +1,4 @@
-import { SelectOrdinal, Trans, useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { formatDistance, formatDuration } from '@varda/ui/lib/format';
 import { cn } from '@varda/ui/lib/utils';
@@ -7,86 +7,7 @@ import type { Stone } from '../lib/stones.ts';
 import { monthOf } from './calendar-month.ts';
 import { type LocalDate, localStartOf, midnightOf } from './local-date.ts';
 import { SportName } from './stone-card.tsx';
-import { heroOf, mondayOf, type PlaceInWeek, weekAround } from './stone-week.ts';
-import { WeekCairnMark } from './week-cairn-mark.tsx';
-
-/**
- * Which stone of its week this is and the week's totals so far, e.g. "4th stone this week · 31 km ·
- * 2:40:12". Just after placing, it says so: the stone joined the week.
- */
-export function PlaceLine({
-  place,
-  today,
-  justPlaced,
-}: {
-  place: PlaceInWeek<Stone>;
-  today: LocalDate;
-  justPlaced: boolean;
-}) {
-  const { i18n } = useLingui();
-  const n = place.ordinal;
-  const thisWeek = mondayOf(today) === place.monday;
-  const weekOf = i18n.date(midnightOf(place.monday), { day: 'numeric', month: 'short', timeZone: 'UTC' });
-
-  let which: ReactNode;
-  if (justPlaced && thisWeek)
-    which = (
-      <Trans>
-        Placed. Your <SelectOrdinal value={n} one="#st" two="#nd" few="#rd" other="#th" /> stone this week
-      </Trans>
-    );
-  else if (justPlaced)
-    which = (
-      <Trans>
-        Placed. Your <SelectOrdinal value={n} one="#st" two="#nd" few="#rd" other="#th" /> stone in the week of {weekOf}
-      </Trans>
-    );
-  else if (thisWeek)
-    which = (
-      <Trans>
-        <SelectOrdinal value={n} one="#st" two="#nd" few="#rd" other="#th" /> stone this week
-      </Trans>
-    );
-  else
-    which = (
-      <Trans>
-        <SelectOrdinal value={n} one="#st" two="#nd" few="#rd" other="#th" /> stone in the week of {weekOf}
-      </Trans>
-    );
-
-  return (
-    <div className="flex items-end gap-3">
-      {justPlaced && <WeekCairnMark count={n} className="mb-1" />}
-      <p
-        // Placing a stone opens this screen; the line is what tells the athlete it worked.
-        role={justPlaced ? 'status' : undefined}
-        className="flex flex-wrap gap-x-1.5 tabular-nums"
-      >
-        <span className="font-medium">
-          {which}
-          <Separator />
-        </span>
-        {place.distance !== null && (
-          <span className="whitespace-nowrap">
-            {formatDistance(place.distance, i18n.locale)}
-            <Separator />
-          </span>
-        )}
-        <span className="whitespace-nowrap">{formatDuration(place.movingTime)}</span>
-      </p>
-    </div>
-  );
-}
-
-/** The dot after an item of the place line, so a line that wraps ends on it rather than starting with it. */
-function Separator() {
-  return (
-    <span aria-hidden className="font-normal text-muted-foreground">
-      {' '}
-      ·
-    </span>
-  );
-}
+import { heroOf, type PlaceInWeek, weekAround } from './stone-week.ts';
 
 /**
  * Where the stone's screen ends: the stones just before and after it, so a look back can walk on
@@ -115,7 +36,7 @@ export function WeekWalk({ stone, place, today }: { stone: Stone; place: PlaceIn
       {next ? (
         <Neighbour stone={next} direction="next" />
       ) : latest ? (
-        <p className="px-4 py-3 text-muted-foreground sm:text-right">
+        <p className="flex items-center rounded-xs border border-dashed border-input/60 px-4 py-3 text-muted-foreground sm:justify-end">
           <Trans>Your latest stone</Trans>
         </p>
       ) : (
@@ -174,7 +95,7 @@ function Neighbour({ stone, direction }: { stone: Stone; direction: 'previous' |
       params={{ stoneId: stone.id }}
       aria-keyshortcuts={isNext ? 'ArrowRight' : 'ArrowLeft'}
       className={cn(
-        'flex flex-col gap-1 rounded-lg border bg-card px-4 py-3 transition-colors hover:border-input focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
+        'flex flex-col gap-1 rounded-xs border bg-card px-4 py-3 transition-colors hover:border-input focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring',
         isNext && 'sm:col-start-2 sm:items-end sm:text-right',
       )}
     >
@@ -201,7 +122,12 @@ function Neighbour({ stone, direction }: { stone: Stone; direction: 'previous' |
 
 function End({ month, message, className }: { month: string; message: ReactNode; className?: string }) {
   return (
-    <p className={cn('flex flex-col gap-1 px-4 py-3 text-muted-foreground', className)}>
+    <p
+      className={cn(
+        'flex flex-col gap-1 rounded-xs border border-dashed border-input/60 px-4 py-3 text-muted-foreground',
+        className,
+      )}
+    >
       <span>{message}</span>
       <Link
         to="/stones"

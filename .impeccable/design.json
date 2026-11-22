@@ -391,7 +391,7 @@
       {
         "name": "stone-settle",
         "value": "720ms cubic-bezier(0.16, 1, 0.3, 1) 280ms both; from translateY(-32px) and 30% opacity",
-        "purpose": "A just-placed stone settles onto its station on the route. Motion-safe only."
+        "purpose": "A just-placed stone settles onto its station on the route, and its stitch into the week row on the stone screen. Motion-safe only."
       },
       {
         "name": "dialog-enter",
@@ -494,6 +494,30 @@
       "description": "One week of the 12-week stitch rows: a 12px stitch per day, dyed by sport, today outlined.",
       "html": "<div class=\"ds-stitch\"><span class=\"ds-wk\">Nov 9</span><i class=\"xt\"></i><i></i><i class=\"run\"></i><i></i><i class=\"run\"></i><i></i><i class=\"run today\"></i><span class=\"ds-n\">4</span></div>",
       "css": ".ds-stitch{display:grid;grid-template-columns:56px repeat(7,1fr) 32px;gap:2px;align-items:center;padding:20px;background:#f4f4f2;border:1px solid #c3c5c0;border-radius:2px;font:400 12px/16px ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;} .ds-wk{color:#5c5752;} .ds-n{text-align:right;color:#2a2420;} .ds-stitch i{height:12px;border-radius:2px;background:rgb(42 36 32 / 0.1);} .ds-stitch i.run{background:#a4482a;} .ds-stitch i.xt{background:#3f5e45;} .ds-stitch i.today{outline:1px solid #2a2420;outline-offset:1px;}"
+    },
+    {
+      "name": "Week Row",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "The stone's week: seven day cells with 16px dyed stitches; the stone's own day is a Svart tab that runs into the plate.",
+      "html": "<div class=\"ds-weekrow\"><span>Mon 9<i class=\"xt\"></i></span><span>Tue 10<i></i></span><span>Wed 11<i class=\"run\"></i></span><span>Thu 12<i></i></span><span>Fri 13<i class=\"run\"></i></span><span>Sat 14<i class=\"run\"></i></span><span class=\"open\">Sun 15<i class=\"run\"></i></span></div>",
+      "css": ".ds-weekrow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font:400 12px/16px ui-sans-serif,system-ui,sans-serif;color:#5c5752;font-variant-numeric:tabular-nums;} .ds-weekrow span{display:flex;flex-direction:column;gap:6px;padding:8px 12px 12px;border-radius:2px 2px 0 0;} .ds-weekrow span.open{background:#2a2420;color:#b3ab9f;} .ds-weekrow i{height:16px;border-radius:2px;background:rgb(42 36 32 / 0.1);} .ds-weekrow i.run{background:#a4482a;} .ds-weekrow i.xt{background:#3f5e45;}"
+    },
+    {
+      "name": "Stone Plate",
+      "kind": "card",
+      "refersTo": "plate",
+      "description": "The stone screen's plate: sport as h1, day and start, week ordinal in Lichen, display figures on the left, the trace large in Lichen on the right.",
+      "html": "<article class=\"ds-splate\"><div><h1>Road running</h1><p>Sunday, November 15 · started 6:40 AM</p><p class=\"l\">5th stone last week</p><dl><dt>Distance</dt><dd>3.00 km</dd></dl></div><svg viewBox=\"0 0 100 60\"><path d=\"M20 10 L60 30 L50 55 L10 45\" fill=\"none\" stroke=\"#b5c26a\" stroke-width=\"2\"/><circle cx=\"20\" cy=\"10\" r=\"2\" fill=\"#b5c26a\"/></svg></article>",
+      "css": ".ds-splate{display:grid;grid-template-columns:1fr 1.25fr;gap:24px 40px;padding:28px;border-radius:2px;background:#2a2420;color:#f2f1ec;font-family:ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;min-height:320px;} .ds-splate h1{margin:0;font-size:24px;font-weight:600;letter-spacing:-.025em;} .ds-splate p{margin:4px 0 0;color:#b3ab9f;} .ds-splate p.l{color:#b5c26a;} .ds-splate dt{font-size:12px;color:#b3ab9f;margin-top:48px;} .ds-splate dd{margin:4px 0 0;font-size:48px;line-height:1;font-weight:600;letter-spacing:-.025em;} .ds-splate svg{width:100%;height:100%;}"
+    },
+    {
+      "name": "Lap Profile",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "A block per lap, width by distance and height by speed, in the sport's dye; the active lap stays full while the others drop to 30%.",
+      "html": "<div class=\"ds-laps\"><i style=\"flex:1;height:52%\"></i><i style=\"flex:1;height:70%\"></i><i class=\"on\" style=\"flex:1;height:90%\"></i><i style=\"flex:1;height:76%\"></i><i style=\"flex:.4;height:60%\"></i></div>",
+      "css": ".ds-laps{display:flex;align-items:flex-end;gap:2px;height:144px;} .ds-laps i{flex-basis:0;background:#a4482a;border-radius:2px 2px 0 0;opacity:.3;transition:opacity 150ms;} .ds-laps i.on{opacity:1;}"
     }
   ],
   "narrative": {

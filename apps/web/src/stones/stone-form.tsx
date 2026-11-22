@@ -4,8 +4,9 @@ import type { ReactNode } from 'react';
 import type { StoneDetail } from '../lib/stones.ts';
 import { formCharts } from './chart-set.ts';
 import { type FormKey, formShown, lapForm } from './form-shown.ts';
-import { AxisName, axisValue, Chart } from './stone-charts.tsx';
-import { ColumnUnit, FigureGrid, StoneSection, tableCell } from './stone-section.tsx';
+import { dyeOf } from './sport-dye.ts';
+import { AxisName, axisValue, ChartGroup } from './stone-charts.tsx';
+import { ColumnUnit, FigureGroups, StoneSection, tableCell } from './stone-section.tsx';
 
 /**
  * A run's running form: the watch's averages for the stone (step length, vertical oscillation,
@@ -32,16 +33,19 @@ export function StoneForm({ stone }: { stone: StoneDetail }) {
       }
     >
       {shown.length > 0 && (
-        <FigureGrid figures={shown.map(({ key, value }) => ({ key, label: <FormLabel form={key} />, value }))} />
+        <FigureGroups
+          groups={[
+            {
+              measure: 'stride',
+              figures: shown.map(({ key, value }) => ({ key, label: <FormLabel form={key} />, value })),
+            },
+          ]}
+          dye={dyeOf(stone.sport)}
+        />
       )}
-      {laps.length > 0 && <LapFormTable laps={laps} count={stone.laps.length} />}
-      {charts !== null && (
-        <div className="flex flex-col divide-y">
-          {charts.charts.map((chart) => (
-            <Chart key={chart.kind} chart={chart} end={charts.end} counts="steps" />
-          ))}
-        </div>
-      )}
+      {/* With one lap, its form is the stone's own, already above. */}
+      {laps.length > 0 && stone.laps.length > 1 && <LapFormTable laps={laps} count={stone.laps.length} />}
+      {charts !== null && <ChartGroup set={charts} dye={dyeOf(stone.sport)} counts="steps" />}
     </StoneSection>
   );
 }

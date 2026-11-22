@@ -6,10 +6,9 @@ import { type StoneDetail, stoneQuery, weekAroundQuery } from '../../lib/stones.
 import { DeleteStone } from '../../stones/delete-stone.tsx';
 import { todayHere } from '../../stones/feed-window.ts';
 import { FromTheWatch, StoneEffort } from '../../stones/from-the-watch.tsx';
-import { StoneCharts } from '../../stones/stone-charts.tsx';
+import { LapsAndCharts } from '../../stones/laps-and-charts.tsx';
 import { StoneFigures } from '../../stones/stone-figures.tsx';
 import { StoneForm } from '../../stones/stone-form.tsx';
-import { StoneLaps } from '../../stones/stone-laps.tsx';
 import { StoneMeasurements } from '../../stones/stone-measurements.tsx';
 import { StonePlate } from '../../stones/stone-plate.tsx';
 import { StoneSplits } from '../../stones/stone-splits.tsx';
@@ -70,8 +69,8 @@ function NoSuchStone() {
 
 /**
  * One stone, read as a reflection rather than a receipt: its week first, a stitch a day, with the
- * stone's own day opening into the plate that holds it; then its laps; at the end the stones either
- * side of it.
+ * stone's own day opening into the plate that holds it; then its summary, its laps and its charts;
+ * at the end the stones either side of it.
  */
 function StoneScreen() {
   const { stoneId } = Route.useParams();
@@ -90,13 +89,15 @@ function StoneScreen() {
         <StonePlate stone={stone} place={place} today={today} justPlaced={justPlaced} />
       </div>
 
-      {/* What the stone shows (spec #74), one section per ticket, each its own component that renders nothing without data. */}
+      {/* What the stone shows (spec #74), one section per ticket, each its own component that renders nothing without data.
+          Ordered by how often it's read: the laps are what a session is read by, then heart rate (the charts lead with it);
+          the kilometre splits mostly matter for a race, so they sit below the stretches. */}
       <StoneFigures stone={stone} />
-      <StoneCharts stone={stone} />
-      <StoneSplits stone={stone} />
-      <StoneLaps stone={stone} />
+      {/* The laps and the charts, read together: a lap pointed at lights up in the charts. */}
+      <LapsAndCharts stone={stone} />
       {/* Stretches (#80) */}
       <StoneStretches stone={stone} />
+      <StoneSplits stone={stone} />
       <StoneForm stone={stone} />
       <StoneMeasurements stone={stone} />
 

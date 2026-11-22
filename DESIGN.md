@@ -18,6 +18,10 @@ colors:
   dye-strength: "#2f4a6e"
   dye-cross-training: "#3f5e45"
   dye-other: "#8d8a84"
+  measure-heart: "#9a2f62"
+  measure-power: "#8f6a0c"
+  measure-stride: "#2a6f6c"
+  measure-ground: "#6e6556"
   lichen: "#b5c26a"
   lava: "#8c2f39"
   basalt: "#2b2e2f"
@@ -186,8 +190,11 @@ Undyed wool for every surface and all ink, a few dyed yarns for meaning, and the
 - **Svart** (`svart`): black-brown wool, the ink of the system. All body text and headings, primary button fills, the active segment of segmented controls, the shell bar, the latest-stone plate, ink rules under week heads, the route line, and text selection (Wool on Svart). In-sentence links are Svart and always underlined.
 
 ### Secondary
-- **Dyed yarns** (`dye-running`, `dye-strength`, `dye-cross-training`, `dye-other`): one per sport group, so the sport reads before the name. Running is rust, strength is indigo, cross-training is bottle green, and anything else is undyed grey. They fill stitch cells, ring and fill route stations, and nothing else on the stones screen.
+- **Dyed yarns** (`dye-running`, `dye-strength`, `dye-cross-training`, `dye-other`): one per sport group, so the sport reads before the name. Running is rust, strength is indigo, cross-training is bottle green, and anything else is undyed grey. They fill stitch cells, ring and fill route stations, and nothing else on the stones screen. On the stone screen the stone's own dye also draws how fast it went: the lap profile, the pace or speed chart, the split bars and the running stretches.
 - **Strength Indigo** (`dye-strength`) doubles as the focus ring on the light ground (6.8:1 on Heather), the only dye with a system role.
+
+### Measure tints
+- **Crowberry, Birch Ochre, Sea-green, Stone** (`measure-heart`, `measure-power`, `measure-stride`, `measure-ground`): one per kind of measure on the stone screen, like plant-dyed yarn beside the sport dyes. Heart rate is crowberry, power birch ochre, stride (cadence and running form) sea-green, and the ground (elevation, ascent, descent) stone. How fast takes the stone's own dye. A tint draws its chart's line and the area under it, and keys that chart's name and its figures with a 4px stitch; figures of no chart (temperature, energy, weight and height) sit under an undyed stitch (Svart at 15%). Every tint is at least 3:1 on Heather (heart 5.3, power 3.7, stride 4.4, ground 4.3); none is ever text.
 
 ### Tertiary
 - **Lichen** (`lichen`): the one bright. Used on Svart only: the shell's active-nav underline and focus outline, the plate's "nth stone this week" line, the plate's trace, and the plate's focus outline (7.9:1 on Svart). It is also the capstone colour of the logo on dark.
@@ -217,7 +224,9 @@ Undyed wool for every surface and all ink, a few dyed yarns for meaning, and the
 
 **The Lichen On Dark Rule.** Lichen appears only on Svart. On the light ground the highlight is Svart ink or a Strength Indigo ring, never Lichen.
 
-**The Dyed Yarn Rule.** A dye names a sport group and nothing else. Dyes are fills, rings and marks, never small text on the ground (Running is 4.4:1 on Heather, Other 2.6:1). A new sport joins one of the four groups; it does not get a new dye.
+**The Dyed Yarn Rule.** A dye names a sport group and nothing else (on its own stone's screen, that sport's way of going: how fast). Dyes are fills, rings and marks, never small text on the ground (Running is 4.4:1 on Heather, Other 2.6:1). A new sport joins one of the four groups; it does not get a new dye.
+
+**The Measure Tint Rule.** A measure tint names a kind of measure and nothing else, the same on its chart and its figures. A new chart joins one of the four measures, or draws undyed; it does not get a new tint. Tints are lines, fills and stitches, never text, and never a sport.
 
 ## Typography
 
@@ -246,7 +255,7 @@ Signed-in screens sit under a full-width Svart shell bar (56px tall) holding the
 
 The stones list is the first wide screen. From 1024px it is a two-column grid (content plus a 20rem side column, 32px apart): a slim full-width Place a stone bar, then the latest-stone plate in the content column beside the 12-week stitch rows, which stick 32px from the top as the route scrolls beneath the plate. On phones it is one column in task order: plate, stitch rows, placing panel, route.
 
-The stone screen is the second wide screen, one column in reading order: "← Stones", the week row, the stone plate joined under it, the laps (profile, then table), the recording line, and the walk to the stones either side. Between the laps and the recording line the screen keeps room for planned against actual and the journey, once they exist. On phones the same order holds; the trace moves between the plate's heading and its figures.
+The stone screen is the second wide screen, one column in reading order: "← Stones", the week row, the stone plate joined under it, the summary, the laps with the charts (from 1024px the upright lap profile beside the charts, heart rate first, then the table across the full width; narrower, the profile, the charts, then the table), the stretches, the splits, running form, measurements, the recording line, and the walk to the stones either side. Between the measurements and the recording line the screen keeps room for planned against actual and the journey, once they exist. On phones the same order holds; the trace moves between the plate's heading and its figures.
 
 Inside panels, content insets 20px and items stack 12px apart. The plate insets 20px on phones and 28px from 640px. Spacing follows Tailwind's 4px step.
 
@@ -321,7 +330,19 @@ The stone screen's one dark plate, under its day in the week row. Svart, 20px/28
 The stone's Mon–Sun week as one row above the plate: the dates in semibold with a "This week"/"Last week" note in Muted Ink, the whole week's totals right-aligned in small body type, then seven day cells 4px apart. Each cell holds its day (short weekday from 640px, narrow on phones, the date number) in caption type and a 16px stitch: Svart at 10% when empty, 4% when still ahead, today outlined 1px Svart, and a day with stones split into each stone's dye. Every other stone is a link (its target reaches 10px above and below the stitch; hover drops it to 75%; focus is the Indigo ring). The stone's own day is a Svart tab (2px top corners) that runs straight into the plate; its stone is marked `aria-current` and not linked, and other stones that day recede to 45% with a Lichen focus outline. Just after placing, the stone's stitch settles into the row with `stone-settle`.
 
 ### Lap profile and table
-The laps under a "Laps" title over a 1px Svart rule, with the lap count right-aligned, naming the rhythm when the watch lapped at one distance ("13 laps · a lap every 1.00 km"). The profile runs the full width, 112px tall (144px from 640px): a block per lap, width by its share of the distance (of elapsed time when any lap has none), height by its speed against the other laps, filled with the sport's dye, 2px top corners, 2px apart; a lap with no speed is at 40%. Lap numbers sit under it in caption type, every one up to 16 laps, then every 5th or 10th. The table below is a Wool panel with hairline rows, units in the column heads and bare tabular values; elapsed time hides on phones. One active lap is shared: a mouse points, a finger taps (it holds until another is tapped), and the keyboard focuses a row (3px inset Indigo ring). The active lap's block stays full while the others drop to 30%, and its row fills Heather Hover in semibold. The profile is decorative to assistive tech; the table carries the figures. A stone with no laps says so in Muted Ink: "The watch recorded no laps: this stone keeps its totals only."
+The laps under a "Laps" title over a 1px Svart rule, with the lap count right-aligned, naming the rhythm when the watch lapped at one distance ("13 laps · a lap every 1.00 km"). The profile runs the full width, 112px tall (144px from 640px): a block per lap, width by its share of the distance (of elapsed time when any lap has none), height by its speed against the other laps, filled with the sport's dye, 2px top corners, 2px apart; a lap with no speed is at 40%. Lap numbers sit under it in caption type, every one up to 16 laps, then every 5th or 10th. From 1024px, when the stone has charts, the profile stands upright in the left third beside the charts (two thirds, compact, sticking 24px from the top): a row per lap, top to bottom, sharing the charts' height and never thinner than 6px, the lap number before (caption type, right-aligned) and its pace or speed after; the bar runs from the left, its length by speed, 2px right corners. Over 24 laps only every 5th or 10th row and the active one are named. A caption row heads each column: "Lap" and the pace unit, "Charts" and what they run along. Narrower, the profile runs across as above and the charts sit between it and the table. The table below is a Wool panel with hairline rows, units in the column heads and bare tabular values; elapsed time hides on phones. One active lap is shared: a mouse points, a finger taps (it holds until another is tapped), and the keyboard focuses a row (3px inset Indigo ring). The active lap's block stays full while the others drop to 30%, and its row fills Heather Hover in semibold. In the charts the active lap lights up: either side of it falls under a 75% Heather wash with a 30% Svart hairline at each edge, the lap's stretch of the axis rule thickens to a 3px Svart line, and a Svart chip names it ("Lap 8") under its middle while no cursor is out. The lap holds while the pointer crosses from the laps to the charts, and lets go when the pointer leaves both. A row opens (click, tap, Enter or Space; a chevron before its number turns down) onto its lens, the lap's charts zoomed in on it with 6% of the stone either side, under the same wash; the charts keep the whole stone's range so laps compare, and the axis names its start and end. The lens fills the panel's visible width while the table scrolls sideways under it. The profile is decorative to assistive tech; the table carries the figures. With one lap, the lap is the stone, so there is no profile, only the table (and running form drops its lap table). A stone with no laps says so in Muted Ink: "The watch recorded no laps: this stone keeps its totals only."
+
+### Figure groups
+The stone screen's figures (summary, running form, measurements) are grouped by measure, groups 40px apart and wrapping: each group sits under a 4px stitch the width of its figures, in its measure's tint (undyed for temperature, energy and the body), then its figures 24px apart, name in caption Muted Ink over value at 1.25rem, 500 weight.
+
+### Charts
+A section's charts stack on one axis, hairlines between them: each a 4px tint stitch and its name (500 weight) with its range in Muted Ink at the other end, over its line (1.5px, its tint) and the area under it (the tint at 10%; elevation at 32%, so it reads as land). A pause breaks the line and the area. Under the last chart, a Svart rule carries the axis: round marks from 0 (every other one on phones) and the end with its unit in ink. One cursor is shared across a section's charts: a mouse points, a finger taps or drags sideways, and the keyboard moves it with the arrow keys once the group (a slider, Indigo ring) has focus, reading out each chart's value. The cursor is a 1px Svart line at 70% with a dot in each tint on its line (Heather ring); each chart's range gives way to its value there in semibold ink, and the axis shows the place in a Svart chip.
+
+### Splits
+The splits table carries a bar per split from 640px, 10px tall in the sport's dye, its length by speed against the other splits, scaled as the lap profile is.
+
+### Stretches
+Above the totals, the stretches run as one 16px row of stitches over the elapsed time, each from its start to the next one's: running in the sport's dye, walking in the dye at 45%, standing undyed, with 0:00 and the elapsed time under it. The totals and each row of the table carry the same stitch as a key, and pointing at a row keeps its stitch full while the others fall to 25%.
 
 ### Walk
 The stone screen ends with the stones either side, two columns from 640px: each neighbour is a Wool panel (hairline, 2px corners) with "← Previous" or "Next →" in caption type, the sport, and its day, time and lead figure; ← and → walk too. Where there is no neighbour, the end takes the empty-state frame at the same size: "Your latest stone", or "No stone in the week before/after" with a link to the calendar.

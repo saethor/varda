@@ -2,7 +2,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import type { Stone } from '../lib/stones.ts';
 import { type FigureKey, figuresShown } from './figures-shown.ts';
-import { FigureGrid, StoneSection } from './stone-section.tsx';
+import { byMeasure, figureMeasure } from './measure-tint.ts';
+import { dyeOf } from './sport-dye.ts';
+import { FigureGroups, StoneSection } from './stone-section.tsx';
 
 /**
  * The stone's summary: the figures its watch recorded (heart rate, ascent and descent, cadence,
@@ -16,7 +18,13 @@ export function StoneFigures({ stone }: { stone: Stone }) {
 
   return (
     <StoneSection id="summary" title={<Trans>Summary</Trans>} note={null}>
-      <FigureGrid figures={shown.map(({ key, value }) => ({ key, label: <FigureLabel figure={key} />, value }))} />
+      <FigureGroups
+        groups={byMeasure(shown, ({ key }) => figureMeasure[key]).map(({ measure, items }) => ({
+          measure,
+          figures: items.map(({ key, value }) => ({ key, label: <FigureLabel figure={key} />, value })),
+        }))}
+        dye={dyeOf(stone.sport)}
+      />
     </StoneSection>
   );
 }

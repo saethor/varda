@@ -1,4 +1,7 @@
+import { cn } from '@varda/ui/lib/utils';
 import type { ReactNode } from 'react';
+import { type Measure, measureText } from './measure-tint.ts';
+import type { Dye } from './sport-dye.ts';
 
 /**
  * One section of the stone screen: its name over a rule, with a short note at the other end when
@@ -37,16 +40,29 @@ export function ColumnUnit({ children }: { children: string }) {
   return <span className="block font-normal">{children}</span>;
 }
 
-/** The watch's figures as a grid of name over value, one it didn't record left out by the caller. */
-export function FigureGrid({ figures }: { figures: { key: string; label: ReactNode; value: string }[] }) {
+export type Figure = { key: string; label: ReactNode; value: string };
+
+/**
+ * The watch's figures in groups by measure, name over value, each group under a stitch of its
+ * measure's tint, the same stitch that keys its chart; figures of no chart sit under an undyed one.
+ * A figure the watch didn't record is left out by the caller.
+ */
+export function FigureGroups({ groups, dye }: { groups: { measure: Measure; figures: Figure[] }[]; dye: Dye }) {
   return (
-    <dl className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-x-6 gap-y-4 tabular-nums">
-      {figures.map(({ key, label, value }) => (
-        <div key={key} className="flex flex-col gap-1">
-          <dt className="text-xs text-muted-foreground">{label}</dt>
-          <dd className="text-xl whitespace-nowrap">{value}</dd>
+    <div className="flex flex-wrap gap-x-10 gap-y-6 pt-1 tabular-nums">
+      {groups.map(({ measure, figures }) => (
+        <div key={measure} className={cn('flex min-w-0 flex-col gap-3', measureText(measure, dye))}>
+          <span aria-hidden className="h-1 w-full min-w-8 rounded-xs bg-current" />
+          <dl className="flex flex-wrap gap-x-6 gap-y-3 text-foreground">
+            {figures.map(({ key, label, value }) => (
+              <div key={key} className="flex flex-col gap-1">
+                <dt className="text-xs text-muted-foreground">{label}</dt>
+                <dd className="text-xl font-medium whitespace-nowrap">{value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       ))}
-    </dl>
+    </div>
   );
 }

@@ -2,7 +2,9 @@ import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { formatDistance, formatDuration, formatElevation, formatHeartRate, units } from '@varda/ui/lib/format';
 import { cn } from '@varda/ui/lib/utils';
 import type { StoneDetail } from '../lib/stones.ts';
+import { lapStrip } from './lap-strip.ts';
 import { paceOrSpeed } from './pace-or-speed.ts';
+import { dyeFill, dyeOf } from './sport-dye.ts';
 import { ColumnUnit, StoneSection, tableCell } from './stone-section.tsx';
 
 /**
@@ -21,6 +23,10 @@ export function StoneSplits({ stone }: { stone: StoneDetail }) {
   const measured = paces.find((pace) => pace !== null) ?? null;
   const heartRate = splits.some((split) => split.averageHeartRate !== null);
   const climb = splits.some((split) => split.ascent !== null || split.descent !== null);
+  // How fast each split went against the others, scaled as the lap profile is; drawn as a bar in the sport's dye.
+  const bars = lapStrip(splits.map(({ distance, movingTime }) => ({ distance, movingTime, elapsedTime: movingTime })));
+  const dye = dyeFill[dyeOf(stone.sport)];
+  const barCell = cn(tableCell, 'w-2/5 max-sm:hidden');
   const head = cn(tableCell, 'text-right font-medium');
   const value = cn(tableCell, 'text-right');
   const orDash = (metres: number | null, format: (value: number) => string) => (metres === null ? '–' : format(metres));
@@ -39,6 +45,7 @@ export function StoneSplits({ stone }: { stone: StoneDetail }) {
               <th scope="col" className={cn(tableCell, 'font-medium')}>
                 <Trans>Kilometre</Trans>
               </th>
+              <td aria-hidden className={barCell} />
               <th scope="col" className={head}>
                 <Trans>Moving time</Trans>
               </th>
@@ -76,6 +83,12 @@ export function StoneSplits({ stone }: { stone: StoneDetail }) {
                   {/* A whole kilometre by its number; the remainder by how far it went, in km. */}
                   {split.kind === 'kilometre' ? i + 1 : formatDistance(split.distance, i18n.locale)}
                 </th>
+                <td aria-hidden className={barCell}>
+                  <div
+                    className={cn('h-2.5 rounded-xs', dye, bars[i]?.hasSpeed === false && 'opacity-40')}
+                    style={{ width: `${(bars[i]?.height ?? 0) * 100}%` }}
+                  />
+                </td>
                 <td className={value}>{formatDuration(split.movingTime)}</td>
                 {measured !== null && <td className={value}>{paces[i]?.value ?? '–'}</td>}
                 {heartRate && (

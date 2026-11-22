@@ -1,8 +1,9 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { formatHeartRate, formatHeight, formatWeight } from '@varda/ui/lib/format';
-import type { ReactNode } from 'react';
 import type { StoneDetail } from '../lib/stones.ts';
-import { StoneSection } from './stone-section.tsx';
+import { byMeasure } from './measure-tint.ts';
+import { dyeOf } from './sport-dye.ts';
+import { type Figure, FigureGroups, StoneSection } from './stone-section.tsx';
 
 /**
  * The athlete's measurements as the watch had them on the stone's day: weight, height, resting and
@@ -14,7 +15,7 @@ export function StoneMeasurements({ stone }: { stone: StoneDetail }) {
   const { measurements } = stone;
   if (measurements === null) return null;
 
-  const shown: { key: string; label: ReactNode; value: string }[] = [];
+  const shown: Figure[] = [];
   if (measurements.weight !== null)
     shown.push({ key: 'weight', label: <Trans>Weight</Trans>, value: formatWeight(measurements.weight, i18n.locale) });
   if (measurements.height !== null)
@@ -39,14 +40,12 @@ export function StoneMeasurements({ stone }: { stone: StoneDetail }) {
       title={<Trans>Measurements</Trans>}
       note={<Trans>As the watch had them that day</Trans>}
     >
-      <dl className="grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-x-6 gap-y-4 tabular-nums">
-        {shown.map((each) => (
-          <div key={each.key} className="flex flex-col gap-1">
-            <dt className="text-xs text-muted-foreground">{each.label}</dt>
-            <dd className="text-xl whitespace-nowrap">{each.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <FigureGroups
+        groups={byMeasure(shown, (each) => (each.key.endsWith('HeartRate') ? 'heart' : 'body')).map(
+          ({ measure, items }) => ({ measure, figures: items }),
+        )}
+        dye={dyeOf(stone.sport)}
+      />
     </StoneSection>
   );
 }

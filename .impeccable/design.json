@@ -244,6 +244,66 @@
           "#efeeec"
         ]
       },
+      "measure-heart": {
+        "role": "secondary",
+        "displayName": "Crowberry",
+        "canonical": "#9a2f62",
+        "tonalRamp": [
+          "#11080d",
+          "#351726",
+          "#602541",
+          "#91315f",
+          "#c24882",
+          "#ce83a7",
+          "#e0bdce",
+          "#f4ebef"
+        ]
+      },
+      "measure-power": {
+        "role": "secondary",
+        "displayName": "Birch Ochre",
+        "canonical": "#8f6a0c",
+        "tonalRamp": [
+          "#141006",
+          "#3e310f",
+          "#715714",
+          "#ae8214",
+          "#e6af24",
+          "#e4c26d",
+          "#eadbb3",
+          "#f7f3e8"
+        ]
+      },
+      "measure-stride": {
+        "role": "secondary",
+        "displayName": "Sea-green",
+        "canonical": "#2a6f6c",
+        "tonalRamp": [
+          "#091010",
+          "#1a3332",
+          "#2a5b59",
+          "#388a86",
+          "#51b8b4",
+          "#89c8c5",
+          "#c0dddc",
+          "#ecf4f3"
+        ]
+      },
+      "measure-ground": {
+        "role": "secondary",
+        "displayName": "Stone",
+        "canonical": "#6e6556",
+        "tonalRamp": [
+          "#0e0d0c",
+          "#2a2723",
+          "#49443c",
+          "#6c6456",
+          "#938877",
+          "#b1aaa0",
+          "#d3d0cb",
+          "#f1f0ef"
+        ]
+      },
       "lichen": {
         "role": "tertiary",
         "displayName": "Lichen",

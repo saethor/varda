@@ -22,21 +22,24 @@ export function StonesHeading({ view }: { view: 'feed' | 'calendar' }) {
   );
 }
 
-/** Switches the stones screen between the feed and the calendar, in the URL. */
+/** Switches the stones screen between the list and the calendar, in the URL. */
 function ViewToggle({ view }: { view: 'feed' | 'calendar' }) {
   const { t } = useLingui();
   const option = (active: boolean) =>
-    cn('rounded-md px-3 py-1.5 text-sm font-medium', active ? 'bg-card shadow-xs' : 'text-muted-foreground');
+    cn(
+      'px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
+      active ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-accent',
+    );
 
   return (
-    <nav aria-label={t`Show stones as`} className="flex gap-1 rounded-lg bg-muted p-1">
+    <nav aria-label={t`Show stones as`} className="flex overflow-hidden rounded-xs border border-foreground">
       <Link
         to="/stones"
         search={{}}
         aria-current={view === 'feed' ? 'page' : undefined}
         className={option(view === 'feed')}
       >
-        <Trans>Feed</Trans>
+        <Trans>List</Trans>
       </Link>
       <Link
         to="/stones"

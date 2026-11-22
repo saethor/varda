@@ -5,7 +5,10 @@
 /* Apps import this file, so Tailwind must also scan the components here. */
 @source "./components";
 
-/* Varða palette, taken from the Icelandic highlands (see README). */
+/*
+ * Varða palette: sauðalitir, the colours of undyed Icelandic wool, with dyed yarns for the sports.
+ * The brand marks keep their own colours (basalt, moss, lichen, snow; see logo/final).
+ */
 @theme {
   --color-basalt: #2b2e2f;
   --color-moss: #5e7a4e;
@@ -14,30 +17,62 @@
   --color-snow: #f3f1ec;
   --color-lava: #8c2f39;
 
-  /*
-   * shadcn/ui's semantic tokens (#27, variant E "Warm stone, final").
-   * Moss is too light for snow text (4.26:1), so primary is a darker moss.
-   * Errors are lava, never ember. No dark mode.
-   */
-  --color-background: var(--color-snow);
-  --color-foreground: var(--color-basalt);
-  --color-card: #faf9f6;
-  --color-card-foreground: var(--color-basalt);
-  --color-popover: #faf9f6;
-  --color-popover-foreground: var(--color-basalt);
-  --color-primary: #4f6841;
-  --color-primary-foreground: var(--color-snow);
-  --color-secondary: #ebe7dd;
-  --color-secondary-foreground: var(--color-basalt);
-  --color-accent: var(--color-lichen);
-  --color-accent-foreground: var(--color-basalt);
-  --color-muted: #ebe7dd;
-  --color-muted-foreground: #6f695d;
-  --color-border: #d8d3c7;
-  --color-input: #8f8878;
-  --color-ring: var(--color-moss);
+  /* Undyed wool: black-brown ink, light grey heather ground, near-white wool. */
+  --color-svart: #2a2420;
+  --color-heather: #dedfdc;
+  --color-wool: #f4f4f2;
+
+  /* Dyed yarns, one per sport group. Fills and marks; never small text on the ground. */
+  --color-dye-running: #a4482a;
+  --color-dye-strength: #2f4a6e;
+  --color-dye-cross-training: #3f5e45;
+  --color-dye-other: #8d8a84;
+
+  /* shadcn/ui's semantic tokens. Errors are lava, never ember or a dye. No dark mode. */
+  --color-background: var(--color-heather);
+  --color-foreground: var(--color-svart);
+  --color-card: var(--color-wool);
+  --color-card-foreground: var(--color-svart);
+  --color-popover: var(--color-wool);
+  --color-popover-foreground: var(--color-svart);
+  --color-primary: var(--color-svart);
+  --color-primary-foreground: var(--color-wool);
+  --color-secondary: #cbcdc8;
+  --color-secondary-foreground: var(--color-svart);
+  --color-accent: #cfd1cc;
+  --color-accent-foreground: var(--color-svart);
+  --color-muted: #d3d5d0;
+  --color-muted-foreground: #5c5752;
+  --color-border: #c3c5c0;
+  --color-input: #7c7a74;
+  --color-ring: var(--color-dye-strength);
   --color-destructive: var(--color-lava);
-  --color-destructive-foreground: var(--color-snow);
+  --color-destructive-foreground: var(--color-wool);
+
+  /* The shell bar and the latest stone's plate: black-brown, with lichen as the one bright. */
+  --color-shell: var(--color-svart);
+  --color-shell-foreground: #f2f1ec;
+  --color-shell-muted: #b3ab9f;
+  --color-shell-line: #4a423c;
+
+  /* Corners stay tight, like knitted edges: 2px on controls, 3–4px at most on dialogs and cards. */
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+
+  /* The one authored moment: a just-placed stone settles onto its week's cairn. */
+  --animate-stone-settle: stone-settle 720ms cubic-bezier(0.16, 1, 0.3, 1) 280ms both;
+  @keyframes stone-settle {
+    from {
+      opacity: 0.3;
+      transform: translateY(-32px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 @layer base {
@@ -47,6 +82,11 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-svart);
+    color: var(--color-wool);
   }
 }
 

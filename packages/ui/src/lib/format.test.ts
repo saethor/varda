@@ -42,3 +42,11 @@ describe('formatting a speed', () => {
     expect(formatSpeed(42_000, 6000, 'is')).toBe('25,2 km/h');
   });
 });
+
+describe('leaving the unit out, for a column whose header names it', () => {
+  it('shows the bare distance, pace and speed', () => {
+    expect(formatDistance(1234, 'is', { unit: false })).toBe('1,23');
+    expect(formatPace(1000, 300, 1000, { unit: false })).toBe('5:00');
+    expect(formatSpeed(10_000, 3600, 'en', { unit: false })).toBe('10.0');
+  });
+});

@@ -3,18 +3,34 @@ import { paceOrSpeed } from './pace-or-speed.ts';
 
 describe('pace or speed, the way each sport talks', () => {
   it('gives runners, walkers and hikers their pace per kilometre', () => {
-    expect(paceOrSpeed('trail-running', 3000, 900, 'en')).toEqual({ measure: 'pace', value: '5:00 /km' });
-    expect(paceOrSpeed('walking', 3000, 1800, 'en')).toEqual({ measure: 'pace', value: '10:00 /km' });
-    expect(paceOrSpeed('hiking', 3000, 1800, 'en')).toEqual({ measure: 'pace', value: '10:00 /km' });
+    expect(paceOrSpeed('trail-running', 3000, 900, 'en')).toEqual({
+      measure: 'pace',
+      value: '5:00 /km',
+      unit: 'min/km',
+    });
+    expect(paceOrSpeed('walking', 3000, 1800, 'en')).toEqual({ measure: 'pace', value: '10:00 /km', unit: 'min/km' });
+    expect(paceOrSpeed('hiking', 3000, 1800, 'en')).toEqual({ measure: 'pace', value: '10:00 /km', unit: 'min/km' });
   });
 
   it('gives swimmers their pace per 100 metres', () => {
-    expect(paceOrSpeed('swimming', 1500, 1575, 'en')).toEqual({ measure: 'pace', value: '1:45 /100 m' });
+    expect(paceOrSpeed('swimming', 1500, 1575, 'en')).toEqual({
+      measure: 'pace',
+      value: '1:45 /100 m',
+      unit: 'min/100 m',
+    });
   });
 
   it('gives cyclists and skiers their speed', () => {
-    expect(paceOrSpeed('cycling', 42_000, 6000, 'is')).toEqual({ measure: 'speed', value: '25,2 km/h' });
-    expect(paceOrSpeed('skiing', 10_000, 3600, 'en')).toEqual({ measure: 'speed', value: '10.0 km/h' });
+    expect(paceOrSpeed('cycling', 42_000, 6000, 'is')).toEqual({ measure: 'speed', value: '25,2 km/h', unit: 'km/h' });
+    expect(paceOrSpeed('skiing', 10_000, 3600, 'en')).toEqual({ measure: 'speed', value: '10.0 km/h', unit: 'km/h' });
+  });
+
+  it('leaves the unit off the value for a column that names it', () => {
+    expect(paceOrSpeed('road-running', 3000, 900, 'en', { unit: false })).toEqual({
+      measure: 'pace',
+      value: '5:00',
+      unit: 'min/km',
+    });
   });
 
   it('gives none for strength and other sessions, whose distance says little', () => {

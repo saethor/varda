@@ -38,6 +38,21 @@ const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
   { daysAgo: 24, time: '10:30', file: { sport: 'crossCountrySkiing', laps: laps(2, 6000, 1500) } },
 ];
 
+/** The dev watch's model: a Forerunner 255 Music, as the real one. */
+const devWatchModel = 3990;
+
+/**
+ * What the athlete rated on the watch (0–100) and Garmin's verdicts, by dev stone: most runs and
+ * the ride are rated, the rest not, so stones with and without effort can both be seen (#77).
+ */
+const onTheWatch: Partial<Record<number, Pick<WatchFileOptions, 'rpe' | 'garminReference'>>> = {
+  0: { rpe: 30, garminReference: { trainingLoad: 62.5, aerobicTrainingEffect: 2.4, anaerobicTrainingEffect: 0.3 } },
+  1: { rpe: 80, garminReference: { trainingLoad: 180.25, aerobicTrainingEffect: 3.8, anaerobicTrainingEffect: 3.1 } },
+  2: { rpe: 60, garminReference: { trainingLoad: 140.75, aerobicTrainingEffect: 3.4, anaerobicTrainingEffect: 0.8 } },
+  3: { rpe: 50 },
+  8: { rpe: 70, garminReference: { trainingLoad: 210.5, aerobicTrainingEffect: 4.1, anaerobicTrainingEffect: 1.2 } },
+};
+
 /**
  * The dev watch every seeded file comes from. A watch file's session key is its watch and when it
  * wrote the file, so each dev stone gets a fixed time written: its key never moves with its dates.
@@ -70,7 +85,14 @@ export async function seedStones({
   for (const athlete of athletes) {
     for (const [entry, { daysAgo, time, file }] of devStones.entries()) {
       const start = startOf(today, daysAgo, time);
-      const bytes = watchFile({ ...file, start, serialNumber: devWatch, timeCreated: writtenAt(entry) });
+      const bytes = watchFile({
+        ...file,
+        product: devWatchModel,
+        ...onTheWatch[entry],
+        start,
+        serialNumber: devWatch,
+        timeCreated: writtenAt(entry),
+      });
       const upload = new File([bytes as Uint8Array<ArrayBuffer>], `seed-${start.toISOString().slice(0, 10)}.fit`);
       const { error, isDefined } = await safe(clientFor(athlete).record.stones.place({ file: upload }));
       if (error === null) result.placed++;

@@ -46,7 +46,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
     elapsedTime: session.totalElapsedTime ?? 0,
     laps,
     trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
-    stretches: readStretches(sportOf(session), messages.splitMesgs ?? [], messages.splitSummaryMesgs ?? [], dateOf),
+    stretches: readStretches(sportOf(session), messages, dateOf),
   };
 }
 

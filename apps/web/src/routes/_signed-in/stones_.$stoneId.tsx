@@ -7,6 +7,7 @@ import { DeleteStone } from '../../stones/delete-stone.tsx';
 import { todayHere } from '../../stones/feed-window.ts';
 import { StoneLaps } from '../../stones/stone-laps.tsx';
 import { StonePlate } from '../../stones/stone-plate.tsx';
+import { StoneStretches } from '../../stones/stone-stretches.tsx';
 import { placeInWeek } from '../../stones/stone-week.ts';
 import { WeekWalk } from '../../stones/stone-week-view.tsx';
 import { WeekRow } from '../../stones/week-row.tsx';
@@ -90,6 +91,7 @@ function StoneScreen() {
       {/* Splits (#83) */}
       <StoneLaps stone={stone} />
       {/* Stretches (#80) */}
+      <StoneStretches stone={stone} />
       {/* Form (#84) */}
       {/* Measurements (#78) */}
 

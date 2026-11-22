@@ -11,8 +11,10 @@ const kindOf = (splitType: unknown): StretchKind | undefined => kinds[String(spl
 /** A run's stretches, or none for another sport or a run the watch detected no stretches in. */
 export function readStretches(
   sport: Sport,
-  splits: SplitMesg[],
-  summaries: SplitSummaryMesg[],
+  {
+    splitMesgs: splits = [],
+    splitSummaryMesgs: summaries = [],
+  }: { splitMesgs?: SplitMesg[]; splitSummaryMesgs?: SplitSummaryMesg[] },
   dateOf: (value: unknown) => Date,
 ): Stretches | null {
   if (sportGroupOf(sport) !== 'running') return null;

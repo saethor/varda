@@ -56,6 +56,11 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
     },
     measurements: { weight: 71.3, height: 1.83, restingHeartRate: null, maxHeartRate: 193 },
     streams,
+    splits: [
+      { distance: 1000, movingTime: 300, averageHeartRate: 141.5, ascent: 8, descent: 3.2 },
+      { distance: 1000, movingTime: 300, averageHeartRate: null, ascent: null, descent: null },
+      { distance: 1000, movingTime: 300, averageHeartRate: 150, ascent: 0, descent: 7.6 },
+    ],
   };
 }
 
@@ -230,6 +235,7 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
         device: null,
         stretches: null,
         measurements: null,
+        splits: [],
       };
       const { id, athlete, fileName, sessionKey, start, localOffset, localDate } = added;
       await stones.add(added);
@@ -248,6 +254,7 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
         stretches: reread.stretches,
         measurements: reread.measurements,
         streams: reread.streams,
+        splits: reread.splits,
       };
 
       await stones.replaceReading(added.id, reading);

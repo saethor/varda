@@ -63,6 +63,7 @@ function toStoneDetail(stone: Stone, viewer: PersonId) {
     stretches: stone.stretches,
     measurements: stone.athlete === viewer ? stone.measurements : toCoach(stone.measurements),
     streams: stone.streams,
+    splits: stone.splits,
   };
 }
 

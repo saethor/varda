@@ -4,7 +4,7 @@ import type { SharedContext } from '@varda/shared';
 import { createFakeCoachingAccess } from '@varda/shared/testing';
 import { describe, expect, it } from 'vitest';
 import { createRecordFakes } from '../testing/index.ts';
-import { type WatchFileSplit, watchFile } from '../watch-files/index.ts';
+import { type WatchFileOptions, type WatchFileSplit, watchFile } from '../watch-files/index.ts';
 import { createRecordRouter } from './rpc.ts';
 
 const guðrún = '00000000-0000-7000-8000-0000000000a1';
@@ -787,5 +787,131 @@ describe('stretches', () => {
     const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
 
     expect(listed).not.toHaveProperty('stretches');
+  });
+});
+
+describe('splits', () => {
+  const opened = async (file: Uint8Array) => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(file) });
+    return await client.stones.get({ stoneId });
+  };
+  // Three laps of 1 km in 300 s of timer, each stopped 10 s halfway, then 400 m in 120 s without a stop.
+  const kilometre = { distance: 1000, timerTime: 300, elapsedTime: 310 };
+  const threePointFour = [kilometre, kilometre, kilometre, { distance: 400, timerTime: 120, elapsedTime: 120 }];
+
+  it('splits a 3.4 km run into three whole kilometres and the 0.4 km left, each timed without its pauses', async () => {
+    const { splits } = await opened(watchFile({ perSecond: true, laps: threePointFour }));
+
+    expect(splits.map(({ distance, movingTime }) => ({ distance, movingTime }))).toEqual([
+      { distance: 1000, movingTime: 300 },
+      { distance: 1000, movingTime: 300 },
+      { distance: 1000, movingTime: 300 },
+      { distance: expect.closeTo(400, 2), movingTime: 120 },
+    ]);
+  });
+
+  it('leaves a pause inside a kilometre out of its time, wherever the kilometre ends between two points', async () => {
+    // 1.7 km at 3.4 m/s in 500 s of timer, stopped for 30 s at 250 s: the first kilometre ends 294.1 s in.
+    const { splits } = await opened(
+      watchFile({ perSecond: true, laps: [{ distance: 1700, timerTime: 500, elapsedTime: 530 }] }),
+    );
+
+    expect(splits).toHaveLength(2);
+    expect(splits[0]?.distance).toBe(1000);
+    expect(splits[0]?.movingTime).toBeCloseTo(1000 / 3.4, 1);
+    expect(splits[1]?.distance).toBeCloseTo(700, 1);
+    expect(splits[1]?.movingTime).toBeCloseTo(700 / 3.4, 1);
+  });
+
+  it("takes each split's heart rate, ascent and descent from the points within it", async () => {
+    // Up 10 m over the first kilometre, flat over the second, down 15 m over the third, then flat.
+    const hill = (metres: number) =>
+      metres < 1000 ? 20 + metres / 100 : metres < 2000 ? 30 : metres < 3000 ? 30 - (metres - 2000) * 0.015 : 15;
+    const { splits } = await opened(watchFile({ perSecond: true, laps: threePointFour, ground: hill }));
+
+    // The builder's runner's heart rate is 138 + t/40 + 3·sin(t/25) bpm, t seconds of timer.
+    // 0–300 s: 138 + 150/40, and the sine averages 0.04. 900–1020 s: 138 + 960/40, the sine 0.54.
+    expect(splits[0]?.averageHeartRate).toBeCloseTo(141.79, 0);
+    expect(splits[3]?.averageHeartRate).toBeCloseTo(162.54, 0);
+    // Each as near as an altimeter's wobble is told from a climb: within 1.2 m.
+    const climbs = splits.map(({ ascent, descent }) => [ascent, descent]);
+    const expected = [
+      [10, 0],
+      [0, 0],
+      [0, 15],
+      [0, 0],
+    ];
+    climbs.flat().forEach((metres, i) => {
+      expect(Math.abs((metres ?? Number.NaN) - (expected.flat()[i] ?? 0))).toBeLessThanOrEqual(1.2);
+    });
+  });
+
+  it("doesn't take an altimeter's wobble on flat ground for climbing", async () => {
+    const wobbling = (metres: number) => 20 + (Math.floor(metres) % 2 === 0 ? 0.4 : -0.4);
+    const { splits } = await opened(watchFile({ perSecond: true, laps: threePointFour, ground: wobbling }));
+
+    for (const split of splits) expect(split).toMatchObject({ ascent: 0, descent: 0 });
+  });
+
+  it('has no heart rate, ascent or descent in a split when the watch recorded none', async () => {
+    const { splits } = await opened(
+      watchFile({ perSecond: true, laps: threePointFour, without: ['heartRate', 'altitude'] }),
+    );
+
+    expect(splits).toHaveLength(4);
+    for (const split of splits) expect(split).toMatchObject({ averageHeartRate: null, ascent: null, descent: null });
+  });
+
+  it('splits a ride and a hike too', async () => {
+    const ride = await opened(
+      watchFile({ sport: 'cycling', perSecond: true, without: ['form'], laps: threePointFour }),
+    );
+    const hike = await opened(
+      watchFile({
+        sport: 'hiking',
+        perSecond: true,
+        without: ['form'],
+        laps: threePointFour,
+        start: new Date('2026-11-03'),
+      }),
+    );
+
+    expect(ride.splits.map((split) => split.movingTime)).toEqual([300, 300, 300, 120]);
+    expect(hike.splits.map((split) => split.movingTime)).toEqual([300, 300, 300, 120]);
+  });
+
+  it('has none for a pool swim, a strength session or yoga', async () => {
+    const swim = await opened(
+      watchFile({ sport: 'swimming', subSport: 'lapSwimming', perSecond: true, gps: false, without: ['form'] }),
+    );
+    const withoutDistance: WatchFileOptions = {
+      laps: [],
+      distance: false,
+      gps: false,
+      perSecond: true,
+      without: ['form'],
+    };
+    const strength = await opened(
+      watchFile({ sport: 'training', subSport: 'strengthTraining', ...withoutDistance, start: new Date('2026-11-03') }),
+    );
+    const yoga = await opened(
+      watchFile({ sport: 'training', subSport: 'yoga', ...withoutDistance, start: new Date('2026-11-04') }),
+    );
+
+    expect(swim.distance).toBe(3000);
+    expect(swim.splits).toEqual([]);
+    expect(strength.splits).toEqual([]);
+    expect(yoga.splits).toEqual([]);
+  });
+
+  it('is never listed', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ perSecond: true, laps: threePointFour })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed).toBeDefined();
+    expect(listed).not.toHaveProperty('splits');
   });
 });

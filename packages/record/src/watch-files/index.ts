@@ -62,6 +62,8 @@ export type WatchFileOptions = {
   perSecond?: boolean;
   /** With `perSecond`, the channels the watch didn't record. */
   without?: WatchFileChannel[];
+  /** With `perSecond`, the height of the ground in metres at each metre from the start. Gently rolling by default. */
+  ground?: (metres: number) => number;
   /** Write no records at all, as a session entered on the watch by hand. */
   noRecords?: true;
   /** The athlete's rating of the session on the watch, 0–100. None by default. */
@@ -186,6 +188,7 @@ export function watchFile({
   missingStartTime,
   perSecond = false,
   without = [],
+  ground = rollingGround,
   noRecords,
   rpe,
   product = forerunner255,
@@ -225,6 +228,7 @@ export function watchFile({
     distance: distance !== false,
     gpsPoints: gps ? gpsPoints : 0,
     without,
+    ground,
   });
 
   let lapStart = 0;
@@ -377,6 +381,7 @@ function writeRecords(
     distance,
     gpsPoints,
     without,
+    ground,
   }: {
     records: 'none' | 'gps' | 'per-second';
     laps: WatchFileLap[];
@@ -385,6 +390,7 @@ function writeRecords(
     distance: boolean;
     gpsPoints: number;
     without: WatchFileChannel[];
+    ground: (metres: number) => number;
   },
 ): void {
   if (records === 'none') return;
@@ -398,7 +404,7 @@ function writeRecords(
       write<RecordMesg>({
         mesgNum: recordMesg,
         timestamp: at(point.at),
-        ...recordedAt(point, { sport, distance, position: positions[i], without }),
+        ...recordedAt(point, { sport, distance, position: positions[i], without, ground }),
       });
     });
     return;
@@ -470,6 +476,9 @@ function lapTimeline(
   return points;
 }
 
+/** Gently rolling ground: 20 m above sea level, 8 m up or down over a wave of about 2.5 km. */
+const rollingGround = (metres: number) => 20 + 8 * Math.sin(metres / 400);
+
 /**
  * What a watch records at a point: a steady runner whose heart rate drifts up over the session, on
  * gently rolling ground, on a cool morning. Values are physical; the encoder scales them.
@@ -481,11 +490,13 @@ function recordedAt(
     distance,
     position,
     without,
+    ground,
   }: {
     sport: SessionMesg['sport'];
     distance: boolean;
     position: [number, number] | undefined;
     without: WatchFileChannel[];
+    ground: (metres: number) => number;
   },
 ): Omit<RecordMesg, 'timestamp'> {
   const has = (channel: WatchFileChannel) => !without.includes(channel);
@@ -496,7 +507,7 @@ function recordedAt(
     ...(distance ? { enhancedSpeed: speed } : {}),
     ...(position ? { positionLat: semicircles(position[0]), positionLong: semicircles(position[1]) } : {}),
     ...(has('heartRate') ? { heartRate: Math.round(138 + moving / 40 + 3 * Math.sin(moving / 25)) } : {}),
-    ...(has('altitude') ? { enhancedAltitude: 20 + 8 * Math.sin(metres / 400) } : {}),
+    ...(has('altitude') ? { enhancedAltitude: ground(metres) } : {}),
     ...(has('power') ? { power: Math.round(255 + 12 * Math.sin(moving / 9)) } : {}),
     ...(has('cadence') ? (onFoot ? { cadence: 85, fractionalCadence: 0.5 } : { cadence: 85 }) : {}),
     ...(has('temperature') ? { temperature: 8 + Math.floor(moving / 600) } : {}),

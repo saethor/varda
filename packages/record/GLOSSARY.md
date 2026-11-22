@@ -29,7 +29,7 @@ A recorded section of a stone. Laps are matched to the workout steps of the work
 _Avoid_: Split (that is a kilometre)
 
 **Split**:
-Each whole kilometre of a stone, in order, and the remainder at the end, worked out from what the watch recorded along the way. A stone without distance, or a swim, has no splits.
+Each whole kilometre of a stone, in order, and the remainder at the end, worked out from what the watch recorded along the way. A stone without distance, or a swim, has no splits. A split's moving time is how long the timer ran within it; a kilometre that ends between two recorded points ends between them in proportion to the distance. A distance correction scales splits as it scales laps.
 _Avoid_: Lap (laps are what the watch recorded), km split
 
 **Stretch**:

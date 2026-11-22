@@ -137,6 +137,19 @@ const StreamsSchema = z.object({
   groundContactTime: StreamChannelSchema,
 });
 
+/**
+ * A whole kilometre of the stone, or the remainder after the last one, worked out by Varða from its
+ * streams: metres, seconds of moving time (pauses left out), average heart rate in bpm, ascent and
+ * descent in metres; each of the last three none when the watch didn't record it.
+ */
+const SplitSchema = z.object({
+  distance: z.number(),
+  movingTime: z.number(),
+  averageHeartRate: z.number().nullable(),
+  ascent: z.number().nullable(),
+  descent: z.number().nullable(),
+});
+
 /** A stone opened on its own screen: everything a listed stone has, and what only its screen shows. */
 const StoneDetailSchema = StoneSchema.extend({
   /** A run's stretches and the watch's totals for each kind; none for other sports or when none were detected. */
@@ -145,6 +158,8 @@ const StoneDetailSchema = StoneSchema.extend({
   measurements: MeasurementsSchema.nullable(),
   /** None when the watch recorded no points. Never listed. */
   streams: StreamsSchema.nullable(),
+  /** Each whole kilometre in order, then the remainder; empty without distance, or for a swim. Never listed. */
+  splits: z.array(SplitSchema),
 });
 
 /** The largest watch file a stone is placed from: 25 MB. The web app checks it before sending, too. */

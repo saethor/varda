@@ -68,6 +68,19 @@ it.each([
   expect(await stonesOf(anna.id)).toHaveLength(first.placed);
 });
 
+it("keeps the athlete's measurements on every stone, as the dev watch had them", async () => {
+  const { clientFor, stonesOf } = devApp();
+
+  await seedStones({ clientFor, athletes: [anna.id], today });
+  const opened = await Promise.all(
+    (await stonesOf(anna.id)).map(({ id }) => clientFor(anna.id).record.stones.get({ stoneId: id })),
+  );
+
+  for (const stone of opened) {
+    expect(stone.measurements).toEqual({ weight: 68.5, height: 1.74, restingHeartRate: 52, maxHeartRate: 188 });
+  }
+});
+
 it('rates some stones on the watch and not others, all from the same watch', async () => {
   const { clientFor, stonesOf } = devApp();
 

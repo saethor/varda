@@ -43,6 +43,17 @@ export type GarminReference = {
   anaerobicTrainingEffect: number | null;
 };
 
+/**
+ * The athlete's measurements as their watch had them on the stone's day (Shared glossary): weight in
+ * kilograms, height in metres, resting and max heart rate in bpm. Each is none when the watch had none.
+ */
+export type Measurements = {
+  weight: number | null;
+  height: number | null;
+  restingHeartRate: number | null;
+  maxHeartRate: number | null;
+};
+
 /** A session read from a watch file, ready to be placed as a stone. */
 export type Session = {
   sessionKey: SessionKey;
@@ -78,6 +89,8 @@ export type Session = {
   figures: Figures;
   /** Running only: none for other sports, or when the watch detected none. */
   stretches: Stretches | null;
+  /** None when the watch had none of them. Never logged or sent outside Varða. */
+  measurements: Measurements | null;
 };
 
 /**

@@ -76,3 +76,14 @@ export function formatTemperature(celsius: number, locale: string, options: Unit
 export function formatCalories(kcal: number, locale: string, options: UnitOption = {}): string {
   return formatWhole(kcal, 'kcal', locale, options);
 }
+
+/** A weight in kilograms to one decimal, written the way `locale` writes numbers. */
+export function formatWeight(kilograms: number, locale: string, options: UnitOption = {}): string {
+  const kg = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  return withUnit(kg.format(kilograms), 'kg', options);
+}
+
+/** A height, given in metres, in whole centimetres. */
+export function formatHeight(metres: number, options: UnitOption = {}): string {
+  return withUnit(String(Math.round(metres * 100)), 'cm', options);
+}

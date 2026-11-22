@@ -154,6 +154,14 @@ function run(averageHeartRate: number, maxHeartRate: number, ascent: number, des
 const devWatch = 1_234_567_890;
 const writtenAt = (entry: number) => new Date(Date.UTC(2026, 0, 1, 0, entry));
 
+/** The measurements the dev watch has of every dev athlete: kilograms, metres, bpm. Made up. */
+const devMeasurements: NonNullable<WatchFileOptions['measurements']> = {
+  weight: 68.5,
+  height: 1.74,
+  restingHeartRate: 52,
+  maxHeartRate: 188,
+};
+
 /** `time` UTC on the day `daysAgo` days before `today`'s UTC date. */
 function startOf(today: Date, daysAgo: number, time: string): Date {
   const day = new Date(today.getTime() - daysAgo * 86_400_000).toISOString().slice(0, 10);
@@ -181,6 +189,7 @@ export async function seedStones({
       const start = startOf(today, daysAgo, time);
       const figures = devFigures[daysAgo];
       const bytes = watchFile({
+        measurements: devMeasurements,
         ...file,
         product: devWatchModel,
         ...onTheWatch[entry],

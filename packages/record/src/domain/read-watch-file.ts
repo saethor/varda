@@ -14,6 +14,7 @@ import {
 import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
 import { readFigures } from './read-figures.ts';
+import { readForm } from './read-form.ts';
 import { streamsOf } from './read-streams.ts';
 import { readStretches } from './read-stretches.ts';
 import type {
@@ -67,6 +68,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
     stretches: readStretches(sportOf(session), messages, dateOf),
     measurements: measurementsOf(messages.userProfileMesgs?.[0], messages.zonesTargetMesgs?.[0]),
     streams: streamsOf(messages, { start, sport: sportOf(session), session }),
+    form: readForm(session, sportOf(session)),
   };
 }
 
@@ -123,6 +125,7 @@ function lapsOf(session: SessionMesg, lapMesgs: LapMesg[], sport: Sport): Lap[] 
       figures: readFigures(lap, sport),
       intensity: intensityOf(lap.intensity),
       workoutStep: typeof lap.wktStepIndex === 'number' ? lap.wktStepIndex : null,
+      form: readForm(lap, sport),
     }))
     .sort((a, b) => a.start.getTime() - b.start.getTime());
 }

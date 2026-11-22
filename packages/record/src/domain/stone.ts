@@ -25,6 +25,8 @@ export type Lap = {
    * workout. Kept to match laps to workout steps later; never answered.
    */
   workoutStep: number | null;
+  /** Running only: the lap's form averages; none for other sports, or when the watch recorded none. */
+  form: Form | null;
 };
 
 /** What part of a session a lap was, as the watch marked it. `active` is the work: an interval, or an unstructured lap. */
@@ -151,6 +153,20 @@ export type Session = {
   measurements: Measurements | null;
   /** None when the watch recorded no points. Only an opened stone has them; a listed one never does. */
   streams: Streams | null;
+  /** Running only: the stone's form averages; none for other sports, or when the watch recorded none. */
+  form: Form | null;
+};
+
+/**
+ * Running form (Record glossary), the watch's averages as recorded: step length and vertical
+ * oscillation in metres, vertical ratio in percent (vertical oscillation over step length), ground
+ * contact time in seconds. Each is none when the watch didn't record it.
+ */
+export type Form = {
+  stepLength: number | null;
+  verticalOscillation: number | null;
+  verticalRatio: number | null;
+  groundContactTime: number | null;
 };
 
 /**

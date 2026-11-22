@@ -10,7 +10,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import type { Figures, Measurements, Streams } from '../../domain/stone.ts';
+import type { Figures, Form, Measurements, Streams } from '../../domain/stone.ts';
 
 // The Record context's own Postgres schema (ADR 0005). Change it, then run
 // `pnpm --filter @varda/record db:generate` and commit the new migration.
@@ -18,7 +18,7 @@ export const record = pgSchema('record');
 
 /**
  * A lap as stored in `stones.laps`: its start as an ISO instant. Laps stored before their figures,
- * intensity and workout step were read have none of them.
+ * intensity, workout step and form were read have none of them.
  */
 export type StoredLap = {
   start: string;
@@ -29,6 +29,7 @@ export type StoredLap = {
   figures?: Figures;
   intensity?: 'warm-up' | 'active' | 'recovery' | 'rest' | 'cool-down' | null;
   workoutStep?: number | null;
+  form?: Form | null;
 };
 
 type StretchTotal = { movingTime: number; distance: number | null } | null;
@@ -77,6 +78,8 @@ export const stones = record.table(
     stretches: jsonb('stretches').$type<StoredStretches>(),
     // The athlete's measurements the watch had (kg, m, bpm), or null when it had none.
     measurements: jsonb('measurements').$type<Measurements>(),
+    // A run's form averages (m, %, s); null for other sports, runs without, and stones placed before it was read.
+    form: jsonb('form').$type<Form>(),
   },
   (table) => [
     // A session is placed as a stone only once (Record glossary).

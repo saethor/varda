@@ -82,6 +82,19 @@ export type WatchFileOptions = {
    * by default the watch had none.
    */
   measurements?: Partial<Record<'weight' | 'height' | 'restingHeartRate' | 'maxHeartRate', number>>;
+  /** The session's running form averages. Each left out is one the watch didn't record; by default none. */
+  form?: WatchFileForm;
+};
+
+/**
+ * Running form averages as the watch writes them, for a session or a lap: step length and vertical
+ * oscillation in mm, vertical ratio in percent, ground contact (stance) time in ms.
+ */
+export type WatchFileForm = {
+  stepLength?: number;
+  verticalOscillation?: number;
+  verticalRatio?: number;
+  groundContactTime?: number;
 };
 
 /**
@@ -119,6 +132,7 @@ export type WatchFileLap = {
   figures?: WatchFileFigures;
   intensity?: 'active' | 'rest' | 'warmup' | 'cooldown' | 'recovery' | 'interval' | 'other';
   workoutStep?: number;
+  form?: WatchFileForm;
 };
 
 /** A split record: its FIT split type, seconds from the session's start, seconds of timer, metres. */
@@ -203,6 +217,7 @@ export function watchFile({
   figures = {},
   splits = [],
   measurements = {},
+  form = {},
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const total = (key: 'distance' | 'timerTime' | 'elapsedTime') =>
@@ -253,6 +268,7 @@ export function watchFile({
       ...(lap.intensity === undefined ? {} : { intensity: lap.intensity }),
       ...(lap.workoutStep === undefined ? {} : { wktStepIndex: lap.workoutStep }),
       ...figureFields(lap.figures ?? {}),
+      ...formFields(lap.form ?? {}),
     });
     lapStart += lap.elapsedTime;
   });
@@ -278,6 +294,7 @@ export function watchFile({
           totalAnaerobicTrainingEffect: garminReference.anaerobicTrainingEffect,
         }),
     ...figureFields(figures),
+    ...formFields(form),
   });
 
   // A brick: the run, a transition, then a ride with no laps of its own.
@@ -371,6 +388,19 @@ function figureFields(figures: WatchFileFigures): Partial<SessionMesg & LapMesg>
     fields.maxCadence = Math.floor(figures.maxCadence);
     fields.maxFractionalCadence = figures.maxCadence % 1;
   }
+  return Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as Partial<
+    SessionMesg & LapMesg
+  >;
+}
+
+/** The form averages as session or lap fields, leaving out those not given. */
+function formFields(form: WatchFileForm): Partial<SessionMesg & LapMesg> {
+  const fields: { [Field in keyof (SessionMesg & LapMesg)]?: number | undefined } = {
+    avgStepLength: form.stepLength,
+    avgVerticalOscillation: form.verticalOscillation,
+    avgVerticalRatio: form.verticalRatio,
+    avgStanceTime: form.groundContactTime,
+  };
   return Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as Partial<
     SessionMesg & LapMesg
   >;
@@ -487,6 +517,24 @@ function lapTimeline(
 }
 
 /**
+ * Running form at `moving` seconds of timer, as the watch writes it (mm, %, ms): steady for the
+ * first five minutes, then fading as a runner tires, steps shortening and feet staying down longer,
+ * with a little stride-to-stride wobble.
+ */
+function formAt(
+  moving: number,
+): Pick<RecordMesg, 'stepLength' | 'verticalOscillation' | 'verticalRatio' | 'stanceTime'> {
+  const tiring = Math.max(0, moving - 300);
+  const wobble = Math.min(1, tiring / 300) * Math.sin(moving / 23);
+  return {
+    stepLength: 1170 - tiring / 40 + 12 * wobble,
+    verticalOscillation: 85 + tiring / 600 + 1.5 * wobble,
+    verticalRatio: 7.3 + tiring / 2400 + 0.15 * wobble,
+    stanceTime: 245 + tiring / 150 + 4 * wobble,
+  };
+}
+
+/**
  * What a watch records at a point: a steady runner whose heart rate drifts up over the session, on
  * gently rolling ground, on a cool morning. Values are physical; the encoder scales them.
  */
@@ -516,6 +564,6 @@ function recordedAt(
     ...(has('power') ? { power: Math.round(255 + 12 * Math.sin(moving / 9)) } : {}),
     ...(has('cadence') ? (onFoot ? { cadence: 85, fractionalCadence: 0.5 } : { cadence: 85 }) : {}),
     ...(has('temperature') ? { temperature: 8 + Math.floor(moving / 600) } : {}),
-    ...(has('form') ? { stepLength: 1170, verticalOscillation: 85, verticalRatio: 7.3, stanceTime: 245 } : {}),
+    ...(has('form') ? formAt(moving) : {}),
   };
 }

@@ -33,6 +33,7 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
         figures: noFigures,
         intensity: null,
         workoutStep: null,
+        form: { stepLength: 1.19, verticalOscillation: 0.0852, verticalRatio: 7.2, groundContactTime: 0.243 },
       },
       {
         start: new Date(start.getTime() + 310_000),
@@ -43,6 +44,7 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
         figures: noFigures,
         intensity: null,
         workoutStep: null,
+        form: null,
       },
     ],
     trace: [
@@ -68,6 +70,7 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
     },
     measurements: { weight: 71.3, height: 1.83, restingHeartRate: null, maxHeartRate: 193 },
     streams,
+    form: { stepLength: 1.184, verticalOscillation: 0.0864, verticalRatio: 7.4, groundContactTime: null },
   };
 }
 
@@ -235,6 +238,27 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       expect((await stones.byId(run.id))?.laps).toEqual(laps);
     });
 
+    it("keeps a run's form and each lap's, and none for a stone without", async () => {
+      const { stones, ids } = await setup();
+      const athlete = ids.next();
+      const run = stone(ids, athlete, '2026-11-02');
+      const ride = {
+        ...stone(ids, athlete, '2026-11-03'),
+        sport: 'cycling' as const,
+        form: null,
+        laps: run.laps.map((lap) => ({ ...lap, form: null })),
+      };
+      await stones.add(run);
+      await stones.add(ride);
+
+      expect(await stones.byId(run.id)).toMatchObject({ form: run.form, laps: run.laps });
+      expect(await stones.byId(ride.id)).toMatchObject({ form: null, laps: ride.laps });
+      expect((await stones.ofAthlete(athlete, { from: '2026-11-02', to: '2026-11-03' })).map((s) => s.form)).toEqual([
+        null,
+        run.form,
+      ]);
+    });
+
     it('names every stone by its ID', async () => {
       const { stones, ids } = await setup();
       const one = stone(ids, ids.next(), '2026-11-02');
@@ -273,6 +297,7 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
         stretches: reread.stretches,
         measurements: reread.measurements,
         streams: reread.streams,
+        form: { stepLength: 1.21, verticalOscillation: 0.084, verticalRatio: 7, groundContactTime: 0.239 },
       };
 
       await stones.replaceReading(added.id, reading);

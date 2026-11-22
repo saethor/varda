@@ -1,0 +1,1 @@
+ALTER TABLE "record"."stones" ADD COLUMN "form" jsonb;

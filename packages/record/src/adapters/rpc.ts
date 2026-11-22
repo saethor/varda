@@ -55,6 +55,7 @@ function toListedStone({
 function toStoneDetail(stone: Stone, viewer: PersonId) {
   return {
     ...toListedStone(stone),
+    stretches: stone.stretches,
   };
 }
 

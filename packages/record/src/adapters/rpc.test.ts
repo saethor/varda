@@ -3,7 +3,7 @@ import type { SharedContext } from '@varda/shared';
 import { createFakeCoachingAccess } from '@varda/shared/testing';
 import { describe, expect, it } from 'vitest';
 import { createRecordFakes } from '../testing/index.ts';
-import { watchFile } from '../watch-files/index.ts';
+import { type WatchFileSplit, watchFile } from '../watch-files/index.ts';
 import { createRecordRouter } from './rpc.ts';
 
 const guðrún = '00000000-0000-7000-8000-0000000000a1';
@@ -277,7 +277,7 @@ describe('opening a stone', () => {
     const stone = await client.stones.get({ stoneId });
 
     const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
-    expect(stone).toEqual(listed);
+    expect(stone).toMatchObject(listed ?? {});
     expect([stone.fileName, stone.laps.length, stone.trace?.length]).toEqual(['morning-run.fit', 3, 4]);
   });
 
@@ -377,5 +377,87 @@ describe('deleting a stone', () => {
       clientFor({ person: null }).stones.delete({ stoneId: '00000000-0000-7000-8000-00000000ffff' }),
     );
     expect(isDefined && error.code).toBe('UNAUTHORIZED');
+  });
+});
+
+describe('stretches', () => {
+  // A run of 900 s on the timer: running, a walk, standing at a crossing, running again.
+  const runWalkStand: WatchFileSplit[] = [
+    { type: 'rwdRun', start: 0, time: 400, distance: 1400 },
+    { type: 'rwdWalk', start: 400, time: 120, distance: 150 },
+    { type: 'rwdStand', start: 520, time: 30, distance: 0 },
+    { type: 'rwdRun', start: 550, time: 350, distance: 1450 },
+  ];
+
+  it("keeps a run's stretches in order, with the watch's running, walking and standing totals", async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ splits: runWalkStand })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.stretches).toEqual({
+      inOrder: [
+        { kind: 'running', start: new Date('2026-11-02T07:30:00Z'), movingTime: 400, distance: 1400 },
+        { kind: 'walking', start: new Date('2026-11-02T07:36:40Z'), movingTime: 120, distance: 150 },
+        { kind: 'standing', start: new Date('2026-11-02T07:38:40Z'), movingTime: 30, distance: 0 },
+        { kind: 'running', start: new Date('2026-11-02T07:39:10Z'), movingTime: 350, distance: 1450 },
+      ],
+      totals: {
+        running: { movingTime: 750, distance: 2850 },
+        walking: { movingTime: 120, distance: 150 },
+        standing: { movingTime: 30, distance: 0 },
+      },
+    });
+  });
+
+  it("leaves out Garmin's interval-type splits, and the kinds the watch didn't detect", async () => {
+    const client = clientFor({ person: guðrún });
+    const intervals: WatchFileSplit[] = [
+      { type: 'intervalActive', start: 0, time: 900, distance: 3000 },
+      { type: 'rwdRun', start: 0, time: 900, distance: 3000 },
+      { type: 'intervalRest', start: 900, time: 30, distance: 0 },
+    ];
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ splits: intervals })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.stretches).toEqual({
+      inOrder: [{ kind: 'running', start: new Date('2026-11-02T07:30:00Z'), movingTime: 900, distance: 3000 }],
+      totals: { running: { movingTime: 900, distance: 3000 }, walking: null, standing: null },
+    });
+  });
+
+  it('keeps no stretches for a ride, even with run/walk splits in its file', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({
+      file: fitFile(watchFile({ sport: 'cycling', splits: runWalkStand })),
+    });
+
+    expect((await client.stones.get({ stoneId })).stretches).toBeNull();
+  });
+
+  it('keeps no stretches for a run the watch detected none in, nor ones with only interval splits', async () => {
+    const client = clientFor({ person: guðrún });
+    const plain = await client.stones.place({ file: fitFile(watchFile()) });
+    const onlyIntervals = await client.stones.place({
+      file: fitFile(
+        watchFile({
+          start: new Date('2026-11-03T07:30:00Z'),
+          splits: [{ type: 'intervalActive', start: 0, time: 900, distance: 3000 }],
+        }),
+      ),
+    });
+
+    expect((await client.stones.get(plain)).stretches).toBeNull();
+    expect((await client.stones.get(onlyIntervals)).stretches).toBeNull();
+  });
+
+  it('lists stones without their stretches', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ splits: runWalkStand })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed).not.toHaveProperty('stretches');
   });
 });

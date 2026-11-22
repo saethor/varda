@@ -11,6 +11,7 @@ import {
 } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
+import { readStretches } from './read-stretches.ts';
 import type { Lap, LapTrigger, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
 
@@ -45,6 +46,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
     elapsedTime: session.totalElapsedTime ?? 0,
     laps,
     trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
+    stretches: readStretches(sportOf(session), messages.splitMesgs ?? [], messages.splitSummaryMesgs ?? [], dateOf),
   };
 }
 

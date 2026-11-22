@@ -67,3 +67,15 @@ it.each([
   expect(second).toEqual({ placed: 0, alreadyPlaced: first.placed });
   expect(await stonesOf(anna.id)).toHaveLength(first.placed);
 });
+
+it('places a run with walking and standing stretches', async () => {
+  const { clientFor, stonesOf } = devApp();
+  await seedStones({ clientFor, athletes: [anna.id], today });
+
+  const opened = await Promise.all(
+    (await stonesOf(anna.id)).map(({ id }) => clientFor(anna.id).record.stones.get({ stoneId: id })),
+  );
+
+  const kinds = new Set(opened.flatMap((stone) => stone.stretches?.inOrder.map(({ kind }) => kind) ?? []));
+  expect([...kinds].sort()).toEqual(['running', 'standing', 'walking']);
+});

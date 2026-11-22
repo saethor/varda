@@ -38,6 +38,18 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
       [64.14522, -21.93911],
       [64.14384, -21.94467],
     ],
+    stretches: {
+      inOrder: [
+        { kind: 'running', start, movingTime: 600, distance: 2000 },
+        { kind: 'standing', start: new Date(start.getTime() + 600_000), movingTime: 30, distance: 0 },
+        { kind: 'walking', start: new Date(start.getTime() + 630_000), movingTime: 270, distance: null },
+      ],
+      totals: {
+        running: { movingTime: 600, distance: 2000 },
+        walking: null,
+        standing: { movingTime: 30, distance: 0 },
+      },
+    },
   };
 }
 

@@ -38,8 +38,34 @@ const StoneSchema = z.object({
   trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
 });
 
+const stretchKinds = ['running', 'walking', 'standing'] as const;
+
+/** A part of a run spent running, walking or standing, as the watch detected it. Seconds of timer, metres or none. */
+const StretchSchema = z.object({
+  kind: z.enum(stretchKinds),
+  start: z.date(),
+  movingTime: z.number(),
+  distance: z.number().nullable(),
+});
+
+/** All stretches of one kind, as the watch summed them. */
+const StretchTotalSchema = z.object({ movingTime: z.number(), distance: z.number().nullable() });
+
+/** A run's stretches in order of their start, and a total per kind (none for a kind the watch didn't detect). */
+const StretchesSchema = z.object({
+  inOrder: z.array(StretchSchema),
+  totals: z.object({
+    running: StretchTotalSchema.nullable(),
+    walking: StretchTotalSchema.nullable(),
+    standing: StretchTotalSchema.nullable(),
+  }),
+});
+
 /** A stone opened on its own screen: everything a listed stone has, and what only its screen shows. */
-const StoneDetailSchema = StoneSchema.extend({});
+const StoneDetailSchema = StoneSchema.extend({
+  /** A run's stretches and the watch's totals for each kind; none for other sports or when none were detected. */
+  stretches: StretchesSchema.nullable(),
+});
 
 /** The largest watch file a stone is placed from: 25 MB. The web app checks it before sending, too. */
 export const maxWatchFileBytes = 25_000_000;

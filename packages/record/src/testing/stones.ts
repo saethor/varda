@@ -54,6 +54,7 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
         standing: { movingTime: 30, distance: 0 },
       },
     },
+    measurements: { weight: 71.3, height: 1.83, restingHeartRate: null, maxHeartRate: 193 },
   };
 }
 

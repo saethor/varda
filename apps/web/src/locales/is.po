@@ -7,6 +7,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: is\n"
 
+#. placeholder {0}: splits.length
+#: src/stones/stone-splits.tsx:36
+msgid "{0, plural, one {# split} other {# splits}}"
+msgstr "{0, plural, one {# millitími} other {# millitímar}}"
+
 #. placeholder {0}: totals.stones
 #: src/stones/stone-route.tsx:136
 #: src/stones/stones-calendar.tsx:185
@@ -66,11 +71,11 @@ msgstr "Bæta við aðgangslykli?"
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
-#: src/stones/stone-charts.tsx:117
+#: src/stones/stone-charts.tsx:116
 msgid "Along the distance"
 msgstr "Eftir vegalengd"
 
-#: src/stones/stone-charts.tsx:117
+#: src/stones/stone-charts.tsx:116
 msgid "Along the moving time"
 msgstr "Eftir hreyfitíma"
 
@@ -87,6 +92,7 @@ msgid "As the watch had them that day"
 msgstr "Eins og úrið hafði þær þann dag"
 
 #: src/stones/stone-figures.tsx:44
+#: src/stones/stone-splits.tsx:65
 msgid "Ascent"
 msgstr "Hækkun"
 
@@ -106,7 +112,7 @@ msgstr "Meðalafl"
 msgid "Average temperature"
 msgstr "Meðalhiti"
 
-#: src/stones/stone-charts.tsx:134
+#: src/stones/stone-charts.tsx:133
 msgid "Cadence"
 msgstr "Taktur"
 
@@ -123,7 +129,7 @@ msgstr "Hitaeiningar"
 msgid "Cancel"
 msgstr "Hætta við"
 
-#: src/stones/stone-charts.tsx:39
+#: src/stones/stone-charts.tsx:38
 msgid "Charts"
 msgstr "Gröf"
 
@@ -148,6 +154,7 @@ msgid "Delete this stone?"
 msgstr "Eyða þessum steini?"
 
 #: src/stones/stone-figures.tsx:46
+#: src/stones/stone-splits.tsx:69
 msgid "Descent"
 msgstr "Lækkun"
 
@@ -176,7 +183,7 @@ msgstr "Áreynsla"
 msgid "Elapsed time"
 msgstr "Heildartími"
 
-#: src/stones/stone-charts.tsx:130
+#: src/stones/stone-charts.tsx:129
 msgid "Elevation"
 msgstr "Hæð yfir sjó"
 
@@ -210,7 +217,8 @@ msgstr "Úr {model}-úrinu þínu · {fileName}"
 msgid "From your watch · {fileName}"
 msgstr "Úr úrinu þínu · {fileName}"
 
-#: src/stones/stone-charts.tsx:124
+#: src/stones/stone-charts.tsx:123
+#: src/stones/stone-splits.tsx:58
 msgid "Heart rate"
 msgstr "Púls"
 
@@ -229,6 +237,10 @@ msgstr "Fjallganga"
 #: src/routes/_signed-in.tsx:39
 msgid "Home"
 msgstr "Forsíða"
+
+#: src/stones/stone-splits.tsx:45
+msgid "Kilometre"
+msgstr "Kílómetri"
 
 #: src/stones/stone-laps.tsx:144
 msgid "Lap"
@@ -285,6 +297,7 @@ msgstr "Minnsti hiti"
 #: src/stones/stone-laps.tsx:151
 #: src/stones/stone-numbers.tsx:21
 #: src/stones/stone-plate.tsx:43
+#: src/stones/stone-splits.tsx:48
 #: src/stones/stone-stretches.tsx:67
 msgid "Moving time"
 msgstr "Hreyfitími"
@@ -344,10 +357,11 @@ msgstr "Annað"
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:126
+#: src/stones/stone-charts.tsx:125
 #: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
+#: src/stones/stone-splits.tsx:52
 msgid "Pace"
 msgstr "Tempó"
 
@@ -378,7 +392,7 @@ msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn síðustu viku"
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn þessa viku"
 
-#: src/stones/stone-charts.tsx:132
+#: src/stones/stone-charts.tsx:131
 msgid "Power"
 msgstr "Afl"
 
@@ -464,12 +478,17 @@ msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:128
+#: src/stones/stone-charts.tsx:127
 #: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
+#: src/stones/stone-splits.tsx:52
 msgid "Speed"
 msgstr "Hraði"
+
+#: src/stones/stone-splits.tsx:33
+msgid "Splits"
+msgstr "Millitímar"
 
 #: src/stones/stone-stretches.tsx:105
 msgid "Standing"
@@ -487,12 +506,12 @@ msgstr "hófst {time}"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Steini eytt. Þú getur lagt hann aftur úr {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:60
+#: src/routes/_signed-in/stones_.$stoneId.tsx:61
 msgid "Stone not found"
 msgstr "Steinn fannst ekki"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:50
+#: src/routes/_signed-in/stones_.$stoneId.tsx:51
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -543,7 +562,7 @@ msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur.
 msgid "The week of {0}"
 msgstr "Vikan frá {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:63
+#: src/routes/_signed-in/stones_.$stoneId.tsx:64
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "Þessi steinn er ekki til. Honum gæti hafa verið eytt, eða hlekkurinn er rangur."
 

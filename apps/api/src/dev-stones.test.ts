@@ -140,3 +140,15 @@ it('places a run with walking and standing stretches', async () => {
   const kinds = new Set(opened.flatMap((stone) => stone.stretches?.inOrder.map(({ kind }) => kind) ?? []));
   expect([...kinds].sort()).toEqual(['running', 'standing', 'walking']);
 });
+
+it('places an interval run whose laps carry their intensity and figures', async () => {
+  const { clientFor, stonesOf } = devApp();
+  await seedStones({ clientFor, athletes: [anna.id], today });
+
+  const track = (await stonesOf(anna.id)).find((stone) => stone.sport.sport === 'track-running');
+
+  expect(new Set(track?.laps.map((lap) => lap.intensity))).toEqual(
+    new Set(['warm-up', 'active', 'recovery', 'cool-down']),
+  );
+  expect(track?.laps.every((lap) => lap.figures.averageHeartRate !== null)).toBe(true);
+});

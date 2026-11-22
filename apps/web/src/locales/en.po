@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 
 #. placeholder {0}: splits.length
-#: src/stones/stone-splits.tsx:36
+#: src/stones/stone-splits.tsx:35
 msgid "{0, plural, one {# split} other {# splits}}"
 msgstr "{0, plural, one {# split} other {# splits}}"
 
@@ -28,11 +28,11 @@ msgstr "{0, plural, one {Last week} other {Last # weeks}}"
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
 
-#: src/stones/stone-laps.tsx:32
+#: src/stones/stone-laps.tsx:34
 msgid "{count, plural, one {# lap} other {# laps}}"
 msgstr "{count, plural, one {# lap} other {# laps}}"
 
-#: src/stones/stone-laps.tsx:34
+#: src/stones/stone-laps.tsx:36
 msgid "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
 msgstr "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
 
@@ -57,6 +57,10 @@ msgstr "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone last
 #: src/stones/stone-plate.tsx:142
 msgid "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
+
+#: src/stones/stone-laps.tsx:240
+msgid "Active"
+msgstr "Active"
 
 #: src/routes/_signed-in/add-a-passkey.tsx:45
 #: src/routes/_signed-in/settings.tsx:65
@@ -92,7 +96,7 @@ msgid "As the watch had them that day"
 msgstr "As the watch had them that day"
 
 #: src/stones/stone-figures.tsx:44
-#: src/stones/stone-splits.tsx:65
+#: src/stones/stone-splits.tsx:64
 msgid "Ascent"
 msgstr "Ascent"
 
@@ -137,6 +141,10 @@ msgstr "Charts"
 msgid "Choose a watch file"
 msgstr "Choose a watch file"
 
+#: src/stones/stone-laps.tsx:246
+msgid "Cool-down"
+msgstr "Cool-down"
+
 #: src/stones/stone-card.tsx:17
 msgid "Cycling"
 msgstr "Cycling"
@@ -154,14 +162,14 @@ msgid "Delete this stone?"
 msgstr "Delete this stone?"
 
 #: src/stones/stone-figures.tsx:46
-#: src/stones/stone-splits.tsx:69
+#: src/stones/stone-splits.tsx:68
 msgid "Descent"
 msgstr "Descent"
 
 #: src/stones/headline-numbers.tsx:33
 #: src/stones/latest-stone.tsx:44
 #: src/stones/latest-stone.tsx:47
-#: src/stones/stone-laps.tsx:147
+#: src/stones/stone-laps.tsx:159
 #: src/stones/stone-numbers.tsx:20
 #: src/stones/stone-plate.tsx:42
 #: src/stones/stone-stretches.tsx:70
@@ -177,7 +185,7 @@ msgid "Effort"
 msgstr "Effort"
 
 #: src/stones/headline-numbers.tsx:36
-#: src/stones/stone-laps.tsx:160
+#: src/stones/stone-laps.tsx:182
 #: src/stones/stone-numbers.tsx:28
 #: src/stones/stone-plate.tsx:50
 msgid "Elapsed time"
@@ -218,7 +226,7 @@ msgid "From your watch · {fileName}"
 msgstr "From your watch · {fileName}"
 
 #: src/stones/stone-charts.tsx:123
-#: src/stones/stone-splits.tsx:58
+#: src/stones/stone-splits.tsx:57
 msgid "Heart rate"
 msgstr "Heart rate"
 
@@ -238,15 +246,19 @@ msgstr "Hiking"
 msgid "Home"
 msgstr "Home"
 
-#: src/stones/stone-splits.tsx:45
+#: src/stones/stone-laps.tsx:155
+msgid "Intensity"
+msgstr "Intensity"
+
+#: src/stones/stone-splits.tsx:44
 msgid "Kilometre"
 msgstr "Kilometre"
 
-#: src/stones/stone-laps.tsx:144
+#: src/stones/stone-laps.tsx:151
 msgid "Lap"
 msgstr "Lap"
 
-#: src/stones/stone-laps.tsx:27
+#: src/stones/stone-laps.tsx:29
 msgid "Laps"
 msgstr "Laps"
 
@@ -294,10 +306,10 @@ msgstr "Min temperature"
 
 #: src/stones/headline-numbers.tsx:34
 #: src/stones/latest-stone.tsx:45
-#: src/stones/stone-laps.tsx:151
+#: src/stones/stone-laps.tsx:163
 #: src/stones/stone-numbers.tsx:21
 #: src/stones/stone-plate.tsx:43
-#: src/stones/stone-splits.tsx:48
+#: src/stones/stone-splits.tsx:47
 #: src/stones/stone-stretches.tsx:67
 msgid "Moving time"
 msgstr "Moving time"
@@ -358,10 +370,10 @@ msgstr "Other"
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
 #: src/stones/stone-charts.tsx:125
-#: src/stones/stone-laps.tsx:155
+#: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
-#: src/stones/stone-splits.tsx:52
+#: src/stones/stone-splits.tsx:51
 msgid "Pace"
 msgstr "Pace"
 
@@ -404,6 +416,10 @@ msgstr "Previous"
 msgid "Reading {reading}…"
 msgstr "Reading {reading}…"
 
+#: src/stones/stone-laps.tsx:242
+msgid "Recovery"
+msgstr "Recovery"
+
 #: src/routes/_signed-in/settings.tsx:90
 #: src/routes/_signed-in/settings.tsx:107
 msgid "Remove"
@@ -416,6 +432,10 @@ msgstr "Remove {name}"
 #: src/routes/_signed-in/settings.tsx:96
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
+
+#: src/stones/stone-laps.tsx:244
+msgid "Rest"
+msgstr "Rest"
 
 #: src/stones/stone-measurements.tsx:24
 msgid "Resting heart rate"
@@ -479,14 +499,14 @@ msgstr "Something went wrong, try again."
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
 #: src/stones/stone-charts.tsx:127
-#: src/stones/stone-laps.tsx:155
+#: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
-#: src/stones/stone-splits.tsx:52
+#: src/stones/stone-splits.tsx:51
 msgid "Speed"
 msgstr "Speed"
 
-#: src/stones/stone-splits.tsx:33
+#: src/stones/stone-splits.tsx:32
 msgid "Splits"
 msgstr "Splits"
 
@@ -553,7 +573,7 @@ msgstr "That email and password don't match."
 msgid "The stone and its watch file, {fileName}, will be gone for good. You can place the stone again from the same file."
 msgstr "The stone and its watch file, {fileName}, will be gone for good. You can place the stone again from the same file."
 
-#: src/stones/stone-laps.tsx:43
+#: src/stones/stone-laps.tsx:45
 msgid "The watch recorded no laps: this stone keeps its totals only."
 msgstr "The watch recorded no laps: this stone keeps its totals only."
 
@@ -627,6 +647,10 @@ msgstr "Varða doesn't recognise that passkey. Sign in with your password instea
 #: src/stones/stone-stretches.tsx:103
 msgid "Walking"
 msgstr "Walking"
+
+#: src/stones/stone-laps.tsx:238
+msgid "Warm-up"
+msgstr "Warm-up"
 
 #: src/stones/stones-calendar.tsx:121
 msgid "Week"

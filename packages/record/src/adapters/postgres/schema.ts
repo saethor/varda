@@ -46,6 +46,16 @@ export const stones = record.table(
     laps: jsonb('laps').$type<StoredLap[]>().notNull(),
     // `[lat, lon]` pairs in degrees, or null when the watch recorded no GPS.
     trace: jsonb('trace').$type<[number, number][]>(),
+    // 1–10, or null when the athlete gave the watch no rating.
+    effort: integer('effort'),
+    // `{ manufacturer, model }` of the watch that recorded it, or null.
+    device: jsonb('device').$type<{ manufacturer: string; model: string | null }>(),
+    // Garmin's training load and Training Effect, as reference only (ADR 0003); never answered. Or null.
+    garminReference: jsonb('garmin_reference').$type<{
+      trainingLoad: number | null;
+      aerobicTrainingEffect: number | null;
+      anaerobicTrainingEffect: number | null;
+    }>(),
   },
   (table) => [
     // A session is placed as a stone only once (Record glossary).

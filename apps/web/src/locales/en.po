@@ -78,6 +78,10 @@ msgstr "Already placed"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
+#: src/stones/stone-measurements.tsx:42
+msgid "As the watch had them that day"
+msgstr "As the watch had them that day"
+
 #: src/stones/stone-figures.tsx:44
 msgid "Ascent"
 msgstr "Ascent"
@@ -194,6 +198,10 @@ msgstr "From your {model} · {fileName}"
 msgid "From your watch · {fileName}"
 msgstr "From your watch · {fileName}"
 
+#: src/stones/stone-measurements.tsx:20
+msgid "Height"
+msgstr "Height"
+
 #: src/routes/_signed-in/index.tsx:34
 msgid "Hi, {name}"
 msgstr "Hi, {name}"
@@ -240,6 +248,7 @@ msgid "Max cadence"
 msgstr "Max cadence"
 
 #: src/stones/stone-figures.tsx:42
+#: src/stones/stone-measurements.tsx:30
 msgid "Max heart rate"
 msgstr "Max heart rate"
 
@@ -250,6 +259,10 @@ msgstr "Max power"
 #: src/stones/stone-figures.tsx:62
 msgid "Max temperature"
 msgstr "Max temperature"
+
+#: src/stones/stone-measurements.tsx:39
+msgid "Measurements"
+msgstr "Measurements"
 
 #: src/stones/stone-figures.tsx:58
 msgid "Min temperature"
@@ -381,6 +394,10 @@ msgstr "Remove {name}?"
 msgid "Rest"
 msgstr "Rest"
 
+#: src/stones/stone-measurements.tsx:24
+msgid "Resting heart rate"
+msgstr "Resting heart rate"
+
 #: src/stones/stone-card.tsx:7
 msgid "Road running"
 msgstr "Road running"
@@ -460,12 +477,12 @@ msgstr "started {time}"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Stone deleted. You can place it again from {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:58
+#: src/routes/_signed-in/stones_.$stoneId.tsx:59
 msgid "Stone not found"
 msgstr "Stone not found"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:48
+#: src/routes/_signed-in/stones_.$stoneId.tsx:49
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -516,7 +533,7 @@ msgstr "The watch recorded no laps: this stone keeps its totals only."
 msgid "The week of {0}"
 msgstr "The week of {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:61
+#: src/routes/_signed-in/stones_.$stoneId.tsx:62
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "There's no such stone. It may have been deleted, or the link may be wrong."
 
@@ -593,6 +610,10 @@ msgstr "Week"
 #: src/stones/stitch-weeks.tsx:42
 msgid "Week of"
 msgstr "Week of"
+
+#: src/stones/stone-measurements.tsx:18
+msgid "Weight"
+msgstr "Weight"
 
 #: src/stones/placing-refusal.tsx:62
 msgid "You already placed a stone from this session: the one placed from {fileName}, on {day}."

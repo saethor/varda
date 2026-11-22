@@ -10,7 +10,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import type { Figures } from '../../domain/stone.ts';
+import type { Figures, Measurements } from '../../domain/stone.ts';
 
 // The Record context's own Postgres schema (ADR 0005). Change it, then run
 // `pnpm --filter @varda/record db:generate` and commit the new migration.
@@ -75,6 +75,8 @@ export const stones = record.table(
     figures: jsonb('figures').$type<Figures>(),
     // A run's stretches, starts as ISO instants; null for other sports and stones placed before them.
     stretches: jsonb('stretches').$type<StoredStretches>(),
+    // The athlete's measurements the watch had (kg, m, bpm), or null when it had none.
+    measurements: jsonb('measurements').$type<Measurements>(),
   },
   (table) => [
     // A session is placed as a stone only once (Record glossary).

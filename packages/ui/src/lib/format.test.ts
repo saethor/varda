@@ -6,10 +6,12 @@ import {
   formatDuration,
   formatElevation,
   formatHeartRate,
+  formatHeight,
   formatPace,
   formatPower,
   formatSpeed,
   formatTemperature,
+  formatWeight,
 } from './format.ts';
 
 describe('formatting a duration', () => {
@@ -79,5 +81,16 @@ describe("formatting a stone's figures", () => {
 
   it('leaves the unit out when asked', () => {
     expect(formatHeartRate(152, 'en', { unit: false })).toBe('152');
+  });
+});
+
+describe("formatting the athlete's measurements", () => {
+  it('shows weight in kilograms to one decimal, in the language shown', () => {
+    expect(formatWeight(71.3, 'en')).toBe('71.3 kg');
+    expect(formatWeight(68, 'is')).toBe('68,0 kg');
+  });
+
+  it('shows height in centimetres', () => {
+    expect(formatHeight(1.83)).toBe('183 cm');
   });
 });

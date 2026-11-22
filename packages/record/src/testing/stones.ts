@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Ids, Stones } from '../application/ports.ts';
-import type { LocalDate, PersonId, Stone } from '../domain/stone.ts';
+import type { LocalDate, PersonId, Reading, Stone } from '../domain/stone.ts';
 
 export type StonesSetup = {
   stones: Stones;
@@ -66,6 +66,7 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
         standing: { movingTime: 30, distance: 0 },
       },
     },
+    measurements: { weight: 71.3, height: 1.83, restingHeartRate: null, maxHeartRate: 193 },
   };
 }
 
@@ -187,6 +188,60 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       await stones.add({ ...run, laps });
 
       expect((await stones.byId(run.id))?.laps).toEqual(laps);
+    });
+
+    it('names every stone by its ID', async () => {
+      const { stones, ids } = await setup();
+      const one = stone(ids, ids.next(), '2026-11-02');
+      const another = stone(ids, ids.next(), '2026-11-03');
+      await stones.add(one);
+      await stones.add(another);
+
+      expect(await stones.everyId()).toEqual(expect.arrayContaining([one.id, another.id]));
+      await stones.remove(one.id);
+      expect(await stones.everyId()).not.toContain(one.id);
+    });
+
+    it('replaces what a stone holds as read from its recording, keeping what places it', async () => {
+      const { stones, ids } = await setup();
+      const added = {
+        ...stone(ids, ids.next(), '2026-11-02'),
+        effort: null,
+        device: null,
+        stretches: null,
+        measurements: null,
+      };
+      const { id, athlete, fileName, sessionKey, start, localOffset, localDate } = added;
+      await stones.add(added);
+      const reread = stone(ids, ids.next(), '2026-11-09');
+      const reading: Reading = {
+        sport: 'trail-running',
+        distance: 3100,
+        movingTime: 905,
+        elapsedTime: 935,
+        laps: reread.laps,
+        trace: reread.trace,
+        effort: reread.effort,
+        device: reread.device,
+        garminReference: reread.garminReference,
+        figures: { ...noFigures, averageHeartRate: 152, calories: 712 },
+        stretches: reread.stretches,
+        measurements: reread.measurements,
+      };
+
+      await stones.replaceReading(added.id, reading);
+      await stones.replaceReading(ids.next(), reading);
+
+      expect(await stones.byId(added.id)).toEqual({
+        ...reading,
+        id,
+        athlete,
+        fileName,
+        sessionKey,
+        start,
+        localOffset,
+        localDate,
+      });
     });
   });
 }

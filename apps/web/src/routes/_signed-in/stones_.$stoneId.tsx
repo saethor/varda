@@ -8,6 +8,7 @@ import { todayHere } from '../../stones/feed-window.ts';
 import { FromTheWatch, StoneEffort } from '../../stones/from-the-watch.tsx';
 import { StoneFigures } from '../../stones/stone-figures.tsx';
 import { StoneLaps } from '../../stones/stone-laps.tsx';
+import { StoneMeasurements } from '../../stones/stone-measurements.tsx';
 import { StonePlate } from '../../stones/stone-plate.tsx';
 import { StoneStretches } from '../../stones/stone-stretches.tsx';
 import { placeInWeek } from '../../stones/stone-week.ts';
@@ -94,7 +95,7 @@ function StoneScreen() {
       {/* Stretches (#80) */}
       <StoneStretches stone={stone} />
       {/* Form (#84) */}
-      {/* Measurements (#78) */}
+      <StoneMeasurements stone={stone} />
 
       {/* Reserved: planned against actual (the workout this stone fulfilled, its workout outcome) and the journey it moved along go here, between the stone's own record and the walk through the weeks. */}
 

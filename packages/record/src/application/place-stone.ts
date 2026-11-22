@@ -24,9 +24,11 @@ export async function placeStone(
   let added: Awaited<ReturnType<RecordOwnAdapters['stones']['add']>>;
   try {
     added = await adapters.stones.add({ ...session, id, athlete, fileName: watchFile.name });
-  } catch (error) {
+  } catch {
     await removeRecording(adapters, id);
-    throw error;
+    // Not the error itself: a database error carries the row it failed to write, measurements and
+    // all, into whatever logs or reports it. This names the stone only (spec #74).
+    throw new Error(`Placing stone ${id} failed: the stone could not be kept.`);
   }
   if (added !== 'added') {
     // Another request placed the same session between the look-up and here.

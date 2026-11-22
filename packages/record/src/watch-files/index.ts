@@ -54,6 +54,29 @@ export type WatchFileOptions = {
   product?: number;
   /** Garmin's training load and Training Effect for the session. None by default. */
   garminReference?: { trainingLoad: number; aerobicTrainingEffect: number; anaerobicTrainingEffect: number };
+  /** The session's summary figures. Each left out is one the watch didn't record; by default none. */
+  figures?: WatchFileFigures;
+};
+
+/**
+ * A session's summary figures as the watch writes them: heart rate in bpm, ascent and descent in
+ * metres, power in W, temperature in °C, calories in kcal. Cadence per leg for running, walking and
+ * hiking (strides a minute, half the steps), rpm otherwise; a fraction of it is written apart.
+ */
+export type WatchFileFigures = {
+  averageHeartRate?: number;
+  maxHeartRate?: number;
+  ascent?: number;
+  descent?: number;
+  averageCadence?: number;
+  maxCadence?: number;
+  averagePower?: number;
+  maxPower?: number;
+  normalizedPower?: number;
+  minTemperature?: number;
+  averageTemperature?: number;
+  maxTemperature?: number;
+  calories?: number;
 };
 
 /** A lap: metres, and seconds of timer and of elapsed time. */
@@ -122,6 +145,7 @@ export function watchFile({
   rpe,
   product = forerunner255,
   garminReference,
+  figures = {},
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const total = (key: keyof WatchFileLap) => sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
@@ -190,6 +214,7 @@ export function watchFile({
           totalTrainingEffect: garminReference.aerobicTrainingEffect,
           totalAnaerobicTrainingEffect: garminReference.anaerobicTrainingEffect,
         }),
+    ...sessionFigures(figures),
   });
 
   // A brick: the run, a transition, then a ride with no laps of its own.
@@ -233,6 +258,32 @@ export function watchFile({
   // The file's CRC is its last two bytes.
   if (brokenCrc) bytes[bytes.length - 1] = (bytes[bytes.length - 1] ?? 0) ^ 0xff;
   return bytes;
+}
+
+/** The figures as session fields, leaving out those not given; a cadence's fraction goes in its own field. */
+function sessionFigures(figures: WatchFileFigures): Partial<SessionMesg> {
+  const fields: { [Field in keyof SessionMesg]?: number | undefined } = {
+    avgHeartRate: figures.averageHeartRate,
+    maxHeartRate: figures.maxHeartRate,
+    totalAscent: figures.ascent,
+    totalDescent: figures.descent,
+    avgPower: figures.averagePower,
+    maxPower: figures.maxPower,
+    normalizedPower: figures.normalizedPower,
+    minTemperature: figures.minTemperature,
+    avgTemperature: figures.averageTemperature,
+    maxTemperature: figures.maxTemperature,
+    totalCalories: figures.calories,
+  };
+  if (figures.averageCadence !== undefined) {
+    fields.avgCadence = Math.floor(figures.averageCadence);
+    fields.avgFractionalCadence = figures.averageCadence % 1;
+  }
+  if (figures.maxCadence !== undefined) {
+    fields.maxCadence = Math.floor(figures.maxCadence);
+    fields.maxFractionalCadence = figures.maxCadence % 1;
+  }
+  return Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as Partial<SessionMesg>;
 }
 
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);

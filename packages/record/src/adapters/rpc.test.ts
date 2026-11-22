@@ -439,3 +439,89 @@ describe('effort, the watch and Garmin reference data (#77)', () => {
     expect((await adapters.stones.byId(stoneId))?.garminReference).toBeNull();
   });
 });
+
+describe('summary figures', () => {
+  it("keeps a run's figures exactly as the watch recorded them, cadence in steps a minute as the watch shows it", async () => {
+    const client = clientFor({ person: guðrún });
+    const run = watchFile({
+      figures: {
+        averageHeartRate: 152,
+        maxHeartRate: 178,
+        ascent: 84,
+        descent: 79,
+        // The watch writes a run's cadence per leg: 84.5 strides a minute are 169 steps.
+        averageCadence: 84.5,
+        maxCadence: 92,
+        averagePower: 301,
+        maxPower: 455,
+        normalizedPower: 312,
+        minTemperature: 18,
+        averageTemperature: 23,
+        maxTemperature: 27,
+        calories: 712,
+      },
+    });
+    const { stoneId } = await client.stones.place({ file: fitFile(run) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.figures).toEqual({
+      averageHeartRate: 152,
+      maxHeartRate: 178,
+      ascent: 84,
+      descent: 79,
+      averageCadence: 169,
+      maxCadence: 184,
+      averagePower: 301,
+      maxPower: 455,
+      normalizedPower: 312,
+      minTemperature: 18,
+      averageTemperature: 23,
+      maxTemperature: 27,
+      calories: 712,
+    });
+  });
+
+  it('leaves out every figure the watch did not record, never 0', async () => {
+    const client = clientFor({ person: guðrún });
+    const noHeartRateNoPower = watchFile({ figures: { ascent: 0, descent: 12, calories: 230 } });
+    const { stoneId } = await client.stones.place({ file: fitFile(noHeartRateNoPower) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.figures).toEqual({
+      averageHeartRate: null,
+      maxHeartRate: null,
+      ascent: 0,
+      descent: 12,
+      averageCadence: null,
+      maxCadence: null,
+      averagePower: null,
+      maxPower: null,
+      normalizedPower: null,
+      minTemperature: null,
+      averageTemperature: null,
+      maxTemperature: null,
+      calories: 230,
+    });
+  });
+
+  it("keeps a ride's cadence in revolutions a minute, as recorded", async () => {
+    const client = clientFor({ person: guðrún });
+    const ride = watchFile({ sport: 'cycling', figures: { averageCadence: 82, maxCadence: 110 } });
+    const { stoneId } = await client.stones.place({ file: fitFile(ride, 'ride.fit') });
+
+    const { figures } = await client.stones.get({ stoneId });
+
+    expect([figures.averageCadence, figures.maxCadence]).toEqual([82, 110]);
+  });
+
+  it('lists stones with their figures', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ figures: { averageHeartRate: 141, calories: 498 } })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed?.figures).toMatchObject({ averageHeartRate: 141, maxHeartRate: null, calories: 498 });
+  });
+});

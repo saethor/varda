@@ -70,9 +70,33 @@ msgstr "Already placed"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
+#: src/stones/stone-figures.tsx:44
+msgid "Ascent"
+msgstr "Ascent"
+
+#: src/stones/stone-figures.tsx:48
+msgid "Average cadence"
+msgstr "Average cadence"
+
+#: src/stones/stone-figures.tsx:40
+msgid "Average heart rate"
+msgstr "Average heart rate"
+
+#: src/stones/stone-figures.tsx:52
+msgid "Average power"
+msgstr "Average power"
+
+#: src/stones/stone-figures.tsx:60
+msgid "Average temperature"
+msgstr "Average temperature"
+
 #: src/stones/stones-calendar.tsx:50
 msgid "Calendar"
 msgstr "Calendar"
+
+#: src/stones/stone-figures.tsx:64
+msgid "Calories"
+msgstr "Calories"
 
 #: src/routes/_signed-in/settings.tsx:104
 #: src/stones/delete-stone.tsx:46
@@ -98,6 +122,10 @@ msgstr "Delete stone…"
 #: src/stones/delete-stone.tsx:35
 msgid "Delete this stone?"
 msgstr "Delete this stone?"
+
+#: src/stones/stone-figures.tsx:46
+msgid "Descent"
+msgstr "Descent"
 
 #: src/stones/headline-numbers.tsx:33
 #: src/stones/latest-stone.tsx:44
@@ -190,6 +218,26 @@ msgstr "List"
 msgid "Main"
 msgstr "Main"
 
+#: src/stones/stone-figures.tsx:50
+msgid "Max cadence"
+msgstr "Max cadence"
+
+#: src/stones/stone-figures.tsx:42
+msgid "Max heart rate"
+msgstr "Max heart rate"
+
+#: src/stones/stone-figures.tsx:54
+msgid "Max power"
+msgstr "Max power"
+
+#: src/stones/stone-figures.tsx:62
+msgid "Max temperature"
+msgstr "Max temperature"
+
+#: src/stones/stone-figures.tsx:58
+msgid "Min temperature"
+msgstr "Min temperature"
+
 #: src/stones/headline-numbers.tsx:34
 #: src/stones/latest-stone.tsx:45
 #: src/stones/stone-laps.tsx:151
@@ -226,6 +274,10 @@ msgstr "No stone in the week before"
 #: src/stones/stones-calendar.tsx:163
 msgid "No stones this week"
 msgstr "No stones this week"
+
+#: src/stones/stone-figures.tsx:56
+msgid "Normalized power"
+msgstr "Normalized power"
 
 #: src/routes/_signed-in/add-a-passkey.tsx:50
 msgid "Not now"
@@ -370,12 +422,12 @@ msgstr "started {time}"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Stone deleted. You can place it again from {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:56
+#: src/routes/_signed-in/stones_.$stoneId.tsx:57
 msgid "Stone not found"
 msgstr "Stone not found"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:46
+#: src/routes/_signed-in/stones_.$stoneId.tsx:47
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -392,6 +444,10 @@ msgstr "Stones: your completed activities"
 #: src/stones/stone-card.tsx:15
 msgid "Strength"
 msgstr "Strength"
+
+#: src/stones/stone-figures.tsx:20
+msgid "Summary"
+msgstr "Summary"
 
 #: src/stones/stone-card.tsx:19
 msgid "Swimming"
@@ -414,7 +470,7 @@ msgstr "The watch recorded no laps: this stone keeps its totals only."
 msgid "The week of {0}"
 msgstr "The week of {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:59
+#: src/routes/_signed-in/stones_.$stoneId.tsx:60
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "There's no such stone. It may have been deleted, or the link may be wrong."
 

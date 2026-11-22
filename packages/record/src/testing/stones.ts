@@ -41,8 +41,25 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
     effort: 6,
     device: { manufacturer: 'Garmin', model: 'Forerunner 255 Music' },
     garminReference: { trainingLoad: 105.87, aerobicTrainingEffect: 3.2, anaerobicTrainingEffect: null },
+    figures: noFigures,
   };
 }
+
+const noFigures: Stone['figures'] = {
+  averageHeartRate: null,
+  maxHeartRate: null,
+  ascent: null,
+  descent: null,
+  averageCadence: null,
+  maxCadence: null,
+  averagePower: null,
+  maxPower: null,
+  normalizedPower: null,
+  minTemperature: null,
+  averageTemperature: null,
+  maxTemperature: null,
+  calories: null,
+};
 
 /**
  * The behaviour every `Stones` adapter shares: run against the in-memory fake in `pnpm test`
@@ -110,6 +127,29 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       await stones.remove(added.id);
 
       expect(await stones.byId(added.id)).toBeNull();
+    });
+
+    it("keeps a stone's figures, and those the watch didn't record as none", async () => {
+      const { stones, ids } = await setup();
+      const athlete = ids.next();
+      const figures = {
+        ...noFigures,
+        averageHeartRate: 152,
+        maxHeartRate: 178,
+        ascent: 0,
+        averageCadence: 169.5,
+        minTemperature: -4,
+        calories: 712,
+      };
+      const run = { ...stone(ids, athlete, '2026-11-02'), figures };
+      const indoors = stone(ids, athlete, '2026-11-03');
+      await stones.add(run);
+      await stones.add(indoors);
+
+      expect((await stones.byId(run.id))?.figures).toEqual(figures);
+      expect((await stones.ofAthlete(athlete, { from: '2026-11-02', to: '2026-11-03' })).map((s) => s.figures)).toEqual(
+        [noFigures, figures],
+      );
     });
   });
 }

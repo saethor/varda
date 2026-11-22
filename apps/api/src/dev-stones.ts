@@ -1,7 +1,7 @@
 import type { ContractRouterClient } from '@orpc/contract';
 import { safe } from '@orpc/server';
 import type { Contract } from '@varda/contract';
-import { type WatchFileLap, type WatchFileOptions, watchFile } from '@varda/record/watch-files';
+import { type WatchFileFigures, type WatchFileLap, type WatchFileOptions, watchFile } from '@varda/record/watch-files';
 
 /** `count` laps of `distance` metres in `timerTime` seconds, each with 10 s stopped. */
 const laps = (count: number, distance: number, timerTime: number): WatchFileLap[] =>
@@ -54,6 +54,72 @@ const onTheWatch: Partial<Record<number, Pick<WatchFileOptions, 'rpe' | 'garminR
 };
 
 /**
+ * The summary figures each dev stone's watch recorded, by its `daysAgo`, as an FR255 writes them:
+ * runs have everything (cadence per leg), rides and skiing no cadence or power, the treadmill no
+ * ascent, strength and yoga only heart rate and calories (yoga with temperature), the swim no
+ * temperature. Stones not here recorded none.
+ */
+const devFigures: Partial<Record<number, WatchFileFigures>> = {
+  1: run(148, 171, 42, 40, 302),
+  3: { ...run(162, 186, 8, 8, 318), maxPower: 520, normalizedPower: 334 },
+  5: { ...run(151, 177, 412, 405, 286), minTemperature: 9, averageTemperature: 12, maxTemperature: 14 },
+  7: { averageHeartRate: 128, maxHeartRate: 154, ascent: 286, descent: 291, calories: 742 },
+  9: { averageHeartRate: 104, maxHeartRate: 141, calories: 312 },
+  11: {
+    averageHeartRate: 118,
+    maxHeartRate: 149,
+    ascent: 640,
+    descent: 636,
+    averageCadence: 52.5,
+    maxCadence: 61,
+    calories: 1180,
+  },
+  13: { averageHeartRate: 131, maxHeartRate: 158, calories: 420 },
+  15: {
+    averageHeartRate: 156,
+    maxHeartRate: 172,
+    averageCadence: 86,
+    maxCadence: 92.5,
+    averagePower: 309,
+    maxPower: 402,
+    normalizedPower: 314,
+    minTemperature: 21,
+    averageTemperature: 23,
+    maxTemperature: 24,
+    calories: 455,
+  },
+  18: run(150, 175, 96, 101, 298),
+  21: {
+    averageHeartRate: 88,
+    maxHeartRate: 112,
+    minTemperature: 22,
+    averageTemperature: 24,
+    maxTemperature: 25,
+    calories: 140,
+  },
+  24: { averageHeartRate: 139, maxHeartRate: 167, ascent: 198, descent: 201, calories: 905 },
+};
+
+/** A run's figures: heart rate, ascent and descent, power, and the rest an FR255 writes with them. */
+function run(averageHeartRate: number, maxHeartRate: number, ascent: number, descent: number, averagePower: number) {
+  return {
+    averageHeartRate,
+    maxHeartRate,
+    ascent,
+    descent,
+    averageCadence: 84.5,
+    maxCadence: 96,
+    averagePower,
+    maxPower: averagePower + 140,
+    normalizedPower: averagePower + 9,
+    minTemperature: 4,
+    averageTemperature: 7,
+    maxTemperature: 9,
+    calories: Math.round(averagePower * 2.4),
+  } satisfies WatchFileFigures;
+}
+
+/**
  * The dev watch every seeded file comes from. A watch file's session key is its watch and when it
  * wrote the file, so each dev stone gets a fixed time written: its key never moves with its dates.
  */
@@ -85,6 +151,7 @@ export async function seedStones({
   for (const athlete of athletes) {
     for (const [entry, { daysAgo, time, file }] of devStones.entries()) {
       const start = startOf(today, daysAgo, time);
+      const figures = devFigures[daysAgo];
       const bytes = watchFile({
         ...file,
         product: devWatchModel,
@@ -92,6 +159,7 @@ export async function seedStones({
         start,
         serialNumber: devWatch,
         timeCreated: writtenAt(entry),
+        ...(figures === undefined ? {} : { figures }),
       });
       const upload = new File([bytes as Uint8Array<ArrayBuffer>], `seed-${start.toISOString().slice(0, 10)}.fit`);
       const { error, isDefined } = await safe(clientFor(athlete).record.stones.place({ file: upload }));

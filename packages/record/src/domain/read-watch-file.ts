@@ -11,6 +11,7 @@ import {
 } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
+import { readFigures } from './read-figures.ts';
 import type { Device, GarminReference, Lap, LapTrigger, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
 
@@ -48,6 +49,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
     effort: effortOf(session),
     device: deviceOf(fileId),
     garminReference: garminReferenceOf(session),
+    figures: readFigures(session, sportOf(session)),
   };
 }
 

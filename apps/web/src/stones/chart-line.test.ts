@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { axisTicks, chartArea, chartDomain, chartPath, chartValueAt, chartWindow } from './chart-line.ts';
+import {
+  axisTicks,
+  chartArea,
+  chartDomain,
+  chartPath,
+  chartStats,
+  chartValueAt,
+  chartWindow,
+  zoomSpan,
+} from './chart-line.ts';
 
 describe('the range a chart shows', () => {
   it('spans its values', () => {
@@ -146,6 +155,92 @@ describe('a chart cut to part of its axis', () => {
 
 describe('axis marks from part of the way along', () => {
   it('fall on round numbers past the start', () => {
-    expect(axisTicks(3000, [500, 1000], 7, 1900)).toEqual([2000, 2500]);
+    expect(axisTicks(3000, [500, 1000], 7, 1800)).toEqual([2000, 2500]);
+  });
+
+  it('keep clear of the named start, as of the end', () => {
+    expect(axisTicks(3000, [500, 1000], 7, 1900)).toEqual([2500]);
+  });
+});
+
+describe('the part of the axis a drag zooms in on', () => {
+  it('runs between the two places, whichever way the drag went', () => {
+    expect(zoomSpan(3000, 1000, [0, 10_000], 25)).toEqual([1000, 3000]);
+    expect(zoomSpan(1000, 3000, [0, 10_000], 25)).toEqual([1000, 3000]);
+  });
+
+  it('keeps within what is shown', () => {
+    expect(zoomSpan(-200, 400, [0, 10_000], 25)).toEqual([0, 400]);
+    expect(zoomSpan(9000, 12_000, [2000, 10_000], 25)).toEqual([9000, 10_000]);
+  });
+
+  it('opens a slip of the hand out about its middle to the least it zooms to', () => {
+    expect(zoomSpan(500, 510, [0, 10_000], 30)).toEqual([490, 520]);
+  });
+
+  it('opens out from an end without passing it', () => {
+    expect(zoomSpan(0, 5, [0, 10_000], 30)).toEqual([0, 30]);
+    expect(zoomSpan(9998, 10_000, [0, 10_000], 30)).toEqual([9970, 10_000]);
+  });
+
+  it('never zooms out past what is shown', () => {
+    expect(zoomSpan(40, 50, [0, 20], 30)).toEqual([0, 20]);
+  });
+});
+
+describe('a chart’s figures over part of its axis', () => {
+  it('takes the lowest, highest and mean of the points within it', () => {
+    const stats = chartStats(
+      [
+        [
+          [0, 100],
+          [10, 120],
+          [20, 140],
+          [30, 200],
+        ],
+      ],
+      [5, 25],
+    );
+    expect(stats).toEqual({ min: 120, max: 140, avg: 130 });
+  });
+
+  it('weighs the mean by how far along each stretch runs', () => {
+    const stats = chartStats(
+      [
+        [
+          [0, 100],
+          [10, 100],
+          [40, 200],
+        ],
+      ],
+      [0, 40],
+    );
+    // 10 at 100, then 30 averaging 150: 5500 over 40.
+    expect(stats?.avg).toBe(137.5);
+  });
+
+  it('leaves the gap of a pause out of the mean', () => {
+    const stats = chartStats(
+      [
+        [
+          [0, 100],
+          [10, 100],
+        ],
+        [
+          [500, 200],
+          [510, 200],
+        ],
+      ],
+      [0, 510],
+    );
+    expect(stats).toEqual({ min: 100, max: 200, avg: 150 });
+  });
+
+  it('takes the plain mean of single points', () => {
+    expect(chartStats([[[0, 100]], [[50, 200]]], [0, 60])?.avg).toBe(150);
+  });
+
+  it('has none where the chart recorded nothing', () => {
+    expect(chartStats([[[0, 100]]], [10, 20])).toBeNull();
   });
 });

@@ -8,7 +8,7 @@ import { lapEvery, lapStrip } from './lap-strip.ts';
 import { paceOrSpeed } from './pace-or-speed.ts';
 import { dyeFill, dyeOf } from './sport-dye.ts';
 import { FigureLabel } from './stone-figures.tsx';
-import { ColumnUnit, StoneSection } from './stone-section.tsx';
+import { ColumnUnit, fullBleed, StoneSection } from './stone-section.tsx';
 
 /**
  * The stone's laps: a profile of them, then the table of their figures. Pointing at a lap in either
@@ -20,6 +20,9 @@ import { ColumnUnit, StoneSection } from './stone-section.tsx';
  * there are, and the table runs the full width below; narrower, the charts sit between the
  * profile (across the width, a block per lap) and the table.
  *
+ * With `chartsWide`, the charts leave the column beside the profile and grow to the screen's width
+ * below it, and the profile runs across again, at every width.
+ *
  * With `lens`, a lap's row opens (a click, a tap, or Enter) onto what `lens` draws for that lap.
  */
 export function StoneLaps({
@@ -27,20 +30,23 @@ export function StoneLaps({
   active,
   onActive,
   charts,
+  chartsWide = false,
+  onPick,
   lens,
 }: {
   stone: Stone;
   active: number | null;
   onActive: (lap: number | null) => void;
   charts?: ReactNode | undefined;
+  chartsWide?: boolean;
+  /** A lap clicked (or tapped) in the profile: the charts zoom in on it. Pointing only lights it. */
+  onPick?: ((lap: number) => void) | undefined;
   lens?: Lens | undefined;
 }) {
   const { i18n } = useLingui();
   const count = stone.laps.length;
   const every = lapEvery(stone.laps);
   const distance = every === null ? null : formatDistance(every, i18n.locale);
-  // One lap is the whole stone: a profile of it would be one flat block.
-  const profile = count > 1;
 
   return (
     <StoneSection
@@ -62,24 +68,66 @@ export function StoneLaps({
         </p>
       ) : (
         <>
-          {charts !== undefined && profile ? (
-            <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-start lg:gap-10">
-              <div className="lg:hidden">
-                <LapProfile stone={stone} active={active} onActive={onActive} />
-              </div>
-              <LapColumn stone={stone} active={active} onActive={onActive} />
-              <div className="lg:sticky lg:top-6">{charts}</div>
-            </div>
-          ) : (
-            <>
-              {profile && <LapProfile stone={stone} active={active} onActive={onActive} />}
-              {charts}
-            </>
-          )}
+          <LapsBesideCharts
+            stone={stone}
+            active={active}
+            onActive={onActive}
+            onPick={onPick}
+            charts={charts}
+            wide={chartsWide}
+          />
           <LapTable stone={stone} active={active} onActive={onActive} lens={lens} />
         </>
       )}
     </StoneSection>
+  );
+}
+
+/**
+ * The profile and the charts: from 1024px the profile upright beside the charts, narrower (or with
+ * the charts grown wide) the profile across above them. The parts stay the same either way, so the
+ * charts keep their place, and their zoom, as they grow.
+ */
+function LapsBesideCharts({
+  stone,
+  active,
+  onActive,
+  onPick,
+  charts,
+  wide,
+}: {
+  stone: Stone;
+  active: number | null;
+  onActive: (lap: number | null) => void;
+  onPick: ((lap: number) => void) | undefined;
+  charts: ReactNode | undefined;
+  wide: boolean;
+}) {
+  // One lap is the whole stone: a profile of it would be one flat block.
+  const profile = stone.laps.length > 1;
+  if (charts === undefined || !profile) {
+    return (
+      <>
+        {profile && <LapProfile stone={stone} active={active} onActive={onActive} onPick={onPick} />}
+        {charts}
+      </>
+    );
+  }
+  return (
+    <div
+      className={cn(
+        'flex flex-col gap-6',
+        !wide && 'lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-start lg:gap-10',
+      )}
+    >
+      <div className={cn(!wide && 'lg:hidden')}>
+        <LapProfile stone={stone} active={active} onActive={onActive} onPick={onPick} />
+      </div>
+      <div className={wide ? 'hidden' : 'contents'}>
+        <LapColumn stone={stone} active={active} onActive={onActive} onPick={onPick} />
+      </div>
+      <div className={wide ? fullBleed : 'lg:sticky lg:top-6'}>{charts}</div>
+    </div>
   );
 }
 
@@ -89,6 +137,17 @@ export type Lens = { open: number | null; onOpen: (lap: number | null) => void; 
 /** Pointing makes a lap active for a mouse only; a finger's pointer leaves as soon as it lifts, so a tap holds instead. */
 const byMouse = (event: PointerEvent) => event.pointerType === 'mouse';
 
+/**
+ * A pointer lifted off a lap in the profile: a finger's tap makes it active (a mouse's pointing
+ * already has), and either picks it, so the charts zoom in on it.
+ */
+const lifted =
+  (onActive: (lap: number | null) => void, onPick: ((lap: number) => void) | undefined) =>
+  (event: PointerEvent, lap: number) => {
+    if (!byMouse(event)) onActive(lap);
+    if (event.button === 0) onPick?.(lap);
+  };
+
 /** Only every nth lap is numbered under the profile when there are many, so the numbers never crowd. */
 const numberEvery = (count: number) => (count <= 16 ? 1 : count <= 40 ? 5 : 10);
 
@@ -96,14 +155,17 @@ function LapProfile({
   stone,
   active,
   onActive,
+  onPick,
 }: {
   stone: Stone;
   active: number | null;
   onActive: (lap: number | null) => void;
+  onPick?: ((lap: number) => void) | undefined;
 }) {
   const bars = lapStrip(stone.laps);
   const dye = dyeFill[dyeOf(stone.sport)];
   const every = numberEvery(bars.length);
+  const lift = lifted(onActive, onPick);
 
   return (
     // Decorative: the table below says the same in words.
@@ -114,9 +176,10 @@ function LapProfile({
             // biome-ignore lint/suspicious/noArrayIndexKey: laps are positional and never reorder
             key={i}
             onPointerEnter={(e) => byMouse(e) && onActive(i)}
-            // A tap on a block makes its lap active; the keyboard reaches the same lap through its row.
-            onPointerUp={(e) => !byMouse(e) && onActive(i)}
-            className="flex h-full min-w-0 items-end"
+            // A tap makes the lap active, and a click or tap zooms the charts in on it; the keyboard
+            // lights a lap through its row and zooms from the charts themselves.
+            onPointerUp={(e) => lift(e, i)}
+            className={cn('flex h-full min-w-0 items-end', onPick !== undefined && 'cursor-pointer')}
             style={{ flexGrow: bar.width, flexBasis: 0 }}
           >
             <div
@@ -157,15 +220,18 @@ function LapColumn({
   stone,
   active,
   onActive,
+  onPick,
 }: {
   stone: Stone;
   active: number | null;
   onActive: (lap: number | null) => void;
+  onPick?: ((lap: number) => void) | undefined;
 }) {
   const { i18n } = useLingui();
   const bars = lapStrip(stone.laps);
   const dye = dyeFill[dyeOf(stone.sport)];
   const every = numberEvery(bars.length);
+  const lift = lifted(onActive, onPick);
   const paces = stone.laps.map((lap) =>
     paceOrSpeed(stone.sport.sport, lap.distance, lap.movingTime, i18n.locale, { unit: false }),
   );
@@ -196,9 +262,10 @@ function LapColumn({
               // biome-ignore lint/suspicious/noArrayIndexKey: laps are positional and never reorder
               key={i}
               onPointerEnter={(e) => byMouse(e) && onActive(i)}
-              onPointerUp={(e) => !byMouse(e) && onActive(i)}
+              onPointerUp={(e) => lift(e, i)}
               className={cn(
                 'flex max-h-8 min-h-1.5 flex-1 items-center gap-2 leading-none text-muted-foreground',
+                onPick !== undefined && 'cursor-pointer',
                 active === i && 'font-semibold text-foreground',
               )}
             >

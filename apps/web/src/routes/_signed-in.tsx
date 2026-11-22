@@ -47,9 +47,12 @@ function SignedIn() {
           </nav>
         </div>
       </header>
-      <main className={cn('mx-auto flex flex-col gap-6 px-5 py-6 sm:p-8', width)}>
-        <Outlet />
-      </main>
+      {/* A container the width of the window, so a part of a screen can grow out of the column to it (`fullBleed`). */}
+      <div className="@container">
+        <main className={cn('mx-auto flex flex-col gap-6 px-5 py-6 sm:p-8', width)}>
+          <Outlet />
+        </main>
+      </div>
     </>
   );
 }

@@ -32,6 +32,12 @@ export function StoneSection({
   );
 }
 
+/**
+ * Out of the screen's column to the window's width, keeping the page's 32px edge (from 640px; on a
+ * phone the column already is the window). Needs the window-wide container around the page.
+ */
+export const fullBleed = 'mx-[min(0px,calc(50%-50cqw+2rem))]';
+
 /** A cell of a stone section's table: values never wrap, and the first and last keep the panel's inset. */
 export const tableCell = 'whitespace-nowrap px-2 py-2.5 first:pl-4 last:pr-4 sm:px-4';
 

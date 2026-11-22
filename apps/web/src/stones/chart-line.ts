@@ -91,8 +91,9 @@ export function axisTicks(end: number, steps: number[], most = 7, start = 0): nu
   const span = end - start;
   const step = steps.find((each) => span / each <= most) ?? steps.at(-1) ?? span;
   const ticks: number[] = [];
-  // From `start` the marks fall on the step's round numbers, none hard against either end.
-  const first = start === 0 ? 0 : Math.ceil((start + step * 0.1) / step) * step;
+  // From `start` the marks fall on the step's round numbers, none hard against either end: a
+  // zoomed-in start is named, as the end is, so both keep a quarter of a step clear.
+  const first = start === 0 ? 0 : Math.ceil((start + step * 0.25) / step) * step;
   for (let at = first; at < end - step * 0.25; at += step) ticks.push(at);
   return ticks;
 }
@@ -126,3 +127,47 @@ function columnsOf(points: ChartPoint[]): ChartPoint[] {
 }
 
 const round = (value: number) => Math.round(value * 10) / 10;
+
+/**
+ * The part of the axis to zoom in on, between two places marked along it in either order: kept
+ * within `bounds`, and opened out about its middle to at least `least` (or all of `bounds`, when
+ * that is less), so a slip of the hand never zooms in on a single point.
+ */
+export function zoomSpan(a: number, b: number, [low, high]: [number, number], least: number): [number, number] {
+  const from = Math.max(low, Math.min(a, b));
+  const to = Math.min(high, Math.max(a, b));
+  const width = Math.min(high - low, Math.max(least, to - from));
+  const start = Math.min(high - width, Math.max(low, (from + to) / 2 - width / 2));
+  return [start, start + width];
+}
+
+/** A chart's lowest, mean and highest values over part of its axis. */
+export type ChartStats = { min: number; avg: number; max: number };
+
+/**
+ * A chart's lowest, mean and highest recorded values within `[from, to]`, or none when it recorded
+ * nothing there. The mean is taken along the axis, each stretch between two points weighed by its
+ * length, so a pace's mean along the distance is the time over the distance; gaps (pauses) count for
+ * nothing. A part holding single points only takes their plain mean.
+ */
+export function chartStats(segments: ChartPoint[][], [from, to]: [number, number]): ChartStats | null {
+  let [min, max, sum, weight, plain, count] = [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 0, 0, 0, 0];
+  for (const segment of segments) {
+    let last: ChartPoint | null = null;
+    for (const point of segment) {
+      const [x, y] = point;
+      if (x < from || x > to) continue;
+      min = Math.min(min, y);
+      max = Math.max(max, y);
+      plain += y;
+      count++;
+      if (last !== null) {
+        sum += ((last[1] + y) / 2) * (x - last[0]);
+        weight += x - last[0];
+      }
+      last = point;
+    }
+  }
+  if (count === 0) return null;
+  return { min, max, avg: weight > 0 ? sum / weight : plain / count };
+}

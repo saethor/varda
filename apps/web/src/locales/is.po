@@ -28,11 +28,11 @@ msgstr "{0, plural, one {Síðasta vika} other {Síðustu # vikur}}"
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} á {operatingSystem}"
 
-#: src/stones/stone-laps.tsx:51
+#: src/stones/stone-laps.tsx:54
 msgid "{count, plural, one {# lap} other {# laps}}"
 msgstr "{count, plural, one {# hringur} other {# hringir}}"
 
-#: src/stones/stone-laps.tsx:53
+#: src/stones/stone-laps.tsx:56
 msgid "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
 msgstr "{count, plural, one {# hringur} other {# hringir}} · hringur á hverjum {distance}"
 
@@ -58,7 +58,7 @@ msgstr "{n, selectordinal, other {#.}} steinn síðustu viku"
 msgid "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "{n, selectordinal, other {#.}} steinn vikunnar"
 
-#: src/stones/stone-laps.tsx:387
+#: src/stones/stone-laps.tsx:423
 msgid "Active"
 msgstr "Átak"
 
@@ -75,11 +75,11 @@ msgstr "Bæta við aðgangslykli?"
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
-#: src/stones/stone-charts.tsx:409
+#: src/stones/stone-charts.tsx:749
 msgid "Along the distance"
 msgstr "Eftir vegalengd"
 
-#: src/stones/stone-charts.tsx:409
+#: src/stones/stone-charts.tsx:749
 msgid "Along the moving time"
 msgstr "Eftir hreyfitíma"
 
@@ -116,7 +116,11 @@ msgstr "Meðalafl"
 msgid "Average temperature"
 msgstr "Meðalhiti"
 
-#: src/stones/stone-charts.tsx:388
+#: src/stones/stone-charts.tsx:560
+msgid "Avg"
+msgstr "Meðal"
+
+#: src/stones/stone-charts.tsx:728
 msgid "Cadence"
 msgstr "Taktur"
 
@@ -133,24 +137,24 @@ msgstr "Hitaeiningar"
 msgid "Cancel"
 msgstr "Hætta við"
 
-#: src/stones/laps-and-charts.tsx:53
-#: src/stones/stone-charts.tsx:59
+#: src/stones/laps-and-charts.tsx:60
+#: src/stones/stone-charts.tsx:81
 msgid "Charts"
 msgstr "Gröf"
 
-#: src/stones/stone-charts.tsx:158
-msgid "Charts along the distance. Arrow keys move along it."
-msgstr "Gröf eftir vegalengd. Örvalyklar færa eftir henni."
+#: src/stones/stone-charts.tsx:247
+msgid "Charts along the distance. Arrow keys move along it; Enter marks where to zoom in from, and Enter again where to."
+msgstr "Gröf eftir vegalengd. Örvalyklar færa eftir henni; Enter merkir hvaðan á að þysja inn og Enter aftur hvert."
 
-#: src/stones/stone-charts.tsx:159
-msgid "Charts along the moving time. Arrow keys move along it."
-msgstr "Gröf eftir hreyfitíma. Örvalyklar færa eftir honum."
+#: src/stones/stone-charts.tsx:248
+msgid "Charts along the moving time. Arrow keys move along it; Enter marks where to zoom in from, and Enter again where to."
+msgstr "Gröf eftir hreyfitíma. Örvalyklar færa eftir honum; Enter merkir hvaðan á að þysja inn og Enter aftur hvert."
 
 #: src/stones/placing-panel.tsx:82
 msgid "Choose a watch file"
 msgstr "Velja úraskrá"
 
-#: src/stones/stone-laps.tsx:393
+#: src/stones/stone-laps.tsx:429
 msgid "Cool-down"
 msgstr "Niðurlag"
 
@@ -178,12 +182,16 @@ msgstr "Lækkun"
 #: src/stones/headline-numbers.tsx:33
 #: src/stones/latest-stone.tsx:44
 #: src/stones/latest-stone.tsx:47
-#: src/stones/stone-laps.tsx:296
+#: src/stones/stone-laps.tsx:332
 #: src/stones/stone-numbers.tsx:20
 #: src/stones/stone-plate.tsx:42
 #: src/stones/stone-stretches.tsx:76
 msgid "Distance"
 msgstr "Vegalengd"
+
+#: src/stones/stone-charts.tsx:361
+msgid "Drag across to zoom in"
+msgstr "Dragðu yfir til að þysja inn"
 
 #: src/stones/placing-panel.tsx:68
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
@@ -194,13 +202,13 @@ msgid "Effort"
 msgstr "Áreynsla"
 
 #: src/stones/headline-numbers.tsx:36
-#: src/stones/stone-laps.tsx:319
+#: src/stones/stone-laps.tsx:355
 #: src/stones/stone-numbers.tsx:28
 #: src/stones/stone-plate.tsx:50
 msgid "Elapsed time"
 msgstr "Heildartími"
 
-#: src/stones/stone-charts.tsx:386
+#: src/stones/stone-charts.tsx:726
 msgid "Elevation"
 msgstr "Hæð yfir sjó"
 
@@ -234,12 +242,16 @@ msgstr "Úr {model}-úrinu þínu · {fileName}"
 msgid "From your watch · {fileName}"
 msgstr "Úr úrinu þínu · {fileName}"
 
-#: src/stones/stone-charts.tsx:399
+#: src/stones/stone-charts.tsx:374
+msgid "Full width"
+msgstr "Full breidd"
+
+#: src/stones/stone-charts.tsx:739
 #: src/stones/stone-form.tsx:100
 msgid "Ground contact time"
 msgstr "Snertitími við jörð"
 
-#: src/stones/stone-charts.tsx:380
+#: src/stones/stone-charts.tsx:720
 #: src/stones/stone-splits.tsx:60
 msgid "Heart rate"
 msgstr "Púls"
@@ -260,7 +272,7 @@ msgstr "Fjallganga"
 msgid "Home"
 msgstr "Forsíða"
 
-#: src/stones/stone-laps.tsx:292
+#: src/stones/stone-laps.tsx:328
 msgid "Intensity"
 msgstr "Ákefð"
 
@@ -269,17 +281,17 @@ msgid "Kilometre"
 msgstr "Kílómetri"
 
 #: src/stones/stone-form.tsx:61
-#: src/stones/stone-laps.tsx:180
-#: src/stones/stone-laps.tsx:288
+#: src/stones/stone-laps.tsx:216
+#: src/stones/stone-laps.tsx:324
 msgid "Lap"
 msgstr "Hringur"
 
 #. placeholder {0}: lap + 1
-#: src/stones/laps-and-charts.tsx:37
+#: src/stones/laps-and-charts.tsx:38
 msgid "Lap {0}"
 msgstr "Hringur {0}"
 
-#: src/stones/stone-laps.tsx:48
+#: src/stones/stone-laps.tsx:51
 msgid "Laps"
 msgstr "Hringir"
 
@@ -299,6 +311,10 @@ msgstr "Listi"
 #: src/routes/_signed-in.tsx:37
 msgid "Main"
 msgstr "Aðalvalmynd"
+
+#: src/stones/stone-charts.tsx:561
+msgid "Max"
+msgstr "Hám."
 
 #: src/stones/stone-figures.tsx:45
 msgid "Max cadence"
@@ -321,13 +337,21 @@ msgstr "Mesti hiti"
 msgid "Measurements"
 msgstr "Mælingar"
 
+#: src/stones/stone-charts.tsx:559
+msgid "Min"
+msgstr "Lágm."
+
 #: src/stones/stone-figures.tsx:53
 msgid "Min temperature"
 msgstr "Minnsti hiti"
 
+#: src/stones/stone-charts.tsx:356
+msgid "Move to the other end, then Enter"
+msgstr "Færðu að hinum endanum, svo Enter"
+
 #: src/stones/headline-numbers.tsx:34
 #: src/stones/latest-stone.tsx:45
-#: src/stones/stone-laps.tsx:300
+#: src/stones/stone-laps.tsx:336
 #: src/stones/stone-numbers.tsx:21
 #: src/stones/stone-plate.tsx:43
 #: src/stones/stone-splits.tsx:50
@@ -390,10 +414,10 @@ msgstr "Annað"
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:382
-#: src/stones/stone-charts.tsx:383
-#: src/stones/stone-laps.tsx:184
-#: src/stones/stone-laps.tsx:304
+#: src/stones/stone-charts.tsx:722
+#: src/stones/stone-charts.tsx:723
+#: src/stones/stone-laps.tsx:220
+#: src/stones/stone-laps.tsx:340
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
 #: src/stones/stone-splits.tsx:54
@@ -427,7 +451,7 @@ msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn síðustu viku"
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn þessa viku"
 
-#: src/stones/stone-charts.tsx:387
+#: src/stones/stone-charts.tsx:727
 msgid "Power"
 msgstr "Afl"
 
@@ -439,7 +463,7 @@ msgstr "Fyrri"
 msgid "Reading {reading}…"
 msgstr "Les {reading}…"
 
-#: src/stones/stone-laps.tsx:389
+#: src/stones/stone-laps.tsx:425
 msgid "Recovery"
 msgstr "Endurheimt"
 
@@ -456,7 +480,7 @@ msgstr "Fjarlægja {name}"
 msgid "Remove {name}?"
 msgstr "Fjarlægja {name}?"
 
-#: src/stones/stone-laps.tsx:391
+#: src/stones/stone-laps.tsx:427
 msgid "Rest"
 msgstr "Hvíld"
 
@@ -525,9 +549,9 @@ msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:385
-#: src/stones/stone-laps.tsx:184
-#: src/stones/stone-laps.tsx:304
+#: src/stones/stone-charts.tsx:725
+#: src/stones/stone-laps.tsx:220
+#: src/stones/stone-laps.tsx:340
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
 #: src/stones/stone-splits.tsx:54
@@ -550,7 +574,7 @@ msgstr "Byrjar"
 msgid "started {time}"
 msgstr "hófst {time}"
 
-#: src/stones/stone-charts.tsx:389
+#: src/stones/stone-charts.tsx:729
 #: src/stones/stone-form.tsx:94
 msgid "Step length"
 msgstr "Skreflengd"
@@ -606,7 +630,7 @@ msgstr "Netfangið og lykilorðið passa ekki saman."
 msgid "The stone and its watch file, {fileName}, will be gone for good. You can place the stone again from the same file."
 msgstr "Steinninn og úraskráin hans, {fileName}, hverfa fyrir fullt og allt. Þú getur lagt steininn aftur úr sömu skrá."
 
-#: src/stones/stone-laps.tsx:61
+#: src/stones/stone-laps.tsx:64
 msgid "The watch recorded no laps: this stone keeps its totals only."
 msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur."
 
@@ -676,12 +700,12 @@ msgstr "Hafnað"
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn með lykilorðinu þínu."
 
-#: src/stones/stone-charts.tsx:391
+#: src/stones/stone-charts.tsx:731
 #: src/stones/stone-form.tsx:96
 msgid "Vertical oscillation"
 msgstr "Lóðrétt sveifla"
 
-#: src/stones/stone-charts.tsx:395
+#: src/stones/stone-charts.tsx:735
 #: src/stones/stone-form.tsx:98
 msgid "Vertical ratio"
 msgstr "Lóðrétt hlutfall"
@@ -691,7 +715,7 @@ msgstr "Lóðrétt hlutfall"
 msgid "Walking"
 msgstr "Ganga"
 
-#: src/stones/stone-laps.tsx:385
+#: src/stones/stone-laps.tsx:421
 msgid "Warm-up"
 msgstr "Upphitun"
 
@@ -726,3 +750,7 @@ msgstr "Lykilorðið má vera í mesta lagi {max} stafir."
 #: src/sign-in/password.ts:13
 msgid "Your password needs at least {min} characters."
 msgstr "Lykilorðið þarf að vera að minnsta kosti {min} stafir."
+
+#: src/stones/stone-charts.tsx:351
+msgid "Zoom out"
+msgstr "Þysja út"

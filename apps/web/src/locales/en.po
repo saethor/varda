@@ -70,11 +70,11 @@ msgstr "Add a passkey?"
 msgid "Added {added}"
 msgstr "Added {added}"
 
-#: src/stones/stone-charts.tsx:116
+#: src/stones/stone-charts.tsx:126
 msgid "Along the distance"
 msgstr "Along the distance"
 
-#: src/stones/stone-charts.tsx:116
+#: src/stones/stone-charts.tsx:126
 msgid "Along the moving time"
 msgstr "Along the moving time"
 
@@ -110,7 +110,7 @@ msgstr "Average power"
 msgid "Average temperature"
 msgstr "Average temperature"
 
-#: src/stones/stone-charts.tsx:133
+#: src/stones/stone-charts.tsx:143
 msgid "Cadence"
 msgstr "Cadence"
 
@@ -127,7 +127,7 @@ msgstr "Calories"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/stones/stone-charts.tsx:38
+#: src/stones/stone-charts.tsx:39
 msgid "Charts"
 msgstr "Charts"
 
@@ -184,7 +184,7 @@ msgstr "Effort"
 msgid "Elapsed time"
 msgstr "Elapsed time"
 
-#: src/stones/stone-charts.tsx:129
+#: src/stones/stone-charts.tsx:139
 msgid "Elevation"
 msgstr "Elevation"
 
@@ -218,7 +218,12 @@ msgstr "From your {model} · {fileName}"
 msgid "From your watch · {fileName}"
 msgstr "From your watch · {fileName}"
 
-#: src/stones/stone-charts.tsx:123
+#: src/stones/stone-charts.tsx:151
+#: src/stones/stone-form.tsx:106
+msgid "Ground contact time"
+msgstr "Ground contact time"
+
+#: src/stones/stone-charts.tsx:133
 msgid "Heart rate"
 msgstr "Heart rate"
 
@@ -242,6 +247,7 @@ msgstr "Home"
 msgid "Intensity"
 msgstr "Intensity"
 
+#: src/stones/stone-form.tsx:67
 #: src/stones/stone-laps.tsx:151
 msgid "Lap"
 msgstr "Lap"
@@ -356,7 +362,7 @@ msgstr "Other"
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:125
+#: src/stones/stone-charts.tsx:135
 #: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -390,7 +396,7 @@ msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 
-#: src/stones/stone-charts.tsx:131
+#: src/stones/stone-charts.tsx:141
 msgid "Power"
 msgstr "Power"
 
@@ -434,6 +440,10 @@ msgstr "Road running"
 #: src/stones/stone-stretches.tsx:101
 msgid "Running"
 msgstr "Running"
+
+#: src/stones/stone-form.tsx:25
+msgid "Running form"
+msgstr "Running form"
 
 #: src/stones/stone-week-view.tsx:137
 msgid "See the calendar"
@@ -484,7 +494,7 @@ msgstr "Something went wrong, try again."
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:127
+#: src/stones/stone-charts.tsx:137
 #: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -503,16 +513,21 @@ msgstr "Start"
 msgid "started {time}"
 msgstr "started {time}"
 
+#: src/stones/stone-charts.tsx:145
+#: src/stones/stone-form.tsx:100
+msgid "Step length"
+msgstr "Step length"
+
 #: src/routes/_signed-in/stones.tsx:120
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Stone deleted. You can place it again from {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:60
+#: src/routes/_signed-in/stones_.$stoneId.tsx:61
 msgid "Stone not found"
 msgstr "Stone not found"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:50
+#: src/routes/_signed-in/stones_.$stoneId.tsx:51
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -563,7 +578,7 @@ msgstr "The watch recorded no laps: this stone keeps its totals only."
 msgid "The week of {0}"
 msgstr "The week of {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:63
+#: src/routes/_signed-in/stones_.$stoneId.tsx:64
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "There's no such stone. It may have been deleted, or the link may be wrong."
 
@@ -623,6 +638,16 @@ msgstr "Turned away"
 #: src/routes/sign-in.tsx:232
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
+
+#: src/stones/stone-charts.tsx:147
+#: src/stones/stone-form.tsx:102
+msgid "Vertical oscillation"
+msgstr "Vertical oscillation"
+
+#: src/stones/stone-charts.tsx:149
+#: src/stones/stone-form.tsx:104
+msgid "Vertical ratio"
+msgstr "Vertical ratio"
 
 #: src/stones/stone-card.tsx:25
 #: src/stones/stone-stretches.tsx:103

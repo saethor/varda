@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Streams } from './chart-series.ts';
-import { stoneCharts } from './chart-set.ts';
+import { formCharts, stoneCharts } from './chart-set.ts';
 
 const none = {
   distance: null,
@@ -79,5 +79,46 @@ describe("a stone's charts", () => {
   it('draws none for a stone without streams, or with nothing to chart', () => {
     expect(stoneCharts({ sport: running, streams: null })).toBeNull();
     expect(stoneCharts({ sport: running, streams: { ...none, offset: [0], timerRunning: [true] } })).toBeNull();
+  });
+});
+
+describe("a run's form charts", () => {
+  const withForm: Streams = {
+    ...run,
+    stepLength: [1.18, 1.2, 1.19],
+    verticalOscillation: [0.085, 0.086, 0.087],
+    verticalRatio: [7.2, 7.2, 7.3],
+    groundContactTime: [0.24, 0.245, 0.25],
+  };
+
+  it('draws step length, vertical oscillation, vertical ratio and ground contact time along the distance', () => {
+    const charts = formCharts({ sport: running, streams: withForm });
+
+    expect(charts).toMatchObject({ axis: 'distance', end: 8 });
+    expect(kinds(charts)).toEqual(['step-length', 'vertical-oscillation', 'vertical-ratio', 'ground-contact-time']);
+    expect(charts?.charts[0]?.segments).toEqual([
+      [
+        [0, 1.18],
+        [4, 1.2],
+        [8, 1.19],
+      ],
+    ]);
+  });
+
+  it('leaves out a pause, as the other charts do', () => {
+    const paused = { ...withForm, offset: [0, 1, 12], timerRunning: [true, true, false] };
+
+    expect(formCharts({ sport: running, streams: paused })?.charts[0]?.segments).toEqual([
+      [
+        [0, 1.18],
+        [4, 1.2],
+      ],
+    ]);
+  });
+
+  it('draws none for a run without form, or for a stone that is not a run', () => {
+    expect(formCharts({ sport: running, streams: run })).toBeNull();
+    expect(formCharts({ sport: running, streams: null })).toBeNull();
+    expect(formCharts({ sport: { sport: 'cycling', group: 'cross-training' }, streams: withForm })).toBeNull();
   });
 });

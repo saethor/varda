@@ -87,3 +87,31 @@ export function formatWeight(kilograms: number, locale: string, options: UnitOpt
 export function formatHeight(metres: number, options: UnitOption = {}): string {
   return withUnit(String(Math.round(metres * 100)), 'cm', options);
 }
+
+/** A number to exactly `digits` decimals with its unit, written the way `locale` writes numbers. */
+const formatFixed = (value: number, digits: number, unit: string, locale: string, options: UnitOption) =>
+  withUnit(
+    new Intl.NumberFormat(locale, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value),
+    unit,
+    options,
+  );
+
+/** A running step length, given in metres, to two decimals. */
+export function formatStepLength(metres: number, locale: string, options: UnitOption = {}): string {
+  return formatFixed(metres, 2, 'm', locale, options);
+}
+
+/** A running vertical oscillation, given in metres, in whole millimetres. */
+export function formatVerticalOscillation(metres: number, locale: string, options: UnitOption = {}): string {
+  return formatWhole(metres * 1000, 'mm', locale, options);
+}
+
+/** A running vertical ratio in percent, to one decimal. */
+export function formatVerticalRatio(percent: number, locale: string, options: UnitOption = {}): string {
+  return formatFixed(percent, 1, '%', locale, options);
+}
+
+/** A running ground contact time, given in seconds, in whole milliseconds. */
+export function formatGroundContactTime(seconds: number, locale: string, options: UnitOption = {}): string {
+  return formatWhole(seconds * 1000, 'ms', locale, options);
+}

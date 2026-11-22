@@ -136,3 +136,29 @@ it('places an interval run whose laps carry their intensity and figures', async 
   );
   expect(track?.laps.every((lap) => lap.figures.averageHeartRate !== null)).toBe(true);
 });
+
+it('places runs with their running form, on the stone, its laps and its streams, and a ride with none', async () => {
+  const { clientFor, stonesOf } = devApp();
+  await seedStones({ clientFor, athletes: [anna.id], today });
+  const listed = await stonesOf(anna.id);
+  const open = (sport: string) => {
+    const stone = listed.find((s) => s.sport.sport === sport);
+    if (stone === undefined) throw new Error(`No ${sport} seeded.`);
+    return clientFor(anna.id).record.stones.get({ stoneId: stone.id });
+  };
+
+  const track = await open('track-running');
+  const ride = await open('cycling');
+
+  expect(track.form?.stepLength).toBeGreaterThan(0.9);
+  expect(track.form?.stepLength).toBeLessThan(1.6);
+  expect(track.form?.groundContactTime).toBeGreaterThan(0.18);
+  expect(track.form?.groundContactTime).toBeLessThan(0.32);
+  expect(track.laps.every((lap) => lap.form !== null)).toBe(true);
+  // The reps are run on longer steps and lighter feet than the recoveries.
+  const [, rep, recovery] = track.laps;
+  expect(rep?.form?.stepLength).toBeGreaterThan(recovery?.form?.stepLength ?? Infinity);
+  expect(rep?.form?.groundContactTime).toBeLessThan(recovery?.form?.groundContactTime ?? 0);
+  expect(new Set(track.streams?.stepLength).size).toBeGreaterThan(1);
+  expect(ride.form).toBeNull();
+});

@@ -28,6 +28,7 @@ const lap = (figures: Partial<Lap['figures']>, intensity: Lap['intensity'] = nul
   trigger: 'distance',
   figures: { ...none, ...figures },
   intensity,
+  form: null,
 });
 
 describe("the laps' figure columns", () => {

@@ -37,3 +37,42 @@ export function formatSpeed(metres: number, seconds: number, locale: string, opt
   const kmh = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   return withUnit(kmh.format((metres / seconds) * 3.6), 'km/h', options);
 }
+
+/** A whole number with its unit, written the way `locale` writes numbers. */
+const formatWhole = (value: number, unit: string, locale: string, options: UnitOption) =>
+  withUnit(new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value), unit, options);
+
+/** A heart rate in beats a minute. */
+export function formatHeartRate(bpm: number, locale: string, options: UnitOption = {}): string {
+  return formatWhole(bpm, 'bpm', locale, options);
+}
+
+/** An elevation, ascent or descent in metres. */
+export function formatElevation(metres: number, locale: string, options: UnitOption = {}): string {
+  return formatWhole(metres, 'm', locale, options);
+}
+
+/** A cadence a minute: steps (`spm`) for running, walking and hiking, revolutions (`rpm`) otherwise. */
+export function formatCadence(
+  perMinute: number,
+  counts: 'steps' | 'revolutions',
+  locale: string,
+  options: UnitOption = {},
+): string {
+  return formatWhole(perMinute, counts === 'steps' ? 'spm' : 'rpm', locale, options);
+}
+
+/** A power in watts. */
+export function formatPower(watts: number, locale: string, options: UnitOption = {}): string {
+  return formatWhole(watts, 'W', locale, options);
+}
+
+/** A temperature in degrees Celsius. */
+export function formatTemperature(celsius: number, locale: string, options: UnitOption = {}): string {
+  return formatWhole(celsius, '°C', locale, options);
+}
+
+/** Energy in kilocalories. */
+export function formatCalories(kcal: number, locale: string, options: UnitOption = {}): string {
+  return formatWhole(kcal, 'kcal', locale, options);
+}

@@ -9,6 +9,8 @@ import {
   type Mesg,
   type RecordMesg,
   type SessionMesg,
+  type UserProfileMesg,
+  type ZonesTargetMesg,
 } from '@garmin/fitsdk';
 import { fitEpoch } from '../domain/read-watch-file.ts';
 
@@ -48,6 +50,11 @@ export type WatchFileOptions = {
   localOffset?: number | null;
   /** Leave out when the session started, as a file damaged in a way its CRC doesn't catch. */
   missingStartTime?: true;
+  /**
+   * The athlete's measurements the watch had: kilograms, metres, bpm. Each one given is written;
+   * by default the watch had none.
+   */
+  measurements?: Partial<Record<'weight' | 'height' | 'restingHeartRate' | 'maxHeartRate', number>>;
 };
 
 /** A lap: metres, and seconds of timer and of elapsed time. */
@@ -59,6 +66,8 @@ const sessionMesg = 18;
 const lapMesg = 19;
 const recordMesg = 20;
 const activityMesg = 34;
+const profileMesg = 3;
+const zonesTargetMesg = 7;
 
 const garmin = 1;
 const forerunner255 = 3992;
@@ -113,6 +122,7 @@ export function watchFile({
   distance,
   localOffset = 0,
   missingStartTime,
+  measurements = {},
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const total = (key: keyof WatchFileLap) => sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
@@ -131,6 +141,11 @@ export function watchFile({
     serialNumber,
     timeCreated: timeCreated ?? end,
   });
+
+  // The watch's profile of the athlete, and its zone settings, which alone hold the max heart rate.
+  const { maxHeartRate, ...profile } = measurements;
+  if (Object.keys(profile).length > 0) write<UserProfileMesg>({ mesgNum: profileMesg, ...profile });
+  if (maxHeartRate !== undefined) write<ZonesTargetMesg>({ mesgNum: zonesTargetMesg, maxHeartRate });
 
   // Before the watch finds GPS, its records have no position.
   write<RecordMesg>({ mesgNum: recordMesg, timestamp: start, distance: 0 });

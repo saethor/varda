@@ -8,10 +8,12 @@ import {
   type RecordMesg,
   type SessionMesg,
   Stream,
+  type UserProfileMesg,
+  type ZonesTargetMesg,
 } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
-import type { Lap, LapTrigger, Session, SessionKey, Trace } from './stone.ts';
+import type { Lap, LapTrigger, Measurements, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
 
 /** Reads the session a watch file recorded. Throws `WatchFileTurnedAway` for a file that can't be placed. */
@@ -45,6 +47,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
     elapsedTime: session.totalElapsedTime ?? 0,
     laps,
     trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
+    measurements: measurementsOf(messages.userProfileMesgs?.[0], messages.zonesTargetMesgs?.[0]),
   };
 }
 
@@ -152,4 +155,19 @@ function dateOf(value: unknown): Date {
   if (value instanceof Date) return value;
   if (typeof value === 'number') return new Date((value + fitEpoch) * 1000);
   throw new WatchFileTurnedAway('broken');
+}
+
+/**
+ * The athlete's measurements from the watch's profile of them and its zone settings: max heart rate
+ * is only ever in the latter. Nothing else of either is read (no name, sex, threshold, FTP or zones).
+ * A value the watch didn't have (missing or 0) is none; none of them at all is no measurements.
+ */
+function measurementsOf(profile: UserProfileMesg | undefined, zones: ZonesTargetMesg | undefined): Measurements | null {
+  const measurements = {
+    weight: profile?.weight || null,
+    height: profile?.height || null,
+    restingHeartRate: profile?.restingHeartRate || null,
+    maxHeartRate: zones?.maxHeartRate || null,
+  };
+  return Object.values(measurements).some((value) => value !== null) ? measurements : null;
 }

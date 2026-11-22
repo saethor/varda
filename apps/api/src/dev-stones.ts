@@ -45,6 +45,14 @@ const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
 const devWatch = 1_234_567_890;
 const writtenAt = (entry: number) => new Date(Date.UTC(2026, 0, 1, 0, entry));
 
+/** The measurements the dev watch has of every dev athlete: kilograms, metres, bpm. Made up. */
+const devMeasurements: NonNullable<WatchFileOptions['measurements']> = {
+  weight: 68.5,
+  height: 1.74,
+  restingHeartRate: 52,
+  maxHeartRate: 188,
+};
+
 /** `time` UTC on the day `daysAgo` days before `today`'s UTC date. */
 function startOf(today: Date, daysAgo: number, time: string): Date {
   const day = new Date(today.getTime() - daysAgo * 86_400_000).toISOString().slice(0, 10);
@@ -70,7 +78,13 @@ export async function seedStones({
   for (const athlete of athletes) {
     for (const [entry, { daysAgo, time, file }] of devStones.entries()) {
       const start = startOf(today, daysAgo, time);
-      const bytes = watchFile({ ...file, start, serialNumber: devWatch, timeCreated: writtenAt(entry) });
+      const bytes = watchFile({
+        measurements: devMeasurements,
+        ...file,
+        start,
+        serialNumber: devWatch,
+        timeCreated: writtenAt(entry),
+      });
       const upload = new File([bytes as Uint8Array<ArrayBuffer>], `seed-${start.toISOString().slice(0, 10)}.fit`);
       const { error, isDefined } = await safe(clientFor(athlete).record.stones.place({ file: upload }));
       if (error === null) result.placed++;

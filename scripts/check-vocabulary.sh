@@ -9,9 +9,10 @@
 # Third-party names, not ours: settings named by their images, TanStack Router's
 # useRouter, useRouteContext and friends and React's useReducer and useRef (where "user" is only
 # "use" + "Route", "Reducer" or "Ref"), the browser's navigator.userAgent, and the WebAuthn
-# options of Chromium's virtual authenticator in the end-to-end suite.
+# options of Chromium's virtual authenticator in the end-to-end suite, and the FIT SDK's
+# message holding the athlete's measurements (read and written only in Record's watch files).
 # Only the names themselves are let through, not the rest of their line.
-allowed='POSTGRES_USER|useRoute|useReducer|useRef|userAgent|hasUserVerification|isUserVerified'
+allowed='POSTGRES_USER|useRoute|useReducer|useRef|userAgent|hasUserVerification|isUserVerified|userProfileMesgs|UserProfileMesg'
 
 found=$(git grep --untracked -I -n -i 'user' -- \
   apps packages scripts .github docker-compose.yml '*.json' '*.ts' '*.cjs' \

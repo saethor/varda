@@ -38,8 +38,22 @@ const StoneSchema = z.object({
   trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
 });
 
+/**
+ * The athlete's measurements as their watch had them on the stone's day: weight in kilograms, height
+ * in metres, resting and max heart rate in bpm. Each none when the watch had none.
+ */
+const MeasurementsSchema = z.object({
+  weight: z.number().nullable(),
+  height: z.number().nullable(),
+  restingHeartRate: z.number().nullable(),
+  maxHeartRate: z.number().nullable(),
+});
+
 /** A stone opened on its own screen: everything a listed stone has, and what only its screen shows. */
-const StoneDetailSchema = StoneSchema.extend({});
+const StoneDetailSchema = StoneSchema.extend({
+  /** None when the watch had none. A coach never sees weight or height: both are none for them. */
+  measurements: MeasurementsSchema.nullable(),
+});
 
 /** The largest watch file a stone is placed from: 25 MB. The web app checks it before sending, too. */
 export const maxWatchFileBytes = 25_000_000;

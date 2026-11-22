@@ -28,6 +28,17 @@
   --color-dye-cross-training: #3f5e45;
   --color-dye-other: #8d8a84;
 
+  /*
+   * Measure tints, one per kind of measure on a stone's charts and the figures that key them: heart
+   * rate in crowberry, power in birch ochre, stride (cadence and running form) in a sea-green, the
+   * ground (elevation, ascent, descent) in stone. How fast is drawn in the stone's own dye. Lines,
+   * fills and stitches only; never text. Every line is at least 3:1 on heather.
+   */
+  --color-measure-heart: #9a2f62;
+  --color-measure-power: #8f6a0c;
+  --color-measure-stride: #2a6f6c;
+  --color-measure-ground: #6e6556;
+
   /* shadcn/ui's semantic tokens. Errors are lava, never ember or a dye. No dark mode. */
   --color-background: var(--color-heather);
   --color-foreground: var(--color-svart);

@@ -1,4 +1,4 @@
-import type { LocalDate, PersonId, SessionKey, Stone, StoneId } from '../domain/stone.ts';
+import type { ListedStone, LocalDate, PersonId, Reading, SessionKey, Stone, StoneId } from '../domain/stone.ts';
 
 /**
  * Who may see an athlete's stones: Record's own question, which apps/api answers with the
@@ -16,14 +16,25 @@ export type Stones = {
    * a moment ago by a racing request): then nothing is added and the answer is that stone.
    */
   add(stone: Stone): Promise<'added' | { alreadyPlaced: StoneId }>;
-  /** The stone with this ID, or null when there is none. */
+  /** The stone with this ID, with its streams, or null when there is none. */
   byId(id: StoneId): Promise<Stone | null>;
-  /** The athlete's stones whose local date is within `from`–`to` (inclusive), newest first. */
-  ofAthlete(athlete: PersonId, range: { from: LocalDate; to: LocalDate }): Promise<Stone[]>;
+  /**
+   * The athlete's stones whose local date is within `from`–`to` (inclusive), newest first, without
+   * their streams: a week of long runs must stay a light read.
+   */
+  ofAthlete(athlete: PersonId, range: { from: LocalDate; to: LocalDate }): Promise<ListedStone[]>;
   /** The athlete's stone placed from this session, or null when there is none. */
   withSessionKey(athlete: PersonId, sessionKey: SessionKey): Promise<Stone | null>;
   /** Removes the stone. Nothing happens when there is none. */
   remove(id: StoneId): Promise<void>;
+  /** The IDs of every athlete's stones, in no particular order. */
+  everyId(): Promise<StoneId[]>;
+  /**
+   * Replaces all the stone holds as read from its recording with `reading`, wherever it is kept,
+   * leaving its ID, athlete, file name, session and dates as they are. Nothing happens when there
+   * is no such stone.
+   */
+  replaceReading(id: StoneId, reading: Reading): Promise<void>;
 };
 
 /** The recordings stones were placed from: the original watch files, kept untouched (ADR 0002). */

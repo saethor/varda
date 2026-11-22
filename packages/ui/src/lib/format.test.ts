@@ -1,5 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { formatDistance, formatDuration, formatPace, formatSpeed } from './format.ts';
+import {
+  formatCadence,
+  formatCalories,
+  formatDistance,
+  formatDuration,
+  formatElevation,
+  formatGroundContactTime,
+  formatHeartRate,
+  formatHeight,
+  formatPace,
+  formatPower,
+  formatSpeed,
+  formatStepLength,
+  formatTemperature,
+  formatVerticalOscillation,
+  formatVerticalRatio,
+  formatWeight,
+} from './format.ts';
 
 describe('formatting a duration', () => {
   it('shows minutes and seconds under an hour', () => {
@@ -26,12 +43,12 @@ describe('formatting a distance', () => {
 describe('formatting a pace', () => {
   it('shows the time per kilometre', () => {
     // 3 km in 15 minutes.
-    expect(formatPace(3000, 900, 1000)).toBe('5:00 /km');
+    expect(formatPace(3000, 900, 'kilometre')).toBe('5:00 /km');
   });
 
   it('shows the time per 100 metres', () => {
     // 1500 m in 26:15.
-    expect(formatPace(1500, 1575, 100)).toBe('1:45 /100 m');
+    expect(formatPace(1500, 1575, '100 metres')).toBe('1:45 /100 m');
   });
 });
 
@@ -46,7 +63,50 @@ describe('formatting a speed', () => {
 describe('leaving the unit out, for a column whose header names it', () => {
   it('shows the bare distance, pace and speed', () => {
     expect(formatDistance(1234, 'is', { unit: false })).toBe('1,23');
-    expect(formatPace(1000, 300, 1000, { unit: false })).toBe('5:00');
+    expect(formatPace(1000, 300, 'kilometre', { unit: false })).toBe('5:00');
     expect(formatSpeed(10_000, 3600, 'en', { unit: false })).toBe('10.0');
+  });
+});
+
+describe("formatting a stone's figures", () => {
+  it('shows each as a whole number with its unit, the way the language shown writes numbers', () => {
+    expect(formatHeartRate(152.4, 'en')).toBe('152 bpm');
+    expect(formatElevation(1284.6, 'en')).toBe('1,285 m');
+    expect(formatElevation(1284.6, 'is')).toBe('1.285 m');
+    expect(formatPower(301, 'en')).toBe('301 W');
+    expect(formatTemperature(-4, 'en')).toBe('-4 °C');
+    expect(formatCalories(1712, 'en')).toBe('1,712 kcal');
+  });
+
+  it('shows cadence in steps a minute for a stepping sport and in revolutions otherwise', () => {
+    expect(formatCadence(169.58, 'steps', 'en')).toBe('170 spm');
+    expect(formatCadence(82, 'revolutions', 'en')).toBe('82 rpm');
+  });
+
+  it('leaves the unit out when asked', () => {
+    expect(formatHeartRate(152, 'en', { unit: false })).toBe('152');
+  });
+});
+
+describe("formatting the athlete's measurements", () => {
+  it('shows weight in kilograms to one decimal, in the language shown', () => {
+    expect(formatWeight(71.3, 'en')).toBe('71.3 kg');
+    expect(formatWeight(68, 'is')).toBe('68,0 kg');
+  });
+
+  it('shows height in centimetres', () => {
+    expect(formatHeight(1.83)).toBe('183 cm');
+  });
+});
+
+describe('formatting running form', () => {
+  it('shows step length in metres to two decimals, oscillation in mm, ratio in percent, contact time in ms', () => {
+    expect(formatStepLength(1.184, 'en')).toBe('1.18 m');
+    expect(formatStepLength(1.2, 'is')).toBe('1,20 m');
+    expect(formatVerticalOscillation(0.0864, 'en')).toBe('86 mm');
+    expect(formatVerticalRatio(7.43, 'en')).toBe('7.4 %');
+    expect(formatVerticalRatio(7, 'is')).toBe('7,0 %');
+    expect(formatGroundContactTime(0.247, 'en')).toBe('247 ms');
+    expect(formatGroundContactTime(0.247, 'en', { unit: false })).toBe('247');
   });
 });

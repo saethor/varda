@@ -3,4 +3,6 @@
 export { createRecordAdapters } from './adapters/real.ts';
 // The router, and the body limit apps/api's HTTP server puts in front of its `place` procedure.
 export { createRecordRouter, placeBodyLimit } from './adapters/rpc.ts';
+// Filling in stones (#82): re-reads every stone's recording and keeps what today's reader reads.
+export { type FilledInReport, fillInStones, type NotFilledInReason } from './application/fill-in-stones.ts';
 export type { RecordAdapters, RecordOwnAdapters } from './application/record-adapters.ts';

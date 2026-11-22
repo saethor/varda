@@ -1,7 +1,15 @@
 import type { ContractRouterClient } from '@orpc/contract';
 import { safe } from '@orpc/server';
 import type { Contract } from '@varda/contract';
-import { type WatchFileLap, type WatchFileOptions, watchFile } from '@varda/record/watch-files';
+import {
+  type WatchFileChannel,
+  type WatchFileFigures,
+  type WatchFileForm,
+  type WatchFileLap,
+  type WatchFileOptions,
+  type WatchFileSplit,
+  watchFile,
+} from '@varda/record/watch-files';
 
 /** `count` laps of `distance` metres in `timerTime` seconds, each with 10 s stopped. */
 const laps = (count: number, distance: number, timerTime: number): WatchFileLap[] =>
@@ -10,33 +18,252 @@ const laps = (count: number, distance: number, timerTime: number): WatchFileLap[
 /** Track intervals: fast 400s with slow 200s between them. */
 const intervals = Array.from({ length: 5 }, () => [...laps(1, 400, 80), ...laps(1, 200, 75)]).flat();
 
+/** What a watch without a power meter or running pod records on a bike or skis. */
+const onABike: WatchFileChannel[] = ['power', 'cadence', 'form'];
+/** What a watch records in the gym: heart rate, nothing else. */
+const heartRateOnly: WatchFileChannel[] = ['altitude', 'power', 'cadence', 'temperature', 'form'];
+
+/**
+ * The track intervals as a structured workout writes them: a warm-up, the 400s as active work and
+ * the 200s as recovery, each with its workout step, then a cool-down. Each lap carries its own
+ * figures, heart rate climbing rep by rep; the recoveries have no power (#81).
+ */
+const intervalLaps: WatchFileLap[] = [
+  {
+    distance: 2000,
+    timerTime: 660,
+    elapsedTime: 660,
+    intensity: 'warmup',
+    workoutStep: 0,
+    figures: { averageHeartRate: 132, maxHeartRate: 146, ascent: 2, descent: 2, averageCadence: 81, averagePower: 251 },
+    form: { stepLength: 1065, verticalOscillation: 84.2, verticalRatio: 7.9, groundContactTime: 256 },
+  },
+  ...intervals.map((lap, i): WatchFileLap => {
+    const rep = Math.floor(i / 2);
+    return i % 2 === 0
+      ? {
+          ...lap,
+          intensity: 'active',
+          workoutStep: 1,
+          figures: {
+            averageHeartRate: 168 + rep * 2,
+            maxHeartRate: 176 + rep * 2,
+            ascent: 1,
+            descent: 1,
+            averageCadence: 93.5,
+            averagePower: 372 + rep,
+            maxPower: 431 + rep * 3,
+            normalizedPower: 375 + rep,
+            calories: 24,
+          },
+          // Longer steps and lighter feet on the reps, fading a little rep by rep.
+          form: {
+            stepLength: 1402 - rep * 9,
+            verticalOscillation: 91.5 + rep * 0.4,
+            verticalRatio: 6.5 + rep * 0.08,
+            groundContactTime: 208 + rep * 3,
+          },
+        }
+      : {
+          ...lap,
+          intensity: 'recovery',
+          workoutStep: 2,
+          figures: { averageHeartRate: 146 + rep * 2, maxHeartRate: 170 + rep * 2, averageCadence: 79, calories: 15 },
+          form: { stepLength: 842, verticalOscillation: 76.8, verticalRatio: 9.1, groundContactTime: 281 + rep * 2 },
+        };
+  }),
+  {
+    distance: 1500,
+    timerTime: 540,
+    elapsedTime: 540,
+    intensity: 'cooldown',
+    workoutStep: 3,
+    figures: { averageHeartRate: 138, maxHeartRate: 151, ascent: 1, descent: 1, averageCadence: 80, averagePower: 236 },
+    form: { stepLength: 1012, verticalOscillation: 82.6, verticalRatio: 8.2, groundContactTime: 262 },
+  },
+];
+
+/**
+ * A long run with walk breaks, as the watch's run/walk detection splits it: 18 minutes running
+ * then a minute walking, five times over, standing at a crossing after the 2nd and 4th walk, and
+ * 4 minutes running to finish. 16 km in 6000 s on the timer, its 4 laps' totals.
+ */
+const runWalk: WatchFileSplit[] = (() => {
+  const splits: WatchFileSplit[] = [];
+  let at = 0;
+  const add = (type: WatchFileSplit['type'], time: number, distance: number) => {
+    splits.push({ type, start: at, time, distance });
+    at += time;
+  };
+  for (let i = 1; i <= 5; i++) {
+    add('rwdRun', 1080, 2990);
+    add('rwdWalk', 60, 80);
+    if (i % 2 === 0) add('rwdStand', 30, 0);
+  }
+  add('rwdRun', 240, 650);
+  return splits;
+})();
+
 /**
  * The stones every dev person gets: how many days before today, a UTC start time, and the watch
  * file. A few sports, with and without laps; those indoors or in a pool have no GPS, so no trace.
- * One was run abroad, late in the evening there, past midnight in UTC.
+ * One was run abroad, late in the evening there, past midnight in UTC. All but the swim record a
+ * point every second, pausing in each lap, with the channels a watch records in that sport.
  */
 const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
-  { daysAgo: 1, time: '06:40', file: {} },
-  { daysAgo: 3, time: '17:15', file: { subSport: 'track', laps: intervals } },
-  { daysAgo: 5, time: '09:00', file: { subSport: 'trail', laps: laps(2, 5000, 1800) } },
-  { daysAgo: 7, time: '17:30', file: { sport: 'cycling', subSport: 'road', laps: laps(2, 15_000, 1800) } },
+  { daysAgo: 1, time: '06:40', file: { perSecond: true } },
+  { daysAgo: 3, time: '17:15', file: { subSport: 'track', laps: intervalLaps, perSecond: true } },
+  { daysAgo: 5, time: '09:00', file: { subSport: 'trail', laps: laps(2, 5000, 1800), perSecond: true } },
+  {
+    daysAgo: 7,
+    time: '17:30',
+    file: { sport: 'cycling', subSport: 'road', laps: laps(2, 15_000, 1800), perSecond: true, without: onABike },
+  },
   {
     daysAgo: 9,
     time: '12:10',
-    file: { sport: 'training', subSport: 'strengthTraining', laps: [], distance: false, gps: false },
+    file: {
+      sport: 'training',
+      subSport: 'strengthTraining',
+      laps: [],
+      distance: false,
+      gps: false,
+      perSecond: true,
+      without: heartRateOnly,
+    },
   },
-  { daysAgo: 11, time: '10:00', file: { sport: 'hiking', laps: laps(1, 8000, 7200) } },
+  {
+    daysAgo: 11,
+    time: '10:00',
+    file: { sport: 'hiking', laps: laps(1, 8000, 7200), perSecond: true, without: ['power', 'form'] },
+  },
   {
     daysAgo: 13,
     time: '07:00',
     file: { sport: 'swimming', subSport: 'lapSwimming', laps: laps(10, 100, 105), gps: false },
   },
-  { daysAgo: 15, time: '18:00', file: { subSport: 'treadmill', laps: laps(5, 1000, 330), gps: false } },
+  {
+    daysAgo: 15,
+    time: '18:00',
+    file: { subSport: 'treadmill', laps: laps(5, 1000, 330), gps: false, perSecond: true, without: ['altitude'] },
+  },
   // 22:30 in New York (UTC−5), the evening before.
-  { daysAgo: 18, time: '03:30', file: { laps: laps(4, 5000, 1500), localOffset: -5 * 3600 } },
-  { daysAgo: 21, time: '12:00', file: { sport: 'training', subSport: 'yoga', laps: [], distance: false, gps: false } },
-  { daysAgo: 24, time: '10:30', file: { sport: 'crossCountrySkiing', laps: laps(2, 6000, 1500) } },
+  { daysAgo: 18, time: '03:30', file: { laps: laps(4, 5000, 1500), localOffset: -5 * 3600, perSecond: true } },
+  {
+    daysAgo: 21,
+    time: '12:00',
+    file: {
+      sport: 'training',
+      subSport: 'yoga',
+      laps: [],
+      distance: false,
+      gps: false,
+      perSecond: true,
+      without: heartRateOnly,
+    },
+  },
+  {
+    daysAgo: 24,
+    time: '10:30',
+    file: { sport: 'crossCountrySkiing', laps: laps(2, 6000, 1500), perSecond: true, without: onABike },
+  },
+  { daysAgo: 27, time: '09:30', file: { laps: laps(4, 4000, 1500), splits: runWalk, perSecond: true } },
 ];
+
+/** The dev watch's model: a Forerunner 255 Music, as the real one. */
+const devWatchModel = 3990;
+
+/**
+ * What the athlete rated on the watch (0–100) and Garmin's verdicts, by dev stone: most runs and
+ * the ride are rated, the rest not, so stones with and without effort can both be seen (#77).
+ */
+const onTheWatch: Partial<Record<number, Pick<WatchFileOptions, 'rpe' | 'garminReference'>>> = {
+  0: { rpe: 30, garminReference: { trainingLoad: 62.5, aerobicTrainingEffect: 2.4, anaerobicTrainingEffect: 0.3 } },
+  1: { rpe: 80, garminReference: { trainingLoad: 180.25, aerobicTrainingEffect: 3.8, anaerobicTrainingEffect: 3.1 } },
+  2: { rpe: 60, garminReference: { trainingLoad: 140.75, aerobicTrainingEffect: 3.4, anaerobicTrainingEffect: 0.8 } },
+  3: { rpe: 50 },
+  8: { rpe: 70, garminReference: { trainingLoad: 210.5, aerobicTrainingEffect: 4.1, anaerobicTrainingEffect: 1.2 } },
+};
+
+/**
+ * The summary figures each dev stone's watch recorded, by its `daysAgo`, as an FR255 writes them:
+ * runs have everything (cadence per leg), rides and skiing no cadence or power, the treadmill no
+ * ascent, strength and yoga only heart rate and calories (yoga with temperature), the swim no
+ * temperature. Stones not here recorded none.
+ */
+const devFigures: Partial<Record<number, WatchFileFigures>> = {
+  1: run(148, 171, 42, 40, 302),
+  3: { ...run(162, 186, 8, 8, 318), maxPower: 520, normalizedPower: 334 },
+  5: { ...run(151, 177, 412, 405, 286), minTemperature: 9, averageTemperature: 12, maxTemperature: 14 },
+  7: { averageHeartRate: 128, maxHeartRate: 154, ascent: 286, descent: 291, calories: 742 },
+  9: { averageHeartRate: 104, maxHeartRate: 141, calories: 312 },
+  11: {
+    averageHeartRate: 118,
+    maxHeartRate: 149,
+    ascent: 640,
+    descent: 636,
+    averageCadence: 52.5,
+    maxCadence: 61,
+    calories: 1180,
+  },
+  13: { averageHeartRate: 131, maxHeartRate: 158, calories: 420 },
+  15: {
+    averageHeartRate: 156,
+    maxHeartRate: 172,
+    averageCadence: 86,
+    maxCadence: 92.5,
+    averagePower: 309,
+    maxPower: 402,
+    normalizedPower: 314,
+    minTemperature: 21,
+    averageTemperature: 23,
+    maxTemperature: 24,
+    calories: 455,
+  },
+  18: run(150, 175, 96, 101, 298),
+  21: {
+    averageHeartRate: 88,
+    maxHeartRate: 112,
+    minTemperature: 22,
+    averageTemperature: 24,
+    maxTemperature: 25,
+    calories: 140,
+  },
+  24: { averageHeartRate: 139, maxHeartRate: 167, ascent: 198, descent: 201, calories: 905 },
+};
+
+/**
+ * The running form averages each dev run's watch recorded, by its `daysAgo`, as an FR255 writes
+ * them (mm, %, ms): easy runs on shorter steps, the long run fading, the treadmill a little bouncier.
+ * The ride, hike and skiing have none; their files hold no form.
+ */
+const devForm: Partial<Record<number, WatchFileForm>> = {
+  1: { stepLength: 1128, verticalOscillation: 86.1, verticalRatio: 7.6, groundContactTime: 248 },
+  3: { stepLength: 1215, verticalOscillation: 87.4, verticalRatio: 7.2, groundContactTime: 236 },
+  5: { stepLength: 984, verticalOscillation: 80.3, verticalRatio: 8.2, groundContactTime: 271 },
+  15: { stepLength: 1102, verticalOscillation: 92.7, verticalRatio: 8.4, groundContactTime: 244 },
+  18: { stepLength: 1146, verticalOscillation: 85.6, verticalRatio: 7.5, groundContactTime: 246 },
+  27: { stepLength: 1058, verticalOscillation: 83.9, verticalRatio: 7.9, groundContactTime: 259 },
+};
+
+/** A run's figures: heart rate, ascent and descent, power, and the rest an FR255 writes with them. */
+function run(averageHeartRate: number, maxHeartRate: number, ascent: number, descent: number, averagePower: number) {
+  return {
+    averageHeartRate,
+    maxHeartRate,
+    ascent,
+    descent,
+    averageCadence: 84.5,
+    maxCadence: 96,
+    averagePower,
+    maxPower: averagePower + 140,
+    normalizedPower: averagePower + 9,
+    minTemperature: 4,
+    averageTemperature: 7,
+    maxTemperature: 9,
+    calories: Math.round(averagePower * 2.4),
+  } satisfies WatchFileFigures;
+}
 
 /**
  * The dev watch every seeded file comes from. A watch file's session key is its watch and when it
@@ -44,6 +271,21 @@ const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
  */
 const devWatch = 1_234_567_890;
 const writtenAt = (entry: number) => new Date(Date.UTC(2026, 0, 1, 0, entry));
+
+/** The measurements the dev watch has of every dev athlete: kilograms, metres, bpm. Made up. */
+const devMeasurements: NonNullable<WatchFileOptions['measurements']> = {
+  weight: 68.5,
+  height: 1.74,
+  restingHeartRate: 52,
+  maxHeartRate: 188,
+};
+
+/** The summary figures and running form the watch recorded for the dev stone of `daysAgo`, those it did. */
+function recordedOn(daysAgo: number): Pick<WatchFileOptions, 'figures' | 'form'> {
+  const figures = devFigures[daysAgo];
+  const form = devForm[daysAgo];
+  return { ...(figures === undefined ? {} : { figures }), ...(form === undefined ? {} : { form }) };
+}
 
 /** `time` UTC on the day `daysAgo` days before `today`'s UTC date. */
 function startOf(today: Date, daysAgo: number, time: string): Date {
@@ -70,7 +312,16 @@ export async function seedStones({
   for (const athlete of athletes) {
     for (const [entry, { daysAgo, time, file }] of devStones.entries()) {
       const start = startOf(today, daysAgo, time);
-      const bytes = watchFile({ ...file, start, serialNumber: devWatch, timeCreated: writtenAt(entry) });
+      const bytes = watchFile({
+        measurements: devMeasurements,
+        ...file,
+        product: devWatchModel,
+        ...onTheWatch[entry],
+        start,
+        serialNumber: devWatch,
+        timeCreated: writtenAt(entry),
+        ...recordedOn(daysAgo),
+      });
       const upload = new File([bytes as Uint8Array<ArrayBuffer>], `seed-${start.toISOString().slice(0, 10)}.fit`);
       const { error, isDefined } = await safe(clientFor(athlete).record.stones.place({ file: upload }));
       if (error === null) result.placed++;

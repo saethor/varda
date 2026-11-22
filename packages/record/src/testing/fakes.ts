@@ -20,13 +20,32 @@ export function createInMemoryStones(): Stones {
     async ofAthlete(athlete, { from, to }) {
       return [...byId.values()]
         .filter((stone) => stone.athlete === athlete && stone.localDate >= from && stone.localDate <= to)
-        .sort((a, b) => b.localDate.localeCompare(a.localDate) || b.start.getTime() - a.start.getTime());
+        .sort((a, b) => b.localDate.localeCompare(a.localDate) || b.start.getTime() - a.start.getTime())
+        .map(
+          ({
+            streams: _streams,
+            splits: _splits,
+            stretches: _stretches,
+            measurements: _measurements,
+            garminReference: _garminReference,
+            ...listed
+          }) => listed,
+        );
     },
     async withSessionKey(athlete, sessionKey) {
       return withSessionKey(athlete, sessionKey);
     },
     async remove(id) {
       byId.delete(id);
+    },
+    async everyId() {
+      return [...byId.keys()];
+    },
+    async replaceReading(id, reading) {
+      const stone = byId.get(id);
+      if (stone === undefined) return;
+      // A reading holds nothing of the stone's placement, ID, athlete or file name, so they stay.
+      byId.set(id, { ...stone, ...reading });
     },
   };
 }

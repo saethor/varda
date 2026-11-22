@@ -6,7 +6,7 @@ import { placeStone } from '../application/place-stone.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
 import { maxWatchFileBytes, recordContract } from '../contract.ts';
 import { SessionAlreadyPlaced, StoneNotFound, WatchFileTurnedAway } from '../domain/errors.ts';
-import type { Stone } from '../domain/stone.ts';
+import { type ListedStone, measurementsForCoach, type PersonId, type Stone } from '../domain/stone.ts';
 
 const os = implement(recordContract).$context<SharedContext>();
 
@@ -21,8 +21,8 @@ const requirePerson = os.middleware(async ({ context, next }) => {
   return await next({ context: { person: context.person } });
 });
 
-/** A stone as the contract shows it. */
-function toContractStone({
+/** A stone as the contract lists it. */
+function toListedStone({
   id,
   localDate,
   start,
@@ -34,7 +34,11 @@ function toContractStone({
   elapsedTime,
   laps,
   trace,
-}: Stone) {
+  effort,
+  device,
+  figures,
+  form,
+}: ListedStone) {
   return {
     id,
     localDate,
@@ -45,8 +49,24 @@ function toContractStone({
     distance,
     movingTime,
     elapsedTime,
-    laps,
+    // A lap's workout step is kept to match it to its workout later, never answered.
+    laps: laps.map(({ workoutStep: _, ...lap }) => lap),
     trace,
+    effort,
+    device,
+    figures,
+    form,
+  };
+}
+
+/** A stone as the contract shows it opened, to `viewer`: its athlete, or someone coaching them. */
+function toStoneDetail(stone: Stone, viewer: PersonId) {
+  return {
+    ...toListedStone(stone),
+    stretches: stone.stretches,
+    measurements: stone.athlete === viewer ? stone.measurements : measurementsForCoach(stone.measurements),
+    streams: stone.streams,
+    splits: stone.splits,
   };
 }
 
@@ -70,11 +90,11 @@ export function createRecordRouter(adapters: RecordAdapters) {
       list: os.stones.list
         .use(requirePerson)
         .handler(async ({ context, input }) =>
-          (await adapters.stones.ofAthlete(context.person, input)).map(toContractStone),
+          (await adapters.stones.ofAthlete(context.person, input)).map(toListedStone),
         ),
       get: os.stones.get.use(requirePerson).handler(async ({ context, input: { stoneId }, errors }) => {
         try {
-          return toContractStone(await openStone(adapters, context.person, stoneId));
+          return toStoneDetail(await openStone(adapters, context.person, stoneId), context.person);
         } catch (error) {
           if (error instanceof StoneNotFound) throw errors.NOT_FOUND();
           throw error;

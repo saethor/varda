@@ -24,12 +24,20 @@ _Avoid_: Activity file, raw data
 A change the athlete makes to a stone's distance, pace or laps when the recording was wrong (e.g. treadmill). Corrections sit on top of the recording, are marked as such, and can be reverted. Only the athlete can correct a stone.
 _Avoid_: Edit, override
 
+**Reading**:
+All a stone holds as read from its recording, apart from what places it (the session it came from and when it was): its sport, distance, times, laps, trace, figures, streams and the rest. A stone's reading is read once, when it is placed, and replaced only by filling in.
+_Avoid_: Parsed data, import, payload
+
+**Filling in stones**:
+Reading every stone's recording again with what Varða reads today, and replacing each stone's reading with it, so stones placed before Varða learned to read something hold it too. It never changes what places a stone, never touches a recording, and running it again changes nothing more.
+_Avoid_: Backfill, re-import, migration
+
 **Lap**:
 A recorded section of a stone. Laps are matched to the workout steps of the workout the stone fulfils; the match can be corrected by hand.
 _Avoid_: Split (that is a kilometre)
 
 **Split**:
-Each whole kilometre of a stone, in order, and the remainder at the end, worked out from what the watch recorded along the way. A stone without distance, or a swim, has no splits.
+Each whole kilometre of a stone, in order, and the remainder at the end, worked out from what the watch recorded along the way. A stone without distance, or a swim, has no splits. A split's moving time is how long the timer ran within it; a kilometre that ends between two recorded points ends between them in proportion to the distance. A distance correction scales splits as it scales laps.
 _Avoid_: Lap (laps are what the watch recorded), km split
 
 **Stretch**:
@@ -47,6 +55,26 @@ _Avoid_: Total time, duration (unqualified)
 **Trace**:
 The line a stone traced over the ground, simplified from its recording's GPS. A stone without GPS (treadmill, pool, strength) has no trace.
 _Avoid_: Track (that is track running), route (planned), GPS track, map
+
+**Stream**:
+Every point the watch recorded over a stone, as recorded and never thinned: for each moment its distance, speed, heart rate, altitude, power, cadence, temperature, position and running form, whichever the watch measured, and whether the timer was running. Splits and charts are drawn from the streams. A distance correction scales the distance stream on top of what was recorded.
+_Avoid_: Records, samples, time series, data points
+
+**Figures**:
+The watch's own summary numbers for a stone or a lap: average and max heart rate, ascent and descent, average and max cadence, average, max and normalized power, min, average and max temperature, and calories. Kept as the watch recorded them, never worked out by Varða; one the watch didn't record is none, never 0.
+_Avoid_: Stats, metrics, summary data
+
+**Cadence**:
+How often the athlete stepped or pedalled, a minute. On foot (running, walking, hiking) it counts steps of both legs, as the watch shows it, though the recording holds strides of one; otherwise it counts revolutions, as recorded.
+_Avoid_: Stride rate, rpm or spm (unqualified)
+
+**Running form**:
+How a run was run, step by step: its step length, vertical oscillation, vertical ratio and ground contact time, as the watch recorded them, averaged over the stone and each lap and along its streams. Only runs have running form; other sports never do, even when their recording holds it.
+_Avoid_: Running dynamics, form metrics, stance time
+
+**Device**:
+The watch a stone was recorded on, by its maker and model as people call them ("Garmin Forerunner 255 Music"). A model Varða doesn't know is none, and the stone names only the maker.
+_Avoid_: Product, hardware, unit
 
 **Training load**:
 Varða's own measure of how much strain a stone put on the athlete, calculated the same way whatever its source.

@@ -1,9 +1,10 @@
+import { inspect } from 'node:util';
 import { createRouterClient, safe } from '@orpc/server';
 import type { SharedContext } from '@varda/shared';
 import { createFakeCoachingAccess } from '@varda/shared/testing';
 import { describe, expect, it } from 'vitest';
 import { createRecordFakes } from '../testing/index.ts';
-import { watchFile } from '../watch-files/index.ts';
+import { type WatchFileLap, type WatchFileOptions, type WatchFileSplit, watchFile } from '../watch-files/index.ts';
 import { createRecordRouter } from './rpc.ts';
 
 const guðrún = '00000000-0000-7000-8000-0000000000a1';
@@ -21,7 +22,8 @@ describe('placing a stone', () => {
     const { stoneId } = await client.stones.place({ file: fitFile(watchFile(), 'morning-run.fit') });
     const stones = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
 
-    expect(stones).toEqual([
+    // Only the fields named here, so a ticket adding a field doesn't rewrite this; each tests its own.
+    expect(stones).toMatchObject([
       {
         id: stoneId,
         localDate: '2026-11-02',
@@ -240,6 +242,107 @@ describe('the trace', () => {
   });
 });
 
+describe('the streams', () => {
+  const opened = async (file: Uint8Array) => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(file) });
+    return await client.stones.get({ stoneId });
+  };
+
+  it('keeps every point the watch recorded, each second, with its offset from the start and its pauses marked', async () => {
+    // 3 laps of 1 km in 300 s of timer and 310 s elapsed: each lap stops for 10 s halfway.
+    const { streams } = await opened(watchFile({ perSecond: true }));
+
+    // 931 seconds from start to finish, less the 9 seconds inside each of the 3 pauses.
+    expect(streams?.offset).toHaveLength(904);
+    expect(streams?.offset.slice(0, 3)).toEqual([0, 1, 2]);
+    expect(streams?.offset.at(-1)).toBe(930);
+    // The point at each restart ends an interval the timer didn't run; every other point is timer-on.
+    const paused = streams?.offset.filter((_, i) => streams.timerRunning[i] === false);
+    expect(paused).toEqual([160, 470, 780]);
+    expect(streams?.timerRunning).toHaveLength(904);
+  });
+
+  it('keeps each channel the watch recorded, in SI units, as recorded', async () => {
+    const { streams } = await opened(watchFile({ perSecond: true }));
+    const at = (offset: number) => streams?.offset.indexOf(offset) ?? -1;
+
+    // Halfway through the first lap: 500 m in 150 s; still there when the timer starts again.
+    expect(streams?.distance?.[at(150)]).toBeCloseTo(500);
+    expect(streams?.distance?.[at(160)]).toBeCloseTo(500);
+    expect(streams?.distance?.at(-1)).toBeCloseTo(3000);
+    expect(streams?.speed?.[at(100)]).toBeCloseTo(3.333, 2);
+    expect(streams?.speed?.[at(160)]).toBe(0);
+    // A running watch writes cadence per leg (85.5 strides/min): the stone has it in steps per minute.
+    expect(streams?.cadence?.[at(100)]).toBe(171);
+    expect(streams?.stepLength?.[at(100)]).toBeCloseTo(1.17);
+    expect(streams?.verticalOscillation?.[at(100)]).toBeCloseTo(0.085);
+    expect(streams?.verticalRatio?.[at(100)]).toBeCloseTo(7.3);
+    expect(streams?.groundContactTime?.[at(100)]).toBeCloseTo(0.245);
+    expect(streams?.position?.[0]?.[0]).toBeCloseTo(64.146612, 5);
+    expect(streams?.position?.at(-1)?.[1]).toBeCloseTo(-21.944671, 5);
+    for (const channel of ['heartRate', 'altitude', 'power', 'temperature'] as const) {
+      expect(streams?.[channel]).toHaveLength(904);
+      expect(streams?.[channel]?.every((value) => typeof value === 'number')).toBe(true);
+    }
+  });
+
+  it('leaves out the channels the watch did not record', async () => {
+    const treadmill = await opened(
+      watchFile({ subSport: 'treadmill', perSecond: true, gps: false, without: ['altitude', 'power'] }),
+    );
+    const strength = await opened(
+      watchFile({
+        sport: 'training',
+        subSport: 'strengthTraining',
+        laps: [],
+        distance: false,
+        gps: false,
+        perSecond: true,
+        without: ['altitude', 'power', 'cadence', 'temperature', 'form'],
+      }),
+    );
+
+    expect(treadmill.streams).toMatchObject({ position: null, altitude: null, power: null });
+    expect(treadmill.streams?.distance).toHaveLength(904);
+    // A watch writes 0 m all session long when it measures no distance: there is no distance at all.
+    expect(strength.streams).toMatchObject({
+      distance: null,
+      speed: null,
+      altitude: null,
+      power: null,
+      cadence: null,
+      temperature: null,
+      position: null,
+      stepLength: null,
+      verticalOscillation: null,
+      verticalRatio: null,
+      groundContactTime: null,
+    });
+    expect(strength.streams?.heartRate?.length).toBe(strength.streams?.offset.length);
+  });
+
+  it('keeps cadence in revolutions per minute, as recorded, for a ride', async () => {
+    const { streams } = await opened(watchFile({ sport: 'cycling', perSecond: true, without: ['form'] }));
+
+    expect(streams?.cadence?.[100]).toBe(85);
+  });
+
+  it('has none when the watch recorded no points', async () => {
+    expect((await opened(watchFile({ gps: false, noRecords: true }))).streams).toBeNull();
+  });
+
+  it('is never listed', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ perSecond: true })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed).toBeDefined();
+    expect(listed).not.toHaveProperty('streams');
+  });
+});
+
 describe('listing stones', () => {
   const runOn = (day: string, time = '07:30') => fitFile(watchFile({ start: new Date(`${day}T${time}:00Z`) }));
 
@@ -276,7 +379,7 @@ describe('opening a stone', () => {
     const stone = await client.stones.get({ stoneId });
 
     const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
-    expect(stone).toEqual(listed);
+    expect(stone).toMatchObject(listed ?? {});
     expect([stone.fileName, stone.laps.length, stone.trace?.length]).toEqual(['morning-run.fit', 3, 4]);
   });
 
@@ -376,5 +479,646 @@ describe('deleting a stone', () => {
       clientFor({ person: null }).stones.delete({ stoneId: '00000000-0000-7000-8000-00000000ffff' }),
     );
     expect(isDefined && error.code).toBe('UNAUTHORIZED');
+  });
+});
+
+describe("the athlete's measurements", () => {
+  const measured = { weight: 71.3, height: 1.83, restingHeartRate: 47, maxHeartRate: 193 };
+
+  it('keeps the weight, height, resting and max heart rate the watch had, for the athlete', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ measurements: measured })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.measurements).toEqual(measured);
+  });
+
+  it('has none from a watch that had none', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+
+    expect((await client.stones.get({ stoneId })).measurements).toBeNull();
+  });
+
+  it('shows a coach the resting and max heart rate, never the weight or height', async () => {
+    const coach = '00000000-0000-7000-8000-0000000000c3';
+    const adapters = {
+      ...createRecordFakes(),
+      coachingAccess: createFakeCoachingAccess([{ viewer: coach, athlete: guðrún }]),
+    };
+    const { stoneId } = await clientFor({ person: guðrún }, adapters).stones.place({
+      file: fitFile(watchFile({ measurements: measured })),
+    });
+
+    const stone = await clientFor({ person: coach }, adapters).stones.get({ stoneId });
+
+    expect(stone.measurements).toEqual({ weight: null, height: null, restingHeartRate: 47, maxHeartRate: 193 });
+  });
+
+  /** What placing says when it fails: everything it logs, and the error it throws, in full. */
+  async function said(place: () => Promise<unknown>): Promise<string> {
+    const lines: unknown[][] = [];
+    const methods = ['log', 'info', 'warn', 'error', 'debug'] as const;
+    const kept = methods.map((method) => console[method]);
+    for (const method of methods) console[method] = (...args: unknown[]) => lines.push(args);
+    try {
+      const { error } = await safe(place());
+      return inspect({ lines, error }, { depth: null });
+    } finally {
+      methods.forEach((method, i) => {
+        console[method] = kept[i] as (typeof console)[typeof method];
+      });
+    }
+  }
+  const anyMeasurement = /weight|height|heartRate|71\.3|1\.83/i;
+
+  it.each([
+    ['broken', { brokenCrc: true }],
+    ['multisport', { multisport: true }],
+  ] as const)('says nothing of them when a %s file is turned away', async (_, options) => {
+    const client = clientFor({ person: guðrún });
+
+    const words = await said(() =>
+      client.stones.place({ file: fitFile(watchFile({ ...options, measurements: measured })) }),
+    );
+
+    expect(words).toContain('TURNED_AWAY');
+    expect(words).not.toMatch(anyMeasurement);
+  });
+
+  it('says nothing of them when the stone fails to be kept, naming the stone instead', async () => {
+    const adapters = createRecordFakes();
+    // A database error carries the row it failed to write, as the Postgres driver's does.
+    adapters.stones.add = async (stone) => {
+      throw new Error(`Failed query: insert into "record"."stones"\nparams: ${JSON.stringify(stone)}`);
+    };
+    const client = clientFor({ person: guðrún }, adapters);
+
+    const words = await said(() => client.stones.place({ file: fitFile(watchFile({ measurements: measured })) }));
+
+    expect(words).toMatch(/Placing stone [0-9a-f-]{36} failed/);
+    expect(words).not.toMatch(anyMeasurement);
+  });
+});
+
+describe('effort, the watch and Garmin reference data (#77)', () => {
+  it("takes the stone's effort from the rating the athlete gave on the watch", async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ rpe: 20 })) });
+
+    expect((await client.stones.get({ stoneId })).effort).toBe(2);
+  });
+
+  it('gives a stone the athlete did not rate on the watch no effort', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+
+    expect((await client.stones.get({ stoneId })).effort).toBeNull();
+  });
+
+  it('keeps which watch recorded the stone, by its maker and model', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ product: 3990 })) });
+
+    expect((await client.stones.get({ stoneId })).device).toEqual({
+      manufacturer: 'Garmin',
+      model: 'Forerunner 255 Music',
+    });
+  });
+
+  it('names only the maker of a watch whose model it does not know', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ product: 65_000 })) });
+
+    expect((await client.stones.get({ stoneId })).device).toEqual({ manufacturer: 'Garmin', model: null });
+  });
+
+  it("keeps Garmin's training load and Training Effect with the stone, and never answers them", async () => {
+    const adapters = createRecordFakes();
+    const client = clientFor({ person: guðrún }, adapters);
+    const garminReference = { trainingLoad: 105.5, aerobicTrainingEffect: 3.2, anaerobicTrainingEffect: 1.4 };
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ garminReference })) });
+    const answers = JSON.stringify([
+      await client.stones.get({ stoneId }),
+      await client.stones.list({ from: '2026-11-02', to: '2026-11-02' }),
+    ]);
+
+    expect((await adapters.stones.byId(stoneId))?.garminReference).toEqual(garminReference);
+    expect(answers).not.toMatch(/garmin.?reference|training.?load|training.?effect|105\.5|3\.2|1\.4/i);
+  });
+
+  it('keeps no Garmin reference data from a file without it', async () => {
+    const adapters = createRecordFakes();
+
+    const { stoneId } = await clientFor({ person: guðrún }, adapters).stones.place({ file: fitFile(watchFile()) });
+
+    expect((await adapters.stones.byId(stoneId))?.garminReference).toBeNull();
+  });
+});
+
+describe('summary figures', () => {
+  it("keeps a run's figures exactly as the watch recorded them, cadence in steps a minute as the watch shows it", async () => {
+    const client = clientFor({ person: guðrún });
+    const run = watchFile({
+      figures: {
+        averageHeartRate: 152,
+        maxHeartRate: 178,
+        ascent: 84,
+        descent: 79,
+        // The watch writes a run's cadence per leg: 84.5 strides a minute are 169 steps.
+        averageCadence: 84.5,
+        maxCadence: 92,
+        averagePower: 301,
+        maxPower: 455,
+        normalizedPower: 312,
+        minTemperature: 18,
+        averageTemperature: 23,
+        maxTemperature: 27,
+        calories: 712,
+      },
+    });
+    const { stoneId } = await client.stones.place({ file: fitFile(run) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.figures).toEqual({
+      averageHeartRate: 152,
+      maxHeartRate: 178,
+      ascent: 84,
+      descent: 79,
+      averageCadence: 169,
+      maxCadence: 184,
+      averagePower: 301,
+      maxPower: 455,
+      normalizedPower: 312,
+      minTemperature: 18,
+      averageTemperature: 23,
+      maxTemperature: 27,
+      calories: 712,
+    });
+  });
+
+  it('leaves out every figure the watch did not record, never 0', async () => {
+    const client = clientFor({ person: guðrún });
+    const noHeartRateNoPower = watchFile({ figures: { ascent: 0, descent: 12, calories: 230 } });
+    const { stoneId } = await client.stones.place({ file: fitFile(noHeartRateNoPower) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.figures).toEqual({
+      averageHeartRate: null,
+      maxHeartRate: null,
+      ascent: 0,
+      descent: 12,
+      averageCadence: null,
+      maxCadence: null,
+      averagePower: null,
+      maxPower: null,
+      normalizedPower: null,
+      minTemperature: null,
+      averageTemperature: null,
+      maxTemperature: null,
+      calories: 230,
+    });
+  });
+
+  it("keeps a ride's cadence in revolutions a minute, as recorded", async () => {
+    const client = clientFor({ person: guðrún });
+    const ride = watchFile({ sport: 'cycling', figures: { averageCadence: 82, maxCadence: 110 } });
+    const { stoneId } = await client.stones.place({ file: fitFile(ride, 'ride.fit') });
+
+    const { figures } = await client.stones.get({ stoneId });
+
+    expect([figures.averageCadence, figures.maxCadence]).toEqual([82, 110]);
+  });
+
+  it('lists stones with their figures', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ figures: { averageHeartRate: 141, calories: 498 } })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed?.figures).toMatchObject({ averageHeartRate: 141, maxHeartRate: null, calories: 498 });
+  });
+});
+
+describe('stretches', () => {
+  // A run of 900 s on the timer: running, a walk, standing at a crossing, running again.
+  const runWalkStand: WatchFileSplit[] = [
+    { type: 'rwdRun', start: 0, time: 400, distance: 1400 },
+    { type: 'rwdWalk', start: 400, time: 120, distance: 150 },
+    { type: 'rwdStand', start: 520, time: 30, distance: 0 },
+    { type: 'rwdRun', start: 550, time: 350, distance: 1450 },
+  ];
+
+  it("keeps a run's stretches in order, with the watch's running, walking and standing totals", async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ splits: runWalkStand })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.stretches).toEqual({
+      inOrder: [
+        { kind: 'running', start: new Date('2026-11-02T07:30:00Z'), movingTime: 400, distance: 1400 },
+        { kind: 'walking', start: new Date('2026-11-02T07:36:40Z'), movingTime: 120, distance: 150 },
+        { kind: 'standing', start: new Date('2026-11-02T07:38:40Z'), movingTime: 30, distance: 0 },
+        { kind: 'running', start: new Date('2026-11-02T07:39:10Z'), movingTime: 350, distance: 1450 },
+      ],
+      totals: {
+        running: { movingTime: 750, distance: 2850 },
+        walking: { movingTime: 120, distance: 150 },
+        standing: { movingTime: 30, distance: 0 },
+      },
+    });
+  });
+
+  it("leaves out Garmin's interval-type splits, and the kinds the watch didn't detect", async () => {
+    const client = clientFor({ person: guðrún });
+    const intervals: WatchFileSplit[] = [
+      { type: 'intervalActive', start: 0, time: 900, distance: 3000 },
+      { type: 'rwdRun', start: 0, time: 900, distance: 3000 },
+      { type: 'intervalRest', start: 900, time: 30, distance: 0 },
+    ];
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ splits: intervals })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.stretches).toEqual({
+      inOrder: [{ kind: 'running', start: new Date('2026-11-02T07:30:00Z'), movingTime: 900, distance: 3000 }],
+      totals: { running: { movingTime: 900, distance: 3000 }, walking: null, standing: null },
+    });
+  });
+
+  it("leaves out a stretch's moving time when the watch recorded none, never 0", async () => {
+    const client = clientFor({ person: guðrún });
+    const untimed: WatchFileSplit[] = [{ type: 'rwdRun', start: 0, time: null, distance: 1400 }];
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ splits: untimed })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.stretches).toEqual({
+      inOrder: [{ kind: 'running', start: new Date('2026-11-02T07:30:00Z'), movingTime: null, distance: 1400 }],
+      totals: { running: { movingTime: null, distance: 1400 }, walking: null, standing: null },
+    });
+  });
+
+  it('keeps no stretches for a ride, even with run/walk splits in its file', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({
+      file: fitFile(watchFile({ sport: 'cycling', splits: runWalkStand })),
+    });
+
+    expect((await client.stones.get({ stoneId })).stretches).toBeNull();
+  });
+
+  it('keeps no stretches for a run the watch detected none in, nor ones with only interval splits', async () => {
+    const client = clientFor({ person: guðrún });
+    const plain = await client.stones.place({ file: fitFile(watchFile()) });
+    const onlyIntervals = await client.stones.place({
+      file: fitFile(
+        watchFile({
+          start: new Date('2026-11-03T07:30:00Z'),
+          splits: [{ type: 'intervalActive', start: 0, time: 900, distance: 3000 }],
+        }),
+      ),
+    });
+
+    expect((await client.stones.get(plain)).stretches).toBeNull();
+    expect((await client.stones.get(onlyIntervals)).stretches).toBeNull();
+  });
+
+  it('lists stones without their stretches', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ splits: runWalkStand })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed).not.toHaveProperty('stretches');
+  });
+});
+
+describe('splits', () => {
+  const opened = async (file: Uint8Array) => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(file) });
+    return await client.stones.get({ stoneId });
+  };
+  // Three laps of 1 km in 300 s of timer, each stopped 10 s halfway, then 400 m in 120 s without a stop.
+  const kilometre = { distance: 1000, timerTime: 300, elapsedTime: 310 };
+  const threePointFour = [kilometre, kilometre, kilometre, { distance: 400, timerTime: 120, elapsedTime: 120 }];
+
+  it('splits a 3.4 km run into three whole kilometres and the 0.4 km left, each timed without its pauses', async () => {
+    const { splits } = await opened(watchFile({ perSecond: true, laps: threePointFour }));
+
+    expect(splits.map(({ kind, distance, movingTime }) => ({ kind, distance, movingTime }))).toEqual([
+      { kind: 'kilometre', distance: 1000, movingTime: 300 },
+      { kind: 'kilometre', distance: 1000, movingTime: 300 },
+      { kind: 'kilometre', distance: 1000, movingTime: 300 },
+      { kind: 'remainder', distance: expect.closeTo(400, 2), movingTime: 120 },
+    ]);
+  });
+
+  it('leaves a pause inside a kilometre out of its time, wherever the kilometre ends between two points', async () => {
+    // 1.7 km at 3.4 m/s in 500 s of timer, stopped for 30 s at 250 s: the first kilometre ends 294.1 s in.
+    const { splits } = await opened(
+      watchFile({ perSecond: true, laps: [{ distance: 1700, timerTime: 500, elapsedTime: 530 }] }),
+    );
+
+    expect(splits).toHaveLength(2);
+    expect(splits[0]?.distance).toBe(1000);
+    expect(splits[0]?.movingTime).toBeCloseTo(1000 / 3.4, 1);
+    expect(splits[1]?.distance).toBeCloseTo(700, 1);
+    expect(splits[1]?.movingTime).toBeCloseTo(700 / 3.4, 1);
+  });
+
+  it("takes each split's heart rate, ascent and descent from the points within it", async () => {
+    // Up 10 m over the first kilometre, flat over the second, down 15 m over the third, then flat.
+    const hill = (metres: number) =>
+      metres < 1000 ? 20 + metres / 100 : metres < 2000 ? 30 : metres < 3000 ? 30 - (metres - 2000) * 0.015 : 15;
+    const { splits } = await opened(watchFile({ perSecond: true, laps: threePointFour, ground: hill }));
+
+    // The builder's runner's heart rate is 138 + t/40 + 3·sin(t/25) bpm, t seconds of timer.
+    // 0–300 s: 138 + 150/40, and the sine averages 0.04. 900–1020 s: 138 + 960/40, the sine 0.54.
+    expect(splits[0]?.averageHeartRate).toBeCloseTo(141.79, 0);
+    expect(splits[3]?.averageHeartRate).toBeCloseTo(162.54, 0);
+    // Each as near as an altimeter's wobble is told from a climb: within 1.2 m.
+    const climbs = splits.map(({ ascent, descent }) => [ascent, descent]);
+    const expected = [
+      [10, 0],
+      [0, 0],
+      [0, 15],
+      [0, 0],
+    ];
+    climbs.flat().forEach((metres, i) => {
+      expect(Math.abs((metres ?? Number.NaN) - (expected.flat()[i] ?? 0))).toBeLessThanOrEqual(1.2);
+    });
+  });
+
+  it("doesn't take an altimeter's wobble on flat ground for climbing", async () => {
+    const wobbling = (metres: number) => 20 + (Math.floor(metres) % 2 === 0 ? 0.4 : -0.4);
+    const { splits } = await opened(watchFile({ perSecond: true, laps: threePointFour, ground: wobbling }));
+
+    for (const split of splits) expect(split).toMatchObject({ ascent: 0, descent: 0 });
+  });
+
+  it('has no heart rate, ascent or descent in a split when the watch recorded none', async () => {
+    const { splits } = await opened(
+      watchFile({ perSecond: true, laps: threePointFour, without: ['heartRate', 'altitude'] }),
+    );
+
+    expect(splits).toHaveLength(4);
+    for (const split of splits) expect(split).toMatchObject({ averageHeartRate: null, ascent: null, descent: null });
+  });
+
+  it('splits a ride and a hike too', async () => {
+    const ride = await opened(
+      watchFile({ sport: 'cycling', perSecond: true, without: ['form'], laps: threePointFour }),
+    );
+    const hike = await opened(
+      watchFile({
+        sport: 'hiking',
+        perSecond: true,
+        without: ['form'],
+        laps: threePointFour,
+        start: new Date('2026-11-03'),
+      }),
+    );
+
+    expect(ride.splits.map((split) => split.movingTime)).toEqual([300, 300, 300, 120]);
+    expect(hike.splits.map((split) => split.movingTime)).toEqual([300, 300, 300, 120]);
+  });
+
+  it('has none for a pool swim, a strength session or yoga', async () => {
+    const swim = await opened(
+      watchFile({ sport: 'swimming', subSport: 'lapSwimming', perSecond: true, gps: false, without: ['form'] }),
+    );
+    const withoutDistance: WatchFileOptions = {
+      laps: [],
+      distance: false,
+      gps: false,
+      perSecond: true,
+      without: ['form'],
+    };
+    const strength = await opened(
+      watchFile({ sport: 'training', subSport: 'strengthTraining', ...withoutDistance, start: new Date('2026-11-03') }),
+    );
+    const yoga = await opened(
+      watchFile({ sport: 'training', subSport: 'yoga', ...withoutDistance, start: new Date('2026-11-04') }),
+    );
+
+    expect(swim.distance).toBe(3000);
+    expect(swim.splits).toEqual([]);
+    expect(strength.splits).toEqual([]);
+    expect(yoga.splits).toEqual([]);
+  });
+
+  it('is never listed', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ perSecond: true, laps: threePointFour })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed).toBeDefined();
+    expect(listed).not.toHaveProperty('splits');
+  });
+});
+
+describe('richer laps (#81)', () => {
+  // An interval run: a warm-up, a hard kilometre, a recovery jog and a cool-down.
+  const intervals: WatchFileLap[] = [
+    {
+      distance: 1500,
+      timerTime: 540,
+      elapsedTime: 540,
+      intensity: 'warmup',
+      figures: { averageHeartRate: 128, maxHeartRate: 141, averagePower: 240, ascent: 6, descent: 2 },
+    },
+    {
+      distance: 1000,
+      timerTime: 220,
+      elapsedTime: 220,
+      intensity: 'active',
+      workoutStep: 1,
+      figures: {
+        averageHeartRate: 171,
+        maxHeartRate: 182,
+        averagePower: 365,
+        maxPower: 430,
+        normalizedPower: 371,
+        ascent: 4,
+        descent: 9,
+        averageCadence: 91.5,
+        maxCadence: 96,
+        minTemperature: 11,
+        averageTemperature: 12,
+        maxTemperature: 13,
+        calories: 81,
+      },
+    },
+    { distance: 400, timerTime: 180, elapsedTime: 200, intensity: 'recovery', figures: { averageHeartRate: 139 } },
+    { distance: 1200, timerTime: 480, elapsedTime: 480, intensity: 'cooldown', figures: {} },
+  ];
+
+  it('keeps each lap with the figures and intensity the watch recorded for it', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ laps: intervals })) });
+
+    const { laps } = await client.stones.get({ stoneId });
+
+    expect(laps.map((lap) => lap.intensity)).toEqual(['warm-up', 'active', 'recovery', 'cool-down']);
+    expect(laps[1]?.figures).toEqual({
+      averageHeartRate: 171,
+      maxHeartRate: 182,
+      ascent: 4,
+      descent: 9,
+      // Per leg on the watch: 91.5 strides a minute are 183 steps.
+      averageCadence: 183,
+      maxCadence: 192,
+      averagePower: 365,
+      maxPower: 430,
+      normalizedPower: 371,
+      minTemperature: 11,
+      averageTemperature: 12,
+      maxTemperature: 13,
+      calories: 81,
+    });
+    expect(laps[0]?.figures).toMatchObject({ averageHeartRate: 128, maxHeartRate: 141, averagePower: 240, ascent: 6 });
+  });
+
+  it("leaves out every lap figure and intensity the watch didn't record, never 0", async () => {
+    const client = clientFor({ person: guðrún });
+    const laps: WatchFileLap[] = [
+      { distance: 1000, timerTime: 300, elapsedTime: 300, figures: { averageHeartRate: 150, ascent: 0 } },
+      { distance: 1000, timerTime: 300, elapsedTime: 300, intensity: 'other' },
+    ];
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ laps })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    const none = {
+      averageHeartRate: null,
+      maxHeartRate: null,
+      ascent: null,
+      descent: null,
+      averageCadence: null,
+      maxCadence: null,
+      averagePower: null,
+      maxPower: null,
+      normalizedPower: null,
+      minTemperature: null,
+      averageTemperature: null,
+      maxTemperature: null,
+      calories: null,
+    };
+    expect(stone.laps.map(({ figures, intensity }) => ({ figures, intensity }))).toEqual([
+      { figures: { ...none, averageHeartRate: 150, ascent: 0 }, intensity: null },
+      { figures: none, intensity: null },
+    ]);
+  });
+
+  it('keeps the workout step each lap was on, and never answers it', async () => {
+    const adapters = createRecordFakes();
+    const client = clientFor({ person: guðrún }, adapters);
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ laps: intervals })) });
+
+    const opened = await client.stones.get({ stoneId });
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect((await adapters.stones.byId(stoneId))?.laps.map((lap) => lap.workoutStep)).toEqual([null, 1, null, null]);
+    for (const lap of [...opened.laps, ...(listed?.laps ?? [])]) expect(lap).not.toHaveProperty('workoutStep');
+  });
+
+  it('lists stones with their richer laps', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ laps: intervals })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed?.laps.map((lap) => [lap.intensity, lap.figures.averageHeartRate])).toEqual([
+      ['warm-up', 128],
+      ['active', 171],
+      ['recovery', 139],
+      ['cool-down', null],
+    ]);
+  });
+});
+
+describe('running form (#84)', () => {
+  // As the watch writes them: step length and vertical oscillation in mm, ground contact time in ms.
+  const form = { stepLength: 1184, verticalOscillation: 86.4, verticalRatio: 7.4, groundContactTime: 247 };
+  const formLaps: WatchFileLap[] = [
+    {
+      distance: 1000,
+      timerTime: 300,
+      elapsedTime: 300,
+      form: { stepLength: 1200, verticalOscillation: 85, verticalRatio: 7.1, groundContactTime: 241 },
+    },
+    {
+      distance: 1000,
+      timerTime: 300,
+      elapsedTime: 300,
+      form: { stepLength: 1150, verticalOscillation: 88, verticalRatio: 7.7, groundContactTime: 255 },
+    },
+  ];
+  const placed = async (options: Parameters<typeof watchFile>[0]) => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile(options)) });
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+    return { opened: await client.stones.get({ stoneId }), listed };
+  };
+
+  it("keeps a run's form averages as the watch recorded them, in metres, percent and seconds", async () => {
+    const { opened, listed } = await placed({ form, laps: formLaps });
+
+    expect(opened.form?.stepLength).toBeCloseTo(1.184);
+    expect(opened.form?.verticalOscillation).toBeCloseTo(0.0864);
+    expect(opened.form?.verticalRatio).toBeCloseTo(7.4);
+    expect(opened.form?.groundContactTime).toBeCloseTo(0.247);
+    expect(listed?.form).toEqual(opened.form);
+  });
+
+  it("keeps each lap's form averages", async () => {
+    const { opened, listed } = await placed({ form, laps: formLaps });
+
+    expect(opened.laps[0]?.form?.stepLength).toBeCloseTo(1.2);
+    expect(opened.laps[0]?.form?.groundContactTime).toBeCloseTo(0.241);
+    expect(opened.laps[1]?.form?.verticalOscillation).toBeCloseTo(0.088);
+    expect(opened.laps[1]?.form?.verticalRatio).toBeCloseTo(7.7);
+    expect(listed?.laps.map((lap) => lap.form)).toEqual(opened.laps.map((lap) => lap.form));
+  });
+
+  it('leaves out a form average the watch did not record, never 0', async () => {
+    const { opened } = await placed({ form: { stepLength: 1184, verticalOscillation: 86.4, verticalRatio: 7.4 } });
+
+    expect(opened.form?.groundContactTime).toBeNull();
+    expect(opened.form?.stepLength).toBeCloseTo(1.184);
+  });
+
+  it('keeps no form for a run the watch recorded none on', async () => {
+    const { opened, listed } = await placed({ perSecond: true, without: ['form'] });
+
+    expect(opened.form).toBeNull();
+    expect(opened.laps.map((lap) => lap.form)).toEqual([null, null, null]);
+    expect(listed?.form).toBeNull();
+  });
+
+  it('keeps no form for a ride, on the stone, its laps or its streams, even with form in its file', async () => {
+    const { opened } = await placed({ sport: 'cycling', form, laps: formLaps, perSecond: true });
+
+    expect(opened.form).toBeNull();
+    expect(opened.laps.map((lap) => lap.form)).toEqual([null, null]);
+    expect(opened.streams).toMatchObject({
+      stepLength: null,
+      verticalOscillation: null,
+      verticalRatio: null,
+      groundContactTime: null,
+    });
+    expect(opened.streams?.heartRate).not.toBeNull();
   });
 });

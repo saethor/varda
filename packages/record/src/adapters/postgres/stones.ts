@@ -1,57 +1,158 @@
-import { and, between, desc, eq } from 'drizzle-orm';
+import { and, between, desc, eq, getTableColumns } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Stones } from '../../application/ports.ts';
-import type { Stone } from '../../domain/stone.ts';
-import { stones } from './schema.ts';
+import type { Figures, ListedStone, ListedWithout, Reading, Stone } from '../../domain/stone.ts';
+import { stoneStreams, stones } from './schema.ts';
 
 type Row = typeof stones.$inferSelect;
 
-function toStone({ laps, sport, ...row }: Row): Stone {
+/** What a stone placed before its figures were read holds: none of them. */
+const noFigures: Figures = {
+  averageHeartRate: null,
+  maxHeartRate: null,
+  ascent: null,
+  descent: null,
+  averageCadence: null,
+  maxCadence: null,
+  averagePower: null,
+  maxPower: null,
+  normalizedPower: null,
+  minTemperature: null,
+  averageTemperature: null,
+  maxTemperature: null,
+  calories: null,
+};
+
+/** A stone row with its streams, which only `byId` and `withSessionKey` read. */
+const withStreams = { stone: stones, streams: stoneStreams.streams };
+
+/** The columns a listed stone is read from: none of what it leaves out, so a list stays a light read. */
+const {
+  splits: _splits,
+  stretches: _stretches,
+  measurements: _measurements,
+  garminReference: _garminReference,
+  ...listedColumns
+} = getTableColumns(stones);
+
+type ListedRow = Omit<Row, Exclude<ListedWithout, 'streams'>>;
+
+function toOpenedStone({ stone, streams }: { stone: Row; streams: Stone['streams'] }): Stone {
+  const { splits, stretches, measurements, garminReference, ...listed } = stone;
+  return {
+    ...toListedStone(listed),
+    splits: splits ?? [],
+    stretches: stretches && {
+      ...stretches,
+      inOrder: stretches.inOrder.map((stretch) => ({ ...stretch, start: new Date(stretch.start) })),
+    },
+    measurements,
+    garminReference,
+    streams,
+  };
+}
+
+function toListedStone({ laps, sport, figures, ...row }: ListedRow): ListedStone {
   return {
     ...row,
+    figures: figures ?? noFigures,
     // Only Record writes this column, and only with a Sport.
     sport: sport as Stone['sport'],
-    laps: laps.map((lap) => ({ ...lap, start: new Date(lap.start) })),
+    laps: laps.map(({ figures: lapFigures, intensity, workoutStep, form, ...lap }) => ({
+      ...lap,
+      start: new Date(lap.start),
+      figures: lapFigures ?? noFigures,
+      intensity: intensity ?? null,
+      workoutStep: workoutStep ?? null,
+      form: form ?? null,
+    })),
+  };
+}
+
+/**
+ * A stone, or only its reading, as stored: every field is its own column, laps and stretches with
+ * their dates as ISO strings. A field a later reader learns becomes a column of the same name.
+ */
+function toStored<T extends Omit<Reading, 'streams'>>({ laps, stretches, ...rest }: T) {
+  return {
+    ...rest,
+    laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })),
+    stretches: stretches && {
+      ...stretches,
+      inOrder: stretches.inOrder.map((stretch) => ({ ...stretch, start: stretch.start.toISOString() })),
+    },
   };
 }
 
 export function createPostgresStones(db: NodePgDatabase): Stones {
   const withSessionKey: Stones['withSessionKey'] = async (athlete, sessionKey) => {
     const [found] = await db
-      .select()
+      .select(withStreams)
       .from(stones)
+      .leftJoin(stoneStreams, eq(stoneStreams.stoneId, stones.id))
       .where(and(eq(stones.athlete, athlete), eq(stones.sessionKey, sessionKey)));
-    return found ? toStone(found) : null;
+    return found ? toOpenedStone(found) : null;
   };
 
   return {
-    async add({ laps, ...stone }) {
+    async add({ streams, ...stone }) {
       // The unique (athlete, session key) constraint decides a race; the loser adds nothing.
-      const added = await db
-        .insert(stones)
-        .values({ ...stone, laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })) })
-        .onConflictDoNothing({ target: [stones.athlete, stones.sessionKey] })
-        .returning({ id: stones.id });
+      const added = await db.transaction(async (tx) => {
+        const inserted = await tx
+          .insert(stones)
+          .values(toStored(stone))
+          .onConflictDoNothing({ target: [stones.athlete, stones.sessionKey] })
+          .returning({ id: stones.id });
+        if (inserted.length > 0 && streams !== null)
+          await tx.insert(stoneStreams).values({ stoneId: stone.id, streams });
+        return inserted;
+      });
       if (added.length > 0) return 'added';
       const placedBefore = await withSessionKey(stone.athlete, stone.sessionKey);
       if (placedBefore === null) throw new Error('A stone from this session was there a moment ago, and is gone.');
       return { alreadyPlaced: placedBefore.id };
     },
     async byId(id) {
-      const [found] = await db.select().from(stones).where(eq(stones.id, id));
-      return found ? toStone(found) : null;
+      const [found] = await db
+        .select(withStreams)
+        .from(stones)
+        .leftJoin(stoneStreams, eq(stoneStreams.stoneId, stones.id))
+        .where(eq(stones.id, id));
+      return found ? toOpenedStone(found) : null;
     },
     async ofAthlete(athlete, { from, to }) {
       const rows = await db
-        .select()
+        .select(listedColumns)
         .from(stones)
         .where(and(eq(stones.athlete, athlete), between(stones.localDate, from, to)))
         .orderBy(desc(stones.localDate), desc(stones.start));
-      return rows.map(toStone);
+      return rows.map(toListedStone);
     },
     withSessionKey,
     async remove(id) {
+      // Its streams go with it (on delete cascade).
       await db.delete(stones).where(eq(stones.id, id));
+    },
+    async everyId() {
+      const rows = await db.select({ id: stones.id }).from(stones);
+      return rows.map(({ id }) => id);
+    },
+    async replaceReading(id, { streams, ...reading }) {
+      // Only the reading's columns: the stone's ID, athlete, file name, session and dates stay.
+      await db.transaction(async (tx) => {
+        const updated = await tx
+          .update(stones)
+          .set(toStored(reading))
+          .where(eq(stones.id, id))
+          .returning({ id: stones.id });
+        if (updated.length === 0) return;
+        if (streams === null) await tx.delete(stoneStreams).where(eq(stoneStreams.stoneId, id));
+        else
+          await tx
+            .insert(stoneStreams)
+            .values({ stoneId: id, streams })
+            .onConflictDoUpdate({ target: stoneStreams.stoneId, set: { streams } });
+      });
     },
   };
 }

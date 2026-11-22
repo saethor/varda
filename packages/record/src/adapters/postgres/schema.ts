@@ -10,19 +10,33 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
+import type {
+  Device,
+  Figures,
+  Form,
+  GarminReference,
+  Lap,
+  Measurements,
+  Split,
+  Streams,
+  Stretch,
+  Stretches,
+  Trace,
+} from '../../domain/stone.ts';
 
 // The Record context's own Postgres schema (ADR 0005). Change it, then run
 // `pnpm --filter @varda/record db:generate` and commit the new migration.
 export const record = pgSchema('record');
 
-/** A lap as stored in `stones.laps`: its start as an ISO instant. */
-export type StoredLap = {
-  start: string;
-  elapsedTime: number;
-  movingTime: number;
-  distance: number | null;
-  trigger: 'manual' | 'distance' | 'time' | 'other';
-};
+/**
+ * A lap as stored in `stones.laps`: its start as an ISO instant. Laps stored before their figures,
+ * intensity, workout step and form were read have none of them.
+ */
+export type StoredLap = Pick<Lap, 'elapsedTime' | 'movingTime' | 'distance' | 'trigger'> &
+  Partial<Pick<Lap, 'figures' | 'intensity' | 'workoutStep' | 'form'>> & { start: string };
+
+/** A run's stretches as stored in `stones.stretches`: each start as an ISO instant. */
+export type StoredStretches = Pick<Stretches, 'totals'> & { inOrder: (Omit<Stretch, 'start'> & { start: string })[] };
 
 export const stones = record.table(
   'stones',
@@ -45,7 +59,23 @@ export const stones = record.table(
     elapsedTime: doublePrecision('elapsed_time').notNull(),
     laps: jsonb('laps').$type<StoredLap[]>().notNull(),
     // `[lat, lon]` pairs in degrees, or null when the watch recorded no GPS.
-    trace: jsonb('trace').$type<[number, number][]>(),
+    trace: jsonb('trace').$type<Trace>(),
+    // 1–10, or null when the athlete gave the watch no rating.
+    effort: integer('effort'),
+    // `{ manufacturer, model }` of the watch that recorded it, or null.
+    device: jsonb('device').$type<Device>(),
+    // Garmin's training load and Training Effect, as reference only (ADR 0003); never answered. Or null.
+    garminReference: jsonb('garmin_reference').$type<GarminReference>(),
+    // The watch's summary figures; null for stones placed before they were read (ADR 0009).
+    figures: jsonb('figures').$type<Figures>(),
+    // A run's stretches, starts as ISO instants; null for other sports and stones placed before them.
+    stretches: jsonb('stretches').$type<StoredStretches>(),
+    // The athlete's measurements the watch had (kg, m, bpm), or null when it had none.
+    measurements: jsonb('measurements').$type<Measurements>(),
+    // A run's form averages (m, %, s); null for other sports, runs without, and stones placed before it was read.
+    form: jsonb('form').$type<Form>(),
+    // Kilometre splits, as worked out at placing; null for stones placed before them (none).
+    splits: jsonb('splits').$type<Split[]>(),
   },
   (table) => [
     // A session is placed as a stone only once (Record glossary).
@@ -54,3 +84,15 @@ export const stones = record.table(
     index('stones_athlete_local_date_index').on(table.athlete, table.localDate),
   ],
 );
+
+/**
+ * A stone's streams, one row per stone, apart from `stones` so listing stones never reads them, and
+ * removed with their stone. All channels in one value keep a stone's streams a single read.
+ */
+export const stoneStreams = record.table('stone_streams', {
+  stoneId: uuid('stone_id')
+    .primaryKey()
+    .references(() => stones.id, { onDelete: 'cascade' }),
+  // As recorded (ADR 0002): parallel arrays, one value per point; see `Streams`.
+  streams: jsonb('streams').$type<Streams>().notNull(),
+});

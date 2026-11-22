@@ -1,34 +1,25 @@
 // Part of reading a watch file: FIT words (record, timer event, stance time) stay in here.
-import type { EventMesg, RecordMesg } from '@garmin/fitsdk';
+import type { EventMesg, RecordMesg, SessionMesg } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
 import type { StreamChannel, Streams } from './stone.ts';
 
 /**
- * The stone's streams: every record the watch wrote, in order, as recorded (decision: no thinning,
- * no resampling), or none when it wrote none. `start` is when the session started; `distance` is
- * the session's, so a session without one keeps no distance (a watch may write 0 m all along).
+ * The stone's streams: every record the watch wrote, in order, as recorded (never thinned or
+ * resampled), or none when it wrote none. `start` is when the session started. A session without
+ * distance keeps no distance stream, though its watch may write 0 m at every point.
  */
-export function streamsOf({
-  records,
-  events,
-  start,
-  sport,
-  distance,
-}: {
-  records: RecordMesg[];
-  events: EventMesg[];
-  start: Date;
-  sport: Sport;
-  distance: number | null;
-}): Streams | null {
-  const points = records
+export function streamsOf(
+  { recordMesgs = [], eventMesgs = [] }: { recordMesgs?: RecordMesg[]; eventMesgs?: EventMesg[] },
+  { start, sport, session }: { start: Date; sport: Sport; session: SessionMesg },
+): Streams | null {
+  const points = recordMesgs
     .filter((record): record is RecordMesg & { timestamp: Date } => record.timestamp instanceof Date)
     .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   if (points.length === 0) return null;
 
-  const stops = timerStopsOf(events);
+  const stops = timerStopsOf(eventMesgs);
   const seconds = points.map(({ timestamp }) => timestamp.getTime() / 1000);
-  const hasDistance = distance !== null;
+  const hasDistance = Boolean(session.totalDistance);
   const steps = stepsPerMinute.has(sport);
 
   return {
@@ -59,9 +50,9 @@ function timerStopsOf(events: EventMesg[]): number[] {
 }
 
 /** One value per point, or none at all when the watch recorded it at no point. */
-function channel(points: RecordMesg[], valueOf: (point: RecordMesg) => unknown): StreamChannel {
+function channel(points: RecordMesg[], read: (point: RecordMesg) => unknown): StreamChannel {
   const values = points.map((point) => {
-    const value = valueOf(point);
+    const value = read(point);
     return typeof value === 'number' && Number.isFinite(value) ? value : null;
   });
   return values.some((value) => value !== null) ? values : null;

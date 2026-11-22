@@ -46,13 +46,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
     elapsedTime: session.totalElapsedTime ?? 0,
     laps,
     trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
-    streams: streamsOf({
-      records: messages.recordMesgs ?? [],
-      events: messages.eventMesgs ?? [],
-      start,
-      sport: sportOf(session),
-      distance: session.totalDistance || null,
-    }),
+    streams: streamsOf(messages, { start, sport: sportOf(session), session }),
   };
 }
 

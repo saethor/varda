@@ -273,26 +273,44 @@ function perSecondTimeline(laps: WatchFileLap[]): {
 } {
   const points: TimelinePoint[] = [];
   const timer: { at: number; type: 'start' | 'stop' | 'stopAll' }[] = [{ at: 0, type: 'start' }];
-  let lapStart = 0;
-  let lapMetres = 0;
-  let moving = 0;
+  const lapStart = { at: 0, metres: 0, moving: 0 };
   for (const lap of laps) {
     const pause = lap.elapsedTime - lap.timerTime;
-    const stopAt = lapStart + Math.floor(lap.timerTime / 2);
-    const restartAt = stopAt + pause;
-    if (pause > 0) timer.push({ at: stopAt, type: 'stop' }, { at: restartAt, type: 'start' });
-    for (let at = points.length === 0 ? lapStart : lapStart + 1; at <= lapStart + lap.elapsedTime; at++) {
-      if (pause > 0 && at > stopAt && at < restartAt) continue;
-      const restart = pause > 0 && at === restartAt;
-      if (at > lapStart && !restart) moving++;
-      const inLap = at <= stopAt ? at - lapStart : at - lapStart - pause;
-      points.push({ at, metres: lapMetres + (lap.distance * inLap) / lap.timerTime, moving, restart });
-    }
-    lapStart += lap.elapsedTime;
-    lapMetres += lap.distance;
+    const stopAt = lapStart.at + Math.floor(lap.timerTime / 2);
+    if (pause > 0) timer.push({ at: stopAt, type: 'stop' }, { at: stopAt + pause, type: 'start' });
+    points.push(...lapTimeline(lap, { ...lapStart, stopAt, pause, first: points.length === 0 }));
+    lapStart.at += lap.elapsedTime;
+    lapStart.metres += lap.distance;
+    lapStart.moving += lap.timerTime;
   }
-  timer.push({ at: lapStart, type: 'stopAll' });
+  timer.push({ at: lapStart.at, type: 'stopAll' });
   return { points, timer };
+}
+
+/** A lap's points: each second but those inside its pause, the first only for the session's first lap. */
+function lapTimeline(
+  lap: WatchFileLap,
+  {
+    at: start,
+    metres,
+    moving,
+    stopAt,
+    pause,
+    first,
+  }: { at: number; metres: number; moving: number; stopAt: number; pause: number; first: boolean },
+): TimelinePoint[] {
+  const points: TimelinePoint[] = [];
+  for (let at = first ? start : start + 1; at <= start + lap.elapsedTime; at++) {
+    if (at > stopAt && at < stopAt + pause) continue;
+    const inLap = at <= stopAt ? at - start : at - start - pause;
+    points.push({
+      at,
+      metres: metres + (lap.distance * inLap) / lap.timerTime,
+      moving: moving + inLap,
+      restart: pause > 0 && at === stopAt + pause,
+    });
+  }
+  return points;
 }
 
 /**

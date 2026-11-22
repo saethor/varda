@@ -72,9 +72,9 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
     streams,
     form: { stepLength: 1.184, verticalOscillation: 0.0864, verticalRatio: 7.4, groundContactTime: null },
     splits: [
-      { distance: 1000, movingTime: 300, averageHeartRate: 141.5, ascent: 8, descent: 3.2 },
-      { distance: 1000, movingTime: 300, averageHeartRate: null, ascent: null, descent: null },
-      { distance: 1000, movingTime: 300, averageHeartRate: 150, ascent: 0, descent: 7.6 },
+      { kind: 'kilometre', distance: 1000, movingTime: 300, averageHeartRate: 141.5, ascent: 8, descent: 3.2 },
+      { kind: 'kilometre', distance: 1000, movingTime: 300, averageHeartRate: null, ascent: null, descent: null },
+      { kind: 'kilometre', distance: 1000, movingTime: 300, averageHeartRate: 150, ascent: 0, descent: 7.6 },
     ],
   };
 }
@@ -153,13 +153,21 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       expect(listed.map(({ id }) => id)).toEqual([last.id, evening.id, morning.id, first.id]);
     });
 
-    it('lists stones without their streams', async () => {
+    it('lists stones with only what a list shows: no streams, splits, stretches, measurements or Garmin reference', async () => {
       const { stones, ids } = await setup();
       const athlete = ids.next();
-      const { streams: _streams, ...withoutStreams } = stone(ids, athlete, '2026-11-02');
-      await stones.add({ ...withoutStreams, streams });
+      const added = stone(ids, athlete, '2026-11-02');
+      const {
+        streams: _streams,
+        splits: _splits,
+        stretches: _stretches,
+        measurements: _measurements,
+        garminReference: _garminReference,
+        ...listed
+      } = added;
+      await stones.add(added);
 
-      expect(await stones.ofAthlete(athlete, { from: '2026-11-02', to: '2026-11-02' })).toEqual([withoutStreams]);
+      expect(await stones.ofAthlete(athlete, { from: '2026-11-02', to: '2026-11-02' })).toEqual([listed]);
     });
 
     it("finds the athlete's stone placed from a session, or none", async () => {

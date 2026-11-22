@@ -1,7 +1,8 @@
 // Part of reading a watch file: FIT words (record, timer event, stance time) stay in here.
 import type { EventMesg, RecordMesg, SessionMesg } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
-import { isRunning } from './read-form.ts';
+import { fromThousandths } from './read-form.ts';
+import { cadenceOf, isRunning } from './sports.ts';
 import type { StreamChannel, Streams } from './stone.ts';
 
 /**
@@ -21,7 +22,6 @@ export function streamsOf(
   const stops = timerStopsOf(eventMesgs);
   const seconds = points.map(({ timestamp }) => timestamp.getTime() / 1000);
   const hasDistance = Boolean(session.totalDistance);
-  const steps = stepsPerMinute.has(sport);
   // Only running has running form, whatever else the watch wrote.
   const form = (read: (point: RecordMesg) => unknown) => (isRunning(sport) ? channel(points, read) : null);
 
@@ -34,17 +34,20 @@ export function streamsOf(
     heartRate: channel(points, (p) => p.heartRate),
     altitude: channel(points, (p) => p.enhancedAltitude ?? p.altitude),
     power: channel(points, (p) => p.power),
-    cadence: channel(points, (p) => cadenceOf(p, steps)),
+    cadence: channel(points, (p) => cadenceOf(sport, p.cadence, p.fractionalCadence)),
     temperature: channel(points, (p) => p.temperature),
     position: positionChannel(points),
-    stepLength: form((p) => millimetres(p.stepLength)),
-    verticalOscillation: form((p) => millimetres(p.verticalOscillation)),
+    stepLength: form((p) => fromThousandths(p.stepLength)),
+    verticalOscillation: form((p) => fromThousandths(p.verticalOscillation)),
     verticalRatio: form((p) => p.verticalRatio),
-    groundContactTime: form((p) => milliseconds(p.stanceTime)),
+    groundContactTime: form((p) => fromThousandths(p.stanceTime)),
   };
 }
 
-/** Seconds (Unix) at which the watch's timer stopped. Timer events are the only events read (decision 2). */
+/**
+ * Seconds (Unix) at which the watch's timer stopped. Timer events are the only events read: the
+ * watch writes no points while its timer is stopped, so only they say where it paused.
+ */
 function timerStopsOf(events: EventMesg[]): number[] {
   const stopTypes: unknown[] = ['stop', 'stopAll', 'stopDisable', 'stopDisableAll'];
   return events
@@ -72,22 +75,3 @@ function positionChannel(points: RecordMesg[]): Streams['position'] {
 
 /** FIT stores positions in semicircles: 2^31 of them make 180°. */
 const degreesOf = (semicircles: number) => (semicircles * 180) / 2 ** 31;
-
-// Sports whose watch counts cadence per leg; the watch shows them in steps per minute (decision 1).
-const stepsPerMinute: ReadonlySet<Sport> = new Set<Sport>([
-  'road-running',
-  'trail-running',
-  'track-running',
-  'treadmill-running',
-  'walking',
-  'hiking',
-]);
-
-/** Steps per minute on foot (strides per leg, doubled), as the watch shows it; revolutions per minute otherwise. */
-function cadenceOf({ cadence, fractionalCadence }: RecordMesg, steps: boolean): number | null {
-  if (typeof cadence !== 'number') return null;
-  return steps ? (cadence + (fractionalCadence ?? 0)) * 2 : cadence;
-}
-
-const millimetres = (value: unknown) => (typeof value === 'number' ? value / 1000 : null);
-const milliseconds = (value: unknown) => (typeof value === 'number' ? value / 1000 : null);

@@ -1,4 +1,4 @@
-// The one-off backfill (#82), through the in-memory fakes: what the stones answer after it runs.
+// Filling in stones (#82), through the in-memory fakes: what the stones answer after it runs.
 import { createRouterClient } from '@orpc/server';
 import { describe, expect, it } from 'vitest';
 import { createRecordRouter } from './adapters/rpc.ts';

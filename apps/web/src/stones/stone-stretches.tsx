@@ -42,7 +42,9 @@ export function StoneStretches({ stone }: { stone: StoneDetail }) {
                 <KindName kind={total.kind} />
               </dt>
               <dd className="flex flex-col">
-                <span className="text-xl whitespace-nowrap">{formatDuration(total.movingTime)}</span>
+                <span className="text-xl whitespace-nowrap">
+                  {total.movingTime === null ? '–' : formatDuration(total.movingTime)}
+                </span>
                 {total.distance !== null && (
                   <span className="text-sm text-muted-foreground whitespace-nowrap">
                     {formatDistance(total.distance, i18n.locale)}
@@ -82,7 +84,9 @@ export function StoneStretches({ stone }: { stone: StoneDetail }) {
                 <td className={cn(cell, 'text-right')}>
                   {formatDuration((stretch.start.getTime() - stone.start.getTime()) / 1000)}
                 </td>
-                <td className={cn(cell, 'text-right')}>{formatDuration(stretch.movingTime)}</td>
+                <td className={cn(cell, 'text-right')}>
+                  {stretch.movingTime === null ? '–' : formatDuration(stretch.movingTime)}
+                </td>
                 <td className={cn(cell, 'text-right')}>
                   {stretch.distance === null ? '–' : formatDistance(stretch.distance, i18n.locale, bare)}
                 </td>

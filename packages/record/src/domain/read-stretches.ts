@@ -1,6 +1,7 @@
 // The watch's run/walk detection, read from its split records. FIT words stay in this file.
 import type { SplitMesg, SplitSummaryMesg } from '@garmin/fitsdk';
-import { type Sport, sportGroupOf } from '@varda/shared';
+import type { Sport } from '@varda/shared';
+import { isRunning } from './sports.ts';
 import type { Stretch, Stretches, StretchKind, StretchTotal } from './stone.ts';
 
 // Only the run/walk detection split types are stretches; Garmin's interval, climb, ski… types are not.
@@ -17,7 +18,7 @@ export function readStretches(
   }: { splitMesgs?: SplitMesg[]; splitSummaryMesgs?: SplitSummaryMesg[] },
   dateOf: (value: unknown) => Date,
 ): Stretches | null {
-  if (sportGroupOf(sport) !== 'running') return null;
+  if (!isRunning(sport)) return null;
   const inOrder = splits
     .flatMap((split): Stretch[] => {
       const kind = kindOf(split.splitType);
@@ -26,7 +27,7 @@ export function readStretches(
         {
           kind,
           start: dateOf(split.startTime),
-          movingTime: split.totalTimerTime ?? 0,
+          movingTime: split.totalTimerTime ?? null,
           distance: split.totalDistance ?? null,
         },
       ];
@@ -37,7 +38,7 @@ export function readStretches(
   const totalOf = (kind: StretchKind): StretchTotal | null => {
     const summary = summaries.find((each) => kindOf(each.splitType) === kind);
     if (summary === undefined) return null;
-    return { movingTime: summary.totalTimerTime ?? 0, distance: summary.totalDistance ?? null };
+    return { movingTime: summary.totalTimerTime ?? null, distance: summary.totalDistance ?? null };
   };
   return {
     inOrder,

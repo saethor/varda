@@ -78,7 +78,7 @@ export function StoneSplits({ stone }: { stone: StoneDetail }) {
               <tr key={i} className="border-t">
                 <th scope="row" className={cn(cell, 'text-left font-normal')}>
                   {/* A whole kilometre by its number; the remainder by how far it went, in km. */}
-                  {split.distance === 1000 ? i + 1 : formatDistance(split.distance, i18n.locale)}
+                  {split.kind === 'kilometre' ? i + 1 : formatDistance(split.distance, i18n.locale)}
                 </th>
                 <td className={value}>{formatDuration(split.movingTime)}</td>
                 {measured !== null && <td className={value}>{paces[i]?.value ?? '–'}</td>}

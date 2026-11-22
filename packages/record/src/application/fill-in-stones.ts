@@ -1,5 +1,5 @@
 import { readWatchFile } from '../domain/read-watch-file.ts';
-import type { Reading, StoneId } from '../domain/stone.ts';
+import { type Reading, readingOf, type StoneId } from '../domain/stone.ts';
 import type { RecordOwnAdapters } from './record-adapters.ts';
 
 /** Why a stone could not be filled in. */
@@ -34,8 +34,7 @@ async function fillIn(adapters: RecordOwnAdapters, stoneId: StoneId): Promise<No
     const recording = await adapters.recordings.get(stoneId);
     if (recording === null) return 'no-recording';
     // What places the stone is kept as stored; all the rest is what the reader reads now.
-    const { sessionKey, start, localOffset, localDate, ...read } = readWatchFile(recording);
-    reading = read;
+    reading = readingOf(readWatchFile(recording));
   } catch {
     return 'unreadable';
   }

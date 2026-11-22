@@ -137,11 +137,14 @@ export type WatchFileLap = {
   form?: WatchFileForm;
 };
 
-/** A split record: its FIT split type, seconds from the session's start, seconds of timer, metres. */
+/**
+ * A split record: its FIT split type, seconds from the session's start, seconds of timer (`null`: the
+ * watch wrote none), metres.
+ */
 export type WatchFileSplit = {
   type: 'rwdRun' | 'rwdWalk' | 'rwdStand' | 'intervalActive' | 'intervalRest';
   start: number;
-  time: number;
+  time: number | null;
   distance: number;
 };
 
@@ -345,9 +348,8 @@ export function watchFile({
       // The encoder takes the type's name, as the decoder gives it back.
       splitType: split.type as unknown as number,
       startTime: at(split.start),
-      endTime: at(split.start + split.time),
-      totalTimerTime: split.time,
-      totalElapsedTime: split.time,
+      endTime: at(split.start + (split.time ?? 0)),
+      ...(split.time === null ? {} : { totalTimerTime: split.time, totalElapsedTime: split.time }),
       totalDistance: split.distance,
     });
   });
@@ -358,7 +360,7 @@ export function watchFile({
       messageIndex: i,
       splitType: type as unknown as number,
       numSplits: ofType.length,
-      totalTimerTime: sum(ofType.map((split) => split.time)),
+      ...timerTimeOf(ofType.flatMap((split) => (split.time === null ? [] : [split.time]))),
       totalDistance: sum(ofType.map((split) => split.distance)),
     });
   });
@@ -411,6 +413,9 @@ function formFields(form: WatchFileForm): Partial<SessionMesg & LapMesg> {
 }
 
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
+
+/** A split summary's timer time: none written when no split of its type had one. */
+const timerTimeOf = (times: number[]) => (times.length === 0 ? {} : { totalTimerTime: sum(times) });
 
 /**
  * The records the watch wrote: none; a record at the start and `gpsPoints` positions spread over

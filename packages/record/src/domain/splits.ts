@@ -1,5 +1,5 @@
 import type { Sport } from '@varda/shared';
-import type { Split, Streams } from './stone.ts';
+import type { Split, SplitKind, Streams } from './stone.ts';
 
 /** A whole kilometre, the length of every split but the last. */
 const kilometre = 1000;
@@ -20,8 +20,8 @@ const shortestRemainder = 1;
  * spec #74): each whole kilometre in order, then the remainder. None for a stone without distance,
  * and none for a swim, where kilometres of a pool mean nothing.
  *
- * Moving time counts only the intervals the timer ran (decision 2: an interval counts when the
- * point at its end has `timerRunning`). A kilometre ends between two points: the boundary is
+ * Moving time counts only the intervals the timer ran: an interval counts when the point at its
+ * end has `timerRunning` (see `Streams`). A kilometre ends between two points: the boundary is
  * placed by linear interpolation on distance, and the interval's time (and altitude) is shared
  * between the two splits in proportion, so a split's time doesn't depend on where the watch
  * happened to write a point. Within one second, that is as good as the recording is.
@@ -37,12 +37,12 @@ export function splitsOf(streams: Streams | null, sport: Sport): Split[] {
     for (const piece of piecesOf(interval, (splits.length + 1) * kilometre)) {
       add(current, piece);
       if (piece.endsKilometre) {
-        splits.push(finished(current, kilometre));
+        splits.push(finished(current, 'kilometre', kilometre));
         current = emptySplit();
       }
     }
   }
-  if (current.distance >= shortestRemainder) splits.push(finished(current, current.distance));
+  if (current.distance >= shortestRemainder) splits.push(finished(current, 'remainder', current.distance));
   return splits;
 }
 
@@ -140,7 +140,8 @@ type Sums = {
   heartRateTime: number;
   ascent: number;
   descent: number;
-  climbed: boolean;
+  /** Whether any piece had an altitude at both ends: without one, the split has no ascent or descent. */
+  altitudeRecorded: boolean;
 };
 
 const emptySplit = (): Sums => ({
@@ -150,7 +151,7 @@ const emptySplit = (): Sums => ({
   heartRateTime: 0,
   ascent: 0,
   descent: 0,
-  climbed: false,
+  altitudeRecorded: false,
 });
 
 function add(sums: Sums, piece: Piece): void {
@@ -164,16 +165,17 @@ function add(sums: Sums, piece: Piece): void {
     const climb = piece.altitudeTo - piece.altitudeFrom;
     sums.ascent += Math.max(climb, 0);
     sums.descent += Math.max(-climb, 0);
-    sums.climbed = true;
+    sums.altitudeRecorded = true;
   }
 }
 
-function finished(sums: Sums, distance: number): Split {
+function finished(sums: Sums, kind: SplitKind, distance: number): Split {
   return {
+    kind,
     distance,
     movingTime: sums.movingTime,
     averageHeartRate: sums.heartRateTime > 0 ? sums.heartbeats / sums.heartRateTime : null,
-    ascent: sums.climbed ? sums.ascent : null,
-    descent: sums.climbed ? sums.descent : null,
+    ascent: sums.altitudeRecorded ? sums.ascent : null,
+    descent: sums.altitudeRecorded ? sums.descent : null,
   };
 }

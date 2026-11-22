@@ -69,6 +69,17 @@ export type Measurements = {
 };
 
 /**
+ * The measurements a coach sees: never weight or height, there being no way yet to share them.
+ * None when that leaves none.
+ */
+export function measurementsForCoach(measurements: Measurements | null): Measurements | null {
+  if (measurements === null) return null;
+  const { restingHeartRate, maxHeartRate } = measurements;
+  if (restingHeartRate === null && maxHeartRate === null) return null;
+  return { weight: null, height: null, restingHeartRate, maxHeartRate };
+}
+
+/**
  * Every point the watch recorded over a stone (Record glossary: Stream), as recorded, never thinned
  * (ADR 0009): about one a second, or every few seconds from a watch that records smartly. Channels
  * are parallel arrays, one value per point; a channel the watch didn't record at all is `null`, and a
@@ -114,8 +125,11 @@ export type Streams = {
 /** One value per point of its streams, `null` at a point the watch missed; `null` when never recorded. */
 export type StreamChannel = (number | null)[] | null;
 
-/** A session read from a watch file, ready to be placed as a stone. */
-export type Session = {
+/**
+ * What places a stone (Record glossary: Placing a stone): the session it came from and when it was.
+ * Filling in a stone never changes it.
+ */
+export type Placement = {
   sessionKey: SessionKey;
   start: Date;
   /**
@@ -125,6 +139,10 @@ export type Session = {
   localOffset: number;
   /** The local date where the session started. */
   localDate: LocalDate;
+};
+
+/** A session read from a watch file, ready to be placed as a stone. */
+export type Session = Placement & {
   sport: Sport;
   /** Metres, or none when the watch recorded none (never 0). */
   distance: number | null;
@@ -194,11 +212,22 @@ export type Figures = {
 };
 
 /**
- * What a stone holds as read from its recording, apart from what places it: the session it came
- * from and when it was (`sessionKey`, `start`, `localOffset`, `localDate`). Re-reading a recording
- * (the backfill, #82) replaces exactly this, so every field a later reader learns is part of it.
+ * What a stone holds as read from its recording (Record glossary: Reading), apart from its
+ * `Placement`. Filling in a stone replaces exactly this, so every field a later reader learns is
+ * part of it.
  */
-export type Reading = Omit<Session, 'sessionKey' | 'start' | 'localOffset' | 'localDate'>;
+export type Reading = Omit<Session, keyof Placement>;
+
+/** All a session holds but what places it. */
+export function readingOf({
+  sessionKey: _,
+  start: _start,
+  localOffset: _offset,
+  localDate: _date,
+  ...reading
+}: Session): Reading {
+  return reading;
+}
 
 /** A training session the athlete actually did (Record glossary). */
 export type Stone = Session & {
@@ -215,14 +244,14 @@ export type StretchKind = 'running' | 'walking' | 'standing';
 export type Stretch = {
   kind: StretchKind;
   start: Date;
-  /** Seconds the timer ran. */
-  movingTime: number;
+  /** Seconds the timer ran, or none when the watch recorded none (never 0). */
+  movingTime: number | null;
   /** Metres, or none when the watch recorded none. Standing still is 0. */
   distance: number | null;
 };
 
-/** All of a run's stretches of one kind, as the watch summed them. */
-export type StretchTotal = { movingTime: number; distance: number | null };
+/** All of a run's stretches of one kind, as the watch summed them; each none when it recorded none. */
+export type StretchTotal = { movingTime: number | null; distance: number | null };
 
 /** A run's stretches, and the watch's own totals for each kind (none for a kind it didn't detect). */
 export type Stretches = {
@@ -231,8 +260,15 @@ export type Stretches = {
   totals: Record<StretchKind, StretchTotal | null>;
 };
 
-/** A stone as a list holds it: everything but its streams, which only opening it reads. */
-export type ListedStone = Omit<Stone, 'streams'>;
+/**
+ * A stone as a list holds it: what a list of stones shows, and no more, so a week of long runs stays
+ * a light read. Its streams, splits, stretches and measurements only opening it reads; Garmin's
+ * reference data nothing reads.
+ */
+export type ListedStone = Omit<Stone, ListedWithout>;
+
+/** What a listed stone leaves out. */
+export type ListedWithout = 'streams' | 'splits' | 'stretches' | 'measurements' | 'garminReference';
 
 /**
  * A whole kilometre of a stone, or the remainder after the last one (Record glossary: Split), worked
@@ -245,9 +281,14 @@ export type ListedStone = Omit<Stone, 'streams'>;
  * kilometres themselves stay where the watch measured them.
  */
 export type Split = {
+  /** Whether it is a whole kilometre, or the remainder after the last; never told by its distance, which a correction scales. */
+  kind: SplitKind;
   distance: number;
   movingTime: number;
   averageHeartRate: number | null;
   ascent: number | null;
   descent: number | null;
 };
+
+/** What a split is: a whole kilometre, or the remainder after the last one. */
+export type SplitKind = 'kilometre' | 'remainder';

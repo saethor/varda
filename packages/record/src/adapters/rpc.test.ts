@@ -755,6 +755,19 @@ describe('stretches', () => {
     });
   });
 
+  it("leaves out a stretch's moving time when the watch recorded none, never 0", async () => {
+    const client = clientFor({ person: guðrún });
+    const untimed: WatchFileSplit[] = [{ type: 'rwdRun', start: 0, time: null, distance: 1400 }];
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ splits: untimed })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    expect(stone.stretches).toEqual({
+      inOrder: [{ kind: 'running', start: new Date('2026-11-02T07:30:00Z'), movingTime: null, distance: 1400 }],
+      totals: { running: { movingTime: null, distance: 1400 }, walking: null, standing: null },
+    });
+  });
+
   it('keeps no stretches for a ride, even with run/walk splits in its file', async () => {
     const client = clientFor({ person: guðrún });
     const { stoneId } = await client.stones.place({
@@ -803,11 +816,11 @@ describe('splits', () => {
   it('splits a 3.4 km run into three whole kilometres and the 0.4 km left, each timed without its pauses', async () => {
     const { splits } = await opened(watchFile({ perSecond: true, laps: threePointFour }));
 
-    expect(splits.map(({ distance, movingTime }) => ({ distance, movingTime }))).toEqual([
-      { distance: 1000, movingTime: 300 },
-      { distance: 1000, movingTime: 300 },
-      { distance: 1000, movingTime: 300 },
-      { distance: expect.closeTo(400, 2), movingTime: 120 },
+    expect(splits.map(({ kind, distance, movingTime }) => ({ kind, distance, movingTime }))).toEqual([
+      { kind: 'kilometre', distance: 1000, movingTime: 300 },
+      { kind: 'kilometre', distance: 1000, movingTime: 300 },
+      { kind: 'kilometre', distance: 1000, movingTime: 300 },
+      { kind: 'remainder', distance: expect.closeTo(400, 2), movingTime: 120 },
     ]);
   });
 

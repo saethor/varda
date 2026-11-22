@@ -1,7 +1,7 @@
-import { and, between, desc, eq } from 'drizzle-orm';
+import { and, between, desc, eq, getTableColumns } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Stones } from '../../application/ports.ts';
-import type { Figures, ListedStone, Reading, Stone } from '../../domain/stone.ts';
+import type { Figures, ListedStone, ListedWithout, Reading, Stone } from '../../domain/stone.ts';
 import { stoneStreams, stones } from './schema.ts';
 
 type Row = typeof stones.$inferSelect;
@@ -26,15 +26,36 @@ const noFigures: Figures = {
 /** A stone row with its streams, which only `byId` and `withSessionKey` read. */
 const withStreams = { stone: stones, streams: stoneStreams.streams };
 
+/** The columns a listed stone is read from: none of what it leaves out, so a list stays a light read. */
+const {
+  splits: _splits,
+  stretches: _stretches,
+  measurements: _measurements,
+  garminReference: _garminReference,
+  ...listedColumns
+} = getTableColumns(stones);
+
+type ListedRow = Omit<Row, Exclude<ListedWithout, 'streams'>>;
+
 function toOpenedStone({ stone, streams }: { stone: Row; streams: Stone['streams'] }): Stone {
-  return { ...toStone(stone), streams };
+  const { splits, stretches, measurements, garminReference, ...listed } = stone;
+  return {
+    ...toListedStone(listed),
+    splits: splits ?? [],
+    stretches: stretches && {
+      ...stretches,
+      inOrder: stretches.inOrder.map((stretch) => ({ ...stretch, start: new Date(stretch.start) })),
+    },
+    measurements,
+    garminReference,
+    streams,
+  };
 }
 
-function toStone({ laps, sport, figures, splits, ...row }: Row): ListedStone {
+function toListedStone({ laps, sport, figures, ...row }: ListedRow): ListedStone {
   return {
     ...row,
     figures: figures ?? noFigures,
-    splits: splits ?? [],
     // Only Record writes this column, and only with a Sport.
     sport: sport as Stone['sport'],
     laps: laps.map(({ figures: lapFigures, intensity, workoutStep, form, ...lap }) => ({
@@ -45,10 +66,6 @@ function toStone({ laps, sport, figures, splits, ...row }: Row): ListedStone {
       workoutStep: workoutStep ?? null,
       form: form ?? null,
     })),
-    stretches: row.stretches && {
-      ...row.stretches,
-      inOrder: row.stretches.inOrder.map((stretch) => ({ ...stretch, start: new Date(stretch.start) })),
-    },
   };
 }
 
@@ -105,11 +122,11 @@ export function createPostgresStones(db: NodePgDatabase): Stones {
     },
     async ofAthlete(athlete, { from, to }) {
       const rows = await db
-        .select()
+        .select(listedColumns)
         .from(stones)
         .where(and(eq(stones.athlete, athlete), between(stones.localDate, from, to)))
         .orderBy(desc(stones.localDate), desc(stones.start));
-      return rows.map(toStone);
+      return rows.map(toListedStone);
     },
     withSessionKey,
     async remove(id) {

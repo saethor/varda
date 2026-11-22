@@ -1,7 +1,8 @@
 // A run's running form, read from the session or lap message that holds its averages. FIT words
 // (stance time) stay in this file.
 import type { LapMesg, SessionMesg } from '@garmin/fitsdk';
-import { type Sport, sportGroupOf } from '@varda/shared';
+import type { Sport } from '@varda/shared';
+import { isRunning } from './sports.ts';
 import type { Form } from './stone.ts';
 
 type FormMesg = Pick<
@@ -17,19 +18,15 @@ type FormMesg = Pick<
 export function readForm(mesg: FormMesg, sport: Sport): Form | null {
   if (!isRunning(sport)) return null;
   const form = {
-    stepLength: thousandths(mesg.avgStepLength),
-    verticalOscillation: thousandths(mesg.avgVerticalOscillation),
+    stepLength: fromThousandths(positiveOrNull(mesg.avgStepLength)),
+    verticalOscillation: fromThousandths(positiveOrNull(mesg.avgVerticalOscillation)),
     verticalRatio: positiveOrNull(mesg.avgVerticalRatio),
-    groundContactTime: thousandths(mesg.avgStanceTime),
+    groundContactTime: fromThousandths(positiveOrNull(mesg.avgStanceTime)),
   };
   return Object.values(form).some((value) => value !== null) ? form : null;
 }
 
-/** Only running has running form; other sports' files may hold form fields, which are never read. */
-export const isRunning = (sport: Sport) => sportGroupOf(sport) === 'running';
-
 const positiveOrNull = (value: unknown) => (typeof value === 'number' && value > 0 ? value : null);
-const thousandths = (value: unknown) => {
-  const positive = positiveOrNull(value);
-  return positive === null ? null : positive / 1000;
-};
+
+/** A value the watch writes in thousandths (mm, ms) in SI units (m, s), or none when it wrote none. */
+export const fromThousandths = (value: unknown): number | null => (typeof value === 'number' ? value / 1000 : null);

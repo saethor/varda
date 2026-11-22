@@ -55,6 +55,27 @@ it('gives outdoor stones a trace and those indoors or in a pool none', async () 
   expect(await traceOf('strength')).toBeNull();
 });
 
+it('records the stones every second, with pauses, keeping only the channels each sport records', async () => {
+  const { clientFor, stonesOf } = devApp();
+
+  await seedStones({ clientFor, athletes: [anna.id], today });
+  const listed = await stonesOf(anna.id);
+  const streamsOf = async (sport: string) => {
+    const stone = listed.find((s) => s.sport.sport === sport);
+    return stone && (await clientFor(anna.id).record.stones.get({ stoneId: stone.id })).streams;
+  };
+
+  const run = await streamsOf('road-running');
+  expect(run?.timerRunning.includes(false)).toBe(true);
+  expect(run?.offset.slice(0, 3)).toEqual([0, 1, 2]);
+  for (const channel of ['distance', 'heartRate', 'altitude', 'power', 'cadence', 'position', 'stepLength'] as const) {
+    expect(run?.[channel]).not.toBeNull();
+  }
+  expect(await streamsOf('treadmill-running')).toMatchObject({ position: null, altitude: null });
+  expect(await streamsOf('cycling')).toMatchObject({ power: null, stepLength: null });
+  expect(await streamsOf('strength')).toMatchObject({ distance: null, heartRate: expect.any(Array) });
+});
+
 it.each([
   ['the same day', today],
   ['a later week', new Date('2026-12-02T09:00:00Z')],

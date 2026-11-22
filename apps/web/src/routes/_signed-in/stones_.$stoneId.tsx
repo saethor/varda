@@ -6,6 +6,7 @@ import { type StoneDetail, stoneQuery, weekAroundQuery } from '../../lib/stones.
 import { DeleteStone } from '../../stones/delete-stone.tsx';
 import { todayHere } from '../../stones/feed-window.ts';
 import { FromTheWatch, StoneEffort } from '../../stones/from-the-watch.tsx';
+import { StoneCharts } from '../../stones/stone-charts.tsx';
 import { StoneFigures } from '../../stones/stone-figures.tsx';
 import { StoneLaps } from '../../stones/stone-laps.tsx';
 import { StoneMeasurements } from '../../stones/stone-measurements.tsx';
@@ -89,7 +90,7 @@ function StoneScreen() {
 
       {/* What the stone shows (spec #74), one section per ticket, each its own component that renders nothing without data. */}
       <StoneFigures stone={stone} />
-      {/* Charts (#79) */}
+      <StoneCharts stone={stone} />
       {/* Splits (#83) */}
       <StoneLaps stone={stone} />
       {/* Stretches (#80) */}

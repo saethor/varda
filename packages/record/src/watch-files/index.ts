@@ -4,6 +4,7 @@ import {
   type ActivityMesg,
   type Encodable,
   Encoder,
+  type EventMesg,
   type FileIdMesg,
   type LapMesg,
   type Mesg,
@@ -52,6 +53,17 @@ export type WatchFileOptions = {
   localOffset?: number | null;
   /** Leave out when the session started, as a file damaged in a way its CRC doesn't catch. */
   missingStartTime?: true;
+  /**
+   * Record a point every second the timer runs, as a watch does, instead of a few GPS points: each
+   * lap stops halfway for as long as its elapsed time exceeds its timer time, with the watch's timer
+   * events around the pause. Every channel a running watch with a power meter records is written
+   * (positions only with `gps`, distance 0 throughout with `distance: false`), less those `without`.
+   */
+  perSecond?: boolean;
+  /** With `perSecond`, the channels the watch didn't record. */
+  without?: WatchFileChannel[];
+  /** Write no records at all, as a session entered on the watch by hand. */
+  noRecords?: true;
   /** The athlete's rating of the session on the watch, 0–100. None by default. */
   rpe?: number;
   /** The Garmin product code of the watch. Default 3992, a Forerunner 255. */
@@ -93,6 +105,9 @@ export type WatchFileFigures = {
   calories?: number;
 };
 
+/** The channels `perSecond` writes that a watch may lack (running form is all or nothing). */
+export type WatchFileChannel = 'heartRate' | 'altitude' | 'power' | 'cadence' | 'temperature' | 'form';
+
 /** A lap: metres, and seconds of timer and of elapsed time. */
 export type WatchFileLap = { distance: number; timerTime: number; elapsedTime: number };
 
@@ -109,6 +124,7 @@ const fileIdMesg = 0;
 const sessionMesg = 18;
 const lapMesg = 19;
 const recordMesg = 20;
+const eventMesg = 21;
 const activityMesg = 34;
 const splitMesg = 312;
 const splitSummaryMesg = 313;
@@ -135,7 +151,7 @@ const route: [number, number][] = [
  * `count` positions along the route, from its start to its finish. Those in between zigzag
  * about 30 m off it, so simplifying the trace can't drop them as being on a straight line.
  */
-function positionsAlongRoute(count: number): [number, number][] {
+function positionsAlongRoute(count: number, zigzag = true): [number, number][] {
   if (count === route.length) return route;
   const legs = route.length - 1;
   return Array.from({ length: count }, (_, i) => {
@@ -144,8 +160,8 @@ function positionsAlongRoute(count: number): [number, number][] {
     const t = along - leg;
     const [fromLat, fromLon] = route[leg] as [number, number];
     const [toLat, toLon] = route[leg + 1] as [number, number];
-    const zigzag = i === 0 || i === count - 1 ? 0 : (i % 2 === 0 ? 1 : -1) * 0.0003;
-    return [fromLat + (toLat - fromLat) * t + zigzag, fromLon + (toLon - fromLon) * t];
+    const off = !zigzag || i === 0 || i === count - 1 ? 0 : (i % 2 === 0 ? 1 : -1) * 0.0003;
+    return [fromLat + (toLat - fromLat) * t + off, fromLon + (toLon - fromLon) * t];
   });
 }
 
@@ -168,6 +184,9 @@ export function watchFile({
   distance,
   localOffset = 0,
   missingStartTime,
+  perSecond = false,
+  without = [],
+  noRecords,
   rpe,
   product = forerunner255,
   garminReference,
@@ -198,17 +217,14 @@ export function watchFile({
   if (Object.keys(profile).length > 0) write<UserProfileMesg>({ mesgNum: profileMesg, ...profile });
   if (maxHeartRate !== undefined) write<ZonesTargetMesg>({ mesgNum: zonesTargetMesg, maxHeartRate });
 
-  // Before the watch finds GPS, its records have no position.
-  write<RecordMesg>({ mesgNum: recordMesg, timestamp: start, distance: 0 });
-
-  const positions = gps ? positionsAlongRoute(gpsPoints) : [];
-  positions.forEach(([lat, lon], i) => {
-    write<RecordMesg>({
-      mesgNum: recordMesg,
-      timestamp: at((elapsedTime * i) / (positions.length - 1)),
-      positionLat: semicircles(lat),
-      positionLong: semicircles(lon),
-    });
+  writeRecords(write, at, {
+    records: noRecords ? 'none' : perSecond ? 'per-second' : 'gps',
+    laps: laps.length > 0 ? laps : roadRunLaps,
+    elapsedTime,
+    sport,
+    distance: distance !== false,
+    gpsPoints: gps ? gpsPoints : 0,
+    without,
   });
 
   let lapStart = 0;
@@ -345,3 +361,145 @@ function sessionFigures(figures: WatchFileFigures): Partial<SessionMesg> {
 }
 
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
+
+/**
+ * The records the watch wrote: none; a record at the start and `gpsPoints` positions spread over
+ * the session (no GPS with 0); or one every second the timer ran, with its timer events.
+ */
+function writeRecords(
+  write: <M extends Mesg>(mesg: Encodable<M>) => void,
+  at: (seconds: number) => Date,
+  {
+    records,
+    laps,
+    elapsedTime,
+    sport,
+    distance,
+    gpsPoints,
+    without,
+  }: {
+    records: 'none' | 'gps' | 'per-second';
+    laps: WatchFileLap[];
+    elapsedTime: number;
+    sport: SessionMesg['sport'];
+    distance: boolean;
+    gpsPoints: number;
+    without: WatchFileChannel[];
+  },
+): void {
+  if (records === 'none') return;
+  if (records === 'per-second') {
+    const timeline = perSecondTimeline(laps);
+    const positions = gpsPoints > 0 ? positionsAlongRoute(timeline.points.length, false) : [];
+    for (const { at: seconds, type } of timeline.timer) {
+      write<EventMesg>({ mesgNum: eventMesg, timestamp: at(seconds), event: 'timer', eventType: type });
+    }
+    timeline.points.forEach((point, i) => {
+      write<RecordMesg>({
+        mesgNum: recordMesg,
+        timestamp: at(point.at),
+        ...recordedAt(point, { sport, distance, position: positions[i], without }),
+      });
+    });
+    return;
+  }
+  // Before the watch finds GPS, its records have no position.
+  write<RecordMesg>({ mesgNum: recordMesg, timestamp: at(0), distance: 0 });
+  const positions = gpsPoints > 0 ? positionsAlongRoute(gpsPoints) : [];
+  positions.forEach(([lat, lon], i) => {
+    write<RecordMesg>({
+      mesgNum: recordMesg,
+      timestamp: at((elapsedTime * i) / (positions.length - 1)),
+      positionLat: semicircles(lat),
+      positionLong: semicircles(lon),
+    });
+  });
+}
+
+/** A point a per-second watch writes: seconds from the start, metres from the start, and whether it ends a pause. */
+type TimelinePoint = { at: number; metres: number; moving: number; restart: boolean };
+
+/**
+ * A record every second of each lap, stopping halfway through the lap for as long as its elapsed
+ * time exceeds its timer time. A watch writes a record when its timer stops and one when it starts
+ * again, at the same distance, and none in between.
+ */
+function perSecondTimeline(laps: WatchFileLap[]): {
+  points: TimelinePoint[];
+  timer: { at: number; type: 'start' | 'stop' | 'stopAll' }[];
+} {
+  const points: TimelinePoint[] = [];
+  const timer: { at: number; type: 'start' | 'stop' | 'stopAll' }[] = [{ at: 0, type: 'start' }];
+  const lapStart = { at: 0, metres: 0, moving: 0 };
+  for (const lap of laps) {
+    const pause = lap.elapsedTime - lap.timerTime;
+    const stopAt = lapStart.at + Math.floor(lap.timerTime / 2);
+    if (pause > 0) timer.push({ at: stopAt, type: 'stop' }, { at: stopAt + pause, type: 'start' });
+    points.push(...lapTimeline(lap, { ...lapStart, stopAt, pause, first: points.length === 0 }));
+    lapStart.at += lap.elapsedTime;
+    lapStart.metres += lap.distance;
+    lapStart.moving += lap.timerTime;
+  }
+  timer.push({ at: lapStart.at, type: 'stopAll' });
+  return { points, timer };
+}
+
+/** A lap's points: each second but those inside its pause, the first only for the session's first lap. */
+function lapTimeline(
+  lap: WatchFileLap,
+  {
+    at: start,
+    metres,
+    moving,
+    stopAt,
+    pause,
+    first,
+  }: { at: number; metres: number; moving: number; stopAt: number; pause: number; first: boolean },
+): TimelinePoint[] {
+  const points: TimelinePoint[] = [];
+  for (let at = first ? start : start + 1; at <= start + lap.elapsedTime; at++) {
+    if (at > stopAt && at < stopAt + pause) continue;
+    const inLap = at <= stopAt ? at - start : at - start - pause;
+    points.push({
+      at,
+      metres: metres + (lap.distance * inLap) / lap.timerTime,
+      moving: moving + inLap,
+      restart: pause > 0 && at === stopAt + pause,
+    });
+  }
+  return points;
+}
+
+/**
+ * What a watch records at a point: a steady runner whose heart rate drifts up over the session, on
+ * gently rolling ground, on a cool morning. Values are physical; the encoder scales them.
+ */
+function recordedAt(
+  { metres, moving, restart }: TimelinePoint,
+  {
+    sport,
+    distance,
+    position,
+    without,
+  }: {
+    sport: SessionMesg['sport'];
+    distance: boolean;
+    position: [number, number] | undefined;
+    without: WatchFileChannel[];
+  },
+): Omit<RecordMesg, 'timestamp'> {
+  const has = (channel: WatchFileChannel) => !without.includes(channel);
+  const onFoot = sport === 'running' || sport === 'walking' || sport === 'hiking';
+  const speed = restart ? 0 : distance ? 1000 / 300 : 0;
+  return {
+    distance: distance ? metres : 0,
+    ...(distance ? { enhancedSpeed: speed } : {}),
+    ...(position ? { positionLat: semicircles(position[0]), positionLong: semicircles(position[1]) } : {}),
+    ...(has('heartRate') ? { heartRate: Math.round(138 + moving / 40 + 3 * Math.sin(moving / 25)) } : {}),
+    ...(has('altitude') ? { enhancedAltitude: 20 + 8 * Math.sin(metres / 400) } : {}),
+    ...(has('power') ? { power: Math.round(255 + 12 * Math.sin(moving / 9)) } : {}),
+    ...(has('cadence') ? (onFoot ? { cadence: 85, fractionalCadence: 0.5 } : { cadence: 85 }) : {}),
+    ...(has('temperature') ? { temperature: 8 + Math.floor(moving / 600) } : {}),
+    ...(has('form') ? { stepLength: 1170, verticalOscillation: 85, verticalRatio: 7.3, stanceTime: 245 } : {}),
+  };
+}

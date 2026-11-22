@@ -20,7 +20,8 @@ export function createInMemoryStones(): Stones {
     async ofAthlete(athlete, { from, to }) {
       return [...byId.values()]
         .filter((stone) => stone.athlete === athlete && stone.localDate >= from && stone.localDate <= to)
-        .sort((a, b) => b.localDate.localeCompare(a.localDate) || b.start.getTime() - a.start.getTime());
+        .sort((a, b) => b.localDate.localeCompare(a.localDate) || b.start.getTime() - a.start.getTime())
+        .map(({ streams: _streams, ...listed }) => listed);
     },
     async withSessionKey(athlete, sessionKey) {
       return withSessionKey(athlete, sessionKey);

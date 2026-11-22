@@ -6,7 +6,7 @@ import { placeStone } from '../application/place-stone.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
 import { maxWatchFileBytes, recordContract } from '../contract.ts';
 import { SessionAlreadyPlaced, StoneNotFound, WatchFileTurnedAway } from '../domain/errors.ts';
-import type { Measurements, PersonId, Stone } from '../domain/stone.ts';
+import type { ListedStone, Measurements, PersonId, Stone } from '../domain/stone.ts';
 
 const os = implement(recordContract).$context<SharedContext>();
 
@@ -37,7 +37,7 @@ function toListedStone({
   effort,
   device,
   figures,
-}: Stone) {
+}: ListedStone) {
   return {
     id,
     localDate,
@@ -62,6 +62,7 @@ function toStoneDetail(stone: Stone, viewer: PersonId) {
     ...toListedStone(stone),
     stretches: stone.stretches,
     measurements: stone.athlete === viewer ? stone.measurements : toCoach(stone.measurements),
+    streams: stone.streams,
   };
 }
 

@@ -50,6 +50,13 @@
       "when": 1795374052038,
       "tag": "0006_add_stone_measurements",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795374206730,
+      "tag": "0007_add_stone_streams",
+      "breakpoints": true
     }
   ]
 }

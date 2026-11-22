@@ -242,6 +242,107 @@ describe('the trace', () => {
   });
 });
 
+describe('the streams', () => {
+  const opened = async (file: Uint8Array) => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(file) });
+    return await client.stones.get({ stoneId });
+  };
+
+  it('keeps every point the watch recorded, each second, with its offset from the start and its pauses marked', async () => {
+    // 3 laps of 1 km in 300 s of timer and 310 s elapsed: each lap stops for 10 s halfway.
+    const { streams } = await opened(watchFile({ perSecond: true }));
+
+    // 931 seconds from start to finish, less the 9 seconds inside each of the 3 pauses.
+    expect(streams?.offset).toHaveLength(904);
+    expect(streams?.offset.slice(0, 3)).toEqual([0, 1, 2]);
+    expect(streams?.offset.at(-1)).toBe(930);
+    // The point at each restart ends an interval the timer didn't run; every other point is timer-on.
+    const paused = streams?.offset.filter((_, i) => streams.timerRunning[i] === false);
+    expect(paused).toEqual([160, 470, 780]);
+    expect(streams?.timerRunning).toHaveLength(904);
+  });
+
+  it('keeps each channel the watch recorded, in SI units, as recorded', async () => {
+    const { streams } = await opened(watchFile({ perSecond: true }));
+    const at = (offset: number) => streams?.offset.indexOf(offset) ?? -1;
+
+    // Halfway through the first lap: 500 m in 150 s; still there when the timer starts again.
+    expect(streams?.distance?.[at(150)]).toBeCloseTo(500);
+    expect(streams?.distance?.[at(160)]).toBeCloseTo(500);
+    expect(streams?.distance?.at(-1)).toBeCloseTo(3000);
+    expect(streams?.speed?.[at(100)]).toBeCloseTo(3.333, 2);
+    expect(streams?.speed?.[at(160)]).toBe(0);
+    // A running watch writes cadence per leg (85.5 strides/min): the stone has it in steps per minute.
+    expect(streams?.cadence?.[at(100)]).toBe(171);
+    expect(streams?.stepLength?.[at(100)]).toBeCloseTo(1.17);
+    expect(streams?.verticalOscillation?.[at(100)]).toBeCloseTo(0.085);
+    expect(streams?.verticalRatio?.[at(100)]).toBeCloseTo(7.3);
+    expect(streams?.groundContactTime?.[at(100)]).toBeCloseTo(0.245);
+    expect(streams?.position?.[0]?.[0]).toBeCloseTo(64.146612, 5);
+    expect(streams?.position?.at(-1)?.[1]).toBeCloseTo(-21.944671, 5);
+    for (const channel of ['heartRate', 'altitude', 'power', 'temperature'] as const) {
+      expect(streams?.[channel]).toHaveLength(904);
+      expect(streams?.[channel]?.every((value) => typeof value === 'number')).toBe(true);
+    }
+  });
+
+  it('leaves out the channels the watch did not record', async () => {
+    const treadmill = await opened(
+      watchFile({ subSport: 'treadmill', perSecond: true, gps: false, without: ['altitude', 'power'] }),
+    );
+    const strength = await opened(
+      watchFile({
+        sport: 'training',
+        subSport: 'strengthTraining',
+        laps: [],
+        distance: false,
+        gps: false,
+        perSecond: true,
+        without: ['altitude', 'power', 'cadence', 'temperature', 'form'],
+      }),
+    );
+
+    expect(treadmill.streams).toMatchObject({ position: null, altitude: null, power: null });
+    expect(treadmill.streams?.distance).toHaveLength(904);
+    // A watch writes 0 m all session long when it measures no distance: there is no distance at all.
+    expect(strength.streams).toMatchObject({
+      distance: null,
+      speed: null,
+      altitude: null,
+      power: null,
+      cadence: null,
+      temperature: null,
+      position: null,
+      stepLength: null,
+      verticalOscillation: null,
+      verticalRatio: null,
+      groundContactTime: null,
+    });
+    expect(strength.streams?.heartRate?.length).toBe(strength.streams?.offset.length);
+  });
+
+  it('keeps cadence in revolutions per minute, as recorded, for a ride', async () => {
+    const { streams } = await opened(watchFile({ sport: 'cycling', perSecond: true, without: ['form'] }));
+
+    expect(streams?.cadence?.[100]).toBe(85);
+  });
+
+  it('has none when the watch recorded no points', async () => {
+    expect((await opened(watchFile({ gps: false, noRecords: true }))).streams).toBeNull();
+  });
+
+  it('is never listed', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ perSecond: true })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed).toBeDefined();
+    expect(listed).not.toHaveProperty('streams');
+  });
+});
+
 describe('listing stones', () => {
   const runOn = (day: string, time = '07:30') => fitFile(watchFile({ start: new Date(`${day}T${time}:00Z`) }));
 

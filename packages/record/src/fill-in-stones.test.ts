@@ -61,6 +61,21 @@ describe('filling in stones placed before the richer stone screen', () => {
     expect(stored?.sessionKey).toBe(sessionKey);
   });
 
+  it('fills in the per-second streams of a stone placed without them', async () => {
+    const adapters = createRecordFakes();
+    const client = createRouterClient(createRecordRouter(adapters), { context: { person: guðrún } });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ noRecords: true })) });
+    await adapters.recordings.put(stoneId, watchFile({ perSecond: true }));
+    const before = await client.stones.get({ stoneId });
+
+    await fillInStones(adapters);
+    const after = await client.stones.get({ stoneId });
+
+    expect(before.streams).toBeNull();
+    expect(after.streams?.offset.length).toBeGreaterThan(0);
+    expect(after.streams?.heartRate?.some((beat) => beat !== null)).toBe(true);
+  });
+
   it('changes nothing more when run again', async () => {
     const { adapters, stoneId } = await placeOldStone();
 

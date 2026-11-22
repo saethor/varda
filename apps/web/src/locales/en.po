@@ -66,6 +66,14 @@ msgstr "Add a passkey?"
 msgid "Added {added}"
 msgstr "Added {added}"
 
+#: src/stones/stone-charts.tsx:117
+msgid "Along the distance"
+msgstr "Along the distance"
+
+#: src/stones/stone-charts.tsx:117
+msgid "Along the moving time"
+msgstr "Along the moving time"
+
 #: src/stones/placing-refusal.tsx:22
 msgid "Already placed"
 msgstr "Already placed"
@@ -98,6 +106,10 @@ msgstr "Average power"
 msgid "Average temperature"
 msgstr "Average temperature"
 
+#: src/stones/stone-charts.tsx:134
+msgid "Cadence"
+msgstr "Cadence"
+
 #: src/stones/stones-calendar.tsx:50
 msgid "Calendar"
 msgstr "Calendar"
@@ -110,6 +122,10 @@ msgstr "Calories"
 #: src/stones/delete-stone.tsx:46
 msgid "Cancel"
 msgstr "Cancel"
+
+#: src/stones/stone-charts.tsx:39
+msgid "Charts"
+msgstr "Charts"
 
 #: src/stones/placing-panel.tsx:82
 msgid "Choose a watch file"
@@ -160,6 +176,10 @@ msgstr "Effort"
 msgid "Elapsed time"
 msgstr "Elapsed time"
 
+#: src/stones/stone-charts.tsx:130
+msgid "Elevation"
+msgstr "Elevation"
+
 #: src/routes/sign-in.tsx:97
 #: src/routes/sign-up.tsx:75
 msgid "Email"
@@ -189,6 +209,10 @@ msgstr "From your {model} · {fileName}"
 #: src/stones/from-the-watch.tsx:22
 msgid "From your watch · {fileName}"
 msgstr "From your watch · {fileName}"
+
+#: src/stones/stone-charts.tsx:124
+msgid "Heart rate"
+msgstr "Heart rate"
 
 #: src/stones/stone-measurements.tsx:20
 msgid "Height"
@@ -320,6 +344,7 @@ msgstr "Other"
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
+#: src/stones/stone-charts.tsx:126
 #: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -352,6 +377,10 @@ msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th
 #: src/stones/stone-plate.tsx:124
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
+
+#: src/stones/stone-charts.tsx:132
+msgid "Power"
+msgstr "Power"
 
 #: src/stones/stone-week-view.tsx:109
 msgid "Previous"
@@ -435,6 +464,7 @@ msgstr "Something went wrong, try again."
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
+#: src/stones/stone-charts.tsx:128
 #: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -457,12 +487,12 @@ msgstr "started {time}"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Stone deleted. You can place it again from {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:59
+#: src/routes/_signed-in/stones_.$stoneId.tsx:60
 msgid "Stone not found"
 msgstr "Stone not found"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:49
+#: src/routes/_signed-in/stones_.$stoneId.tsx:50
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -513,7 +543,7 @@ msgstr "The watch recorded no laps: this stone keeps its totals only."
 msgid "The week of {0}"
 msgstr "The week of {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:62
+#: src/routes/_signed-in/stones_.$stoneId.tsx:63
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "There's no such stone. It may have been deleted, or the link may be wrong."
 

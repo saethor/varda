@@ -10,7 +10,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import type { Figures, Measurements } from '../../domain/stone.ts';
+import type { Figures, Measurements, Streams } from '../../domain/stone.ts';
 
 // The Record context's own Postgres schema (ADR 0005). Change it, then run
 // `pnpm --filter @varda/record db:generate` and commit the new migration.
@@ -79,3 +79,15 @@ export const stones = record.table(
     index('stones_athlete_local_date_index').on(table.athlete, table.localDate),
   ],
 );
+
+/**
+ * A stone's streams, one row per stone, apart from `stones` so listing stones never reads them, and
+ * removed with their stone. All channels in one value keep a stone's streams a single read.
+ */
+export const stoneStreams = record.table('stone_streams', {
+  stoneId: uuid('stone_id')
+    .primaryKey()
+    .references(() => stones.id, { onDelete: 'cascade' }),
+  // As recorded (ADR 0002): parallel arrays, one value per point; see `Streams`.
+  streams: jsonb('streams').$type<Streams>().notNull(),
+});

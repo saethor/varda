@@ -14,6 +14,7 @@ import {
 import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
 import { readFigures } from './read-figures.ts';
+import { streamsOf } from './read-streams.ts';
 import { readStretches } from './read-stretches.ts';
 import type { Device, GarminReference, Lap, LapTrigger, Measurements, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
@@ -55,6 +56,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
     figures: readFigures(session, sportOf(session)),
     stretches: readStretches(sportOf(session), messages, dateOf),
     measurements: measurementsOf(messages.userProfileMesgs?.[0], messages.zonesTargetMesgs?.[0]),
+    streams: streamsOf(messages, { start, sport: sportOf(session), session }),
   };
 }
 

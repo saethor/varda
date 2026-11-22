@@ -36,7 +36,13 @@ function toStone({ laps, sport, figures, ...row }: Row): ListedStone {
     figures: figures ?? noFigures,
     // Only Record writes this column, and only with a Sport.
     sport: sport as Stone['sport'],
-    laps: laps.map((lap) => ({ ...lap, start: new Date(lap.start) })),
+    laps: laps.map(({ figures: lapFigures, intensity, workoutStep, ...lap }) => ({
+      ...lap,
+      start: new Date(lap.start),
+      figures: lapFigures ?? noFigures,
+      intensity: intensity ?? null,
+      workoutStep: workoutStep ?? null,
+    })),
     stretches: row.stretches && {
       ...row.stretches,
       inOrder: row.stretches.inOrder.map((stretch) => ({ ...stretch, start: new Date(stretch.start) })),

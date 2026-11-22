@@ -34,7 +34,7 @@ export function StoneFigures({ stone }: { stone: Stone }) {
   );
 }
 
-function FigureLabel({ figure }: { figure: FigureKey }): ReactNode {
+export function FigureLabel({ figure }: { figure: FigureKey }): ReactNode {
   switch (figure) {
     case 'averageHeartRate':
       return <Trans>Average heart rate</Trans>;

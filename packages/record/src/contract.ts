@@ -3,15 +3,6 @@ import { z } from 'zod';
 
 const lapTriggers = ['manual', 'distance', 'time', 'other'] as const;
 
-/** A recorded section of a stone. Times in seconds, distance in metres or none. */
-const LapSchema = z.object({
-  start: z.date(),
-  elapsedTime: z.number(),
-  movingTime: z.number(),
-  distance: z.number().nullable(),
-  trigger: z.enum(lapTriggers),
-});
-
 /**
  * The watch's own figures, as recorded; each null when it recorded none (never 0). Heart rate in
  * bpm, ascent and descent in metres, power in W, temperature in °C, calories in kcal. Cadence as
@@ -31,6 +22,21 @@ const FiguresSchema = z.object({
   averageTemperature: z.number().nullable(),
   maxTemperature: z.number().nullable(),
   calories: z.number().nullable(),
+});
+
+const lapIntensities = ['warm-up', 'active', 'recovery', 'rest', 'cool-down'] as const;
+
+/** A recorded section of a stone. Times in seconds, distance in metres or none. */
+const LapSchema = z.object({
+  start: z.date(),
+  elapsedTime: z.number(),
+  movingTime: z.number(),
+  distance: z.number().nullable(),
+  trigger: z.enum(lapTriggers),
+  /** The watch's own figures for the lap, as recorded. */
+  figures: FiguresSchema,
+  /** What part of the stone the lap was (`active` is the work); none when the watch didn't mark it. */
+  intensity: z.enum(lapIntensities).nullable(),
 });
 
 /**

@@ -16,13 +16,19 @@ import type { Figures, Measurements, Streams } from '../../domain/stone.ts';
 // `pnpm --filter @varda/record db:generate` and commit the new migration.
 export const record = pgSchema('record');
 
-/** A lap as stored in `stones.laps`: its start as an ISO instant. */
+/**
+ * A lap as stored in `stones.laps`: its start as an ISO instant. Laps stored before their figures,
+ * intensity and workout step were read have none of them.
+ */
 export type StoredLap = {
   start: string;
   elapsedTime: number;
   movingTime: number;
   distance: number | null;
   trigger: 'manual' | 'distance' | 'time' | 'other';
+  figures?: Figures;
+  intensity?: 'warm-up' | 'active' | 'recovery' | 'rest' | 'cool-down' | null;
+  workoutStep?: number | null;
 };
 
 type StretchTotal = { movingTime: number; distance: number | null } | null;

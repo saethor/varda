@@ -37,21 +37,21 @@ describe("a stone's charts", () => {
     const charts = stoneCharts({ sport: running, streams: run });
 
     expect(charts).toMatchObject({ axis: 'distance', end: 8 });
-    expect(kinds(charts)).toEqual(['heart-rate', 'pace', 'elevation', 'cadence']);
-    // 4 m/s is 250 s per kilometre, faster higher.
+    expect(kinds(charts)).toEqual(['heart-rate', 'pace-per-kilometre', 'elevation', 'cadence']);
+    // 4 m/s is 0.25 s a metre (250 s per kilometre once shown), faster higher.
     expect(charts?.charts[1]).toMatchObject({
       invert: true,
       segments: [
         [
-          [0, 250],
-          [4, 250],
-          [8, 250],
+          [0, 0.25],
+          [4, 0.25],
+          [8, 0.25],
         ],
       ],
     });
   });
 
-  it('draws speed for a ride, in kilometres per hour', () => {
+  it('draws speed for a ride, in metres per second as recorded', () => {
     const charts = stoneCharts({ sport: { sport: 'cycling', group: 'cross-training' }, streams: run });
 
     expect(charts?.charts[1]).toMatchObject({
@@ -59,9 +59,9 @@ describe("a stone's charts", () => {
       invert: false,
       segments: [
         [
-          [0, 14.4],
-          [4, 14.4],
-          [8, 14.4],
+          [0, 4],
+          [4, 4],
+          [8, 4],
         ],
       ],
     });

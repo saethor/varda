@@ -66,8 +66,7 @@ describe('the lines a chart draws', () => {
 });
 
 describe('pace from speed', () => {
-  it('is the seconds per kilometre or per 100 metres, and none when standing still', () => {
-    expect(paceOf([4, 2.5, 0, null], 1000)).toEqual([250, 400, null, null]);
-    expect(paceOf([1], 100)).toEqual([100]);
+  it('is the seconds a metre, and none when standing still', () => {
+    expect(paceOf([4, 2.5, 0, null])).toEqual([0.25, 0.4, null, null]);
   });
 });

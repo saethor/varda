@@ -1,10 +1,12 @@
-import type { StoneDetail } from '../lib/stones.ts';
+import type { Sport, StoneDetail } from '../lib/stones.ts';
 import { type Channel, type ChartAxis, type ChartPoint, chartAxisOf, chartSegments, paceOf } from './chart-series.ts';
-import { measureOfSport } from './pace-or-speed.ts';
+import { howFastOf } from './pace-or-speed.ts';
 
+/** What a chart draws. A pace chart says what distance its pace is over, as its sport talks. */
 export type ChartKind =
   | 'heart-rate'
-  | 'pace'
+  | 'pace-per-kilometre'
+  | 'pace-per-100-metres'
   | 'speed'
   | 'elevation'
   | 'power'
@@ -17,10 +19,13 @@ export type ChartKind =
 /** The charts of one section, along the same axis up to the same `end`. */
 export type ChartSet = { axis: ChartAxis; end: number; charts: StoneChart[] };
 
-type ChartCandidate = Omit<StoneChart, 'segments'> & { values: Channel | null };
+type ChartCandidate = { kind: ChartKind; values: Channel | null };
 
-/** One chart: its lines, and whether it is turned over (pace: fewer seconds is faster, drawn higher). */
-export type StoneChart = { kind: ChartKind; segments: ChartPoint[][]; invert: boolean; per: 1000 | 100 | null };
+/**
+ * One chart: its lines, its values in SI units as the contract gives them (a pace in seconds a
+ * metre), and whether it is turned over (pace: fewer seconds is faster, drawn higher).
+ */
+export type StoneChart = { kind: ChartKind; segments: ChartPoint[][]; invert: boolean };
 
 /**
  * The charts a stone's streams draw, along distance or, without distance, along moving time, up to
@@ -29,21 +34,21 @@ export type StoneChart = { kind: ChartKind; segments: ChartPoint[][]; invert: bo
  */
 export function stoneCharts({ sport, streams }: Pick<StoneDetail, 'sport' | 'streams'>): ChartSet | null {
   if (streams === null) return null;
-  const measure = measureOfSport(sport.sport);
-  const speed = streams.speed;
-  const howFast: ChartCandidate =
-    measure === null || speed === null
-      ? { kind: 'speed', values: null, invert: false, per: null }
-      : measure === 'speed'
-        ? { kind: 'speed', values: speed.map((v) => (v === null ? null : v * 3.6)), invert: false, per: null }
-        : { kind: 'pace', values: paceOf(speed, measure.pace), invert: true, per: measure.pace };
   return chartSetOf(streams, [
-    { kind: 'heart-rate', values: streams.heartRate, invert: false, per: null },
-    howFast,
-    { kind: 'elevation', values: streams.altitude, invert: false, per: null },
-    { kind: 'power', values: streams.power, invert: false, per: null },
-    { kind: 'cadence', values: streams.cadence, invert: false, per: null },
+    { kind: 'heart-rate', values: streams.heartRate },
+    howFastChart(sport.sport, streams.speed),
+    { kind: 'elevation', values: streams.altitude },
+    { kind: 'power', values: streams.power },
+    { kind: 'cadence', values: streams.cadence },
   ]);
+}
+
+/** Pace over the sport's distance, or speed, from the speed stream; nothing for a sport that talks of neither. */
+function howFastChart(sport: Sport, speed: Channel | null): ChartCandidate {
+  const howFast = howFastOf(sport);
+  if (howFast === null || speed === null) return { kind: 'speed', values: null };
+  if (howFast.measure === 'speed') return { kind: 'speed', values: speed };
+  return { kind: howFast.per === 'kilometre' ? 'pace-per-kilometre' : 'pace-per-100-metres', values: paceOf(speed) };
 }
 
 /**
@@ -54,19 +59,22 @@ export function stoneCharts({ sport, streams }: Pick<StoneDetail, 'sport' | 'str
 export function formCharts({ sport, streams }: Pick<StoneDetail, 'sport' | 'streams'>): ChartSet | null {
   if (streams === null || sport.group !== 'running') return null;
   return chartSetOf(streams, [
-    { kind: 'step-length', values: streams.stepLength, invert: false, per: null },
-    { kind: 'vertical-oscillation', values: streams.verticalOscillation, invert: false, per: null },
-    { kind: 'vertical-ratio', values: streams.verticalRatio, invert: false, per: null },
-    { kind: 'ground-contact-time', values: streams.groundContactTime, invert: false, per: null },
+    { kind: 'step-length', values: streams.stepLength },
+    { kind: 'vertical-oscillation', values: streams.verticalOscillation },
+    { kind: 'vertical-ratio', values: streams.verticalRatio },
+    { kind: 'ground-contact-time', values: streams.groundContactTime },
   ]);
 }
+
+/** A pace chart is turned over: fewer seconds is faster, drawn higher. */
+const inverted: ReadonlySet<ChartKind> = new Set<ChartKind>(['pace-per-kilometre', 'pace-per-100-metres']);
 
 /** The candidates with something to draw, along the streams' axis; none when none has. */
 function chartSetOf(streams: NonNullable<StoneDetail['streams']>, candidates: ChartCandidate[]): ChartSet | null {
   const axis = chartAxisOf(streams);
-  const charts = candidates.flatMap(({ values, ...chart }) => {
+  const charts = candidates.flatMap(({ kind, values }) => {
     const segments = values === null ? [] : chartSegments(streams, axis, values);
-    return segments.length > 0 ? [{ ...chart, segments }] : [];
+    return segments.length > 0 ? [{ kind, segments, invert: inverted.has(kind) }] : [];
   });
   if (charts.length === 0) return null;
   // Points rise along the axis, so each chart ends at its last point.

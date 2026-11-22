@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 
 #. placeholder {0}: splits.length
-#: src/stones/stone-splits.tsx:35
+#: src/stones/stone-splits.tsx:32
 msgid "{0, plural, one {# split} other {# splits}}"
 msgstr "{0, plural, one {# split} other {# splits}}"
 
@@ -28,15 +28,15 @@ msgstr "{0, plural, one {Last week} other {Last # weeks}}"
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
 
-#: src/stones/stone-laps.tsx:34
+#: src/stones/stone-laps.tsx:32
 msgid "{count, plural, one {# lap} other {# laps}}"
 msgstr "{count, plural, one {# lap} other {# laps}}"
 
-#: src/stones/stone-laps.tsx:36
+#: src/stones/stone-laps.tsx:34
 msgid "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
 msgstr "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
 
-#: src/stones/stone-stretches.tsx:34
+#: src/stones/stone-stretches.tsx:30
 msgid "{count, plural, one {# stretch} other {# stretches}}"
 msgstr "{count, plural, one {# stretch} other {# stretches}}"
 
@@ -58,7 +58,7 @@ msgstr "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone last
 msgid "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 
-#: src/stones/stone-laps.tsx:240
+#: src/stones/stone-laps.tsx:232
 msgid "Active"
 msgstr "Active"
 
@@ -75,11 +75,11 @@ msgstr "Add a passkey?"
 msgid "Added {added}"
 msgstr "Added {added}"
 
-#: src/stones/stone-charts.tsx:126
+#: src/stones/stone-charts.tsx:131
 msgid "Along the distance"
 msgstr "Along the distance"
 
-#: src/stones/stone-charts.tsx:126
+#: src/stones/stone-charts.tsx:131
 msgid "Along the moving time"
 msgstr "Along the moving time"
 
@@ -91,32 +91,32 @@ msgstr "Already placed"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Already signed up? <0>Sign in</0>"
 
-#: src/stones/stone-measurements.tsx:42
+#: src/stones/stone-measurements.tsx:40
 msgid "As the watch had them that day"
 msgstr "As the watch had them that day"
 
-#: src/stones/stone-figures.tsx:44
-#: src/stones/stone-splits.tsx:64
+#: src/stones/stone-figures.tsx:31
+#: src/stones/stone-splits.tsx:60
 msgid "Ascent"
 msgstr "Ascent"
 
-#: src/stones/stone-figures.tsx:48
+#: src/stones/stone-figures.tsx:35
 msgid "Average cadence"
 msgstr "Average cadence"
 
-#: src/stones/stone-figures.tsx:40
+#: src/stones/stone-figures.tsx:27
 msgid "Average heart rate"
 msgstr "Average heart rate"
 
-#: src/stones/stone-figures.tsx:52
+#: src/stones/stone-figures.tsx:39
 msgid "Average power"
 msgstr "Average power"
 
-#: src/stones/stone-figures.tsx:60
+#: src/stones/stone-figures.tsx:47
 msgid "Average temperature"
 msgstr "Average temperature"
 
-#: src/stones/stone-charts.tsx:143
+#: src/stones/stone-charts.tsx:110
 msgid "Cadence"
 msgstr "Cadence"
 
@@ -124,7 +124,7 @@ msgstr "Cadence"
 msgid "Calendar"
 msgstr "Calendar"
 
-#: src/stones/stone-figures.tsx:64
+#: src/stones/stone-figures.tsx:51
 msgid "Calories"
 msgstr "Calories"
 
@@ -133,7 +133,7 @@ msgstr "Calories"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/stones/stone-charts.tsx:39
+#: src/stones/stone-charts.tsx:41
 msgid "Charts"
 msgstr "Charts"
 
@@ -141,7 +141,7 @@ msgstr "Charts"
 msgid "Choose a watch file"
 msgstr "Choose a watch file"
 
-#: src/stones/stone-laps.tsx:246
+#: src/stones/stone-laps.tsx:238
 msgid "Cool-down"
 msgstr "Cool-down"
 
@@ -161,18 +161,18 @@ msgstr "Delete stone…"
 msgid "Delete this stone?"
 msgstr "Delete this stone?"
 
-#: src/stones/stone-figures.tsx:46
-#: src/stones/stone-splits.tsx:68
+#: src/stones/stone-figures.tsx:33
+#: src/stones/stone-splits.tsx:64
 msgid "Descent"
 msgstr "Descent"
 
 #: src/stones/headline-numbers.tsx:33
 #: src/stones/latest-stone.tsx:44
 #: src/stones/latest-stone.tsx:47
-#: src/stones/stone-laps.tsx:159
+#: src/stones/stone-laps.tsx:156
 #: src/stones/stone-numbers.tsx:20
 #: src/stones/stone-plate.tsx:42
-#: src/stones/stone-stretches.tsx:70
+#: src/stones/stone-stretches.tsx:67
 msgid "Distance"
 msgstr "Distance"
 
@@ -185,13 +185,13 @@ msgid "Effort"
 msgstr "Effort"
 
 #: src/stones/headline-numbers.tsx:36
-#: src/stones/stone-laps.tsx:182
+#: src/stones/stone-laps.tsx:179
 #: src/stones/stone-numbers.tsx:28
 #: src/stones/stone-plate.tsx:50
 msgid "Elapsed time"
 msgstr "Elapsed time"
 
-#: src/stones/stone-charts.tsx:139
+#: src/stones/stone-charts.tsx:108
 msgid "Elevation"
 msgstr "Elevation"
 
@@ -225,17 +225,17 @@ msgstr "From your {model} · {fileName}"
 msgid "From your watch · {fileName}"
 msgstr "From your watch · {fileName}"
 
-#: src/stones/stone-charts.tsx:151
-#: src/stones/stone-form.tsx:106
+#: src/stones/stone-charts.tsx:121
+#: src/stones/stone-form.tsx:96
 msgid "Ground contact time"
 msgstr "Ground contact time"
 
-#: src/stones/stone-charts.tsx:133
-#: src/stones/stone-splits.tsx:57
+#: src/stones/stone-charts.tsx:102
+#: src/stones/stone-splits.tsx:53
 msgid "Heart rate"
 msgstr "Heart rate"
 
-#: src/stones/stone-measurements.tsx:20
+#: src/stones/stone-measurements.tsx:21
 msgid "Height"
 msgstr "Height"
 
@@ -251,16 +251,16 @@ msgstr "Hiking"
 msgid "Home"
 msgstr "Home"
 
-#: src/stones/stone-laps.tsx:155
+#: src/stones/stone-laps.tsx:152
 msgid "Intensity"
 msgstr "Intensity"
 
-#: src/stones/stone-splits.tsx:44
+#: src/stones/stone-splits.tsx:40
 msgid "Kilometre"
 msgstr "Kilometre"
 
-#: src/stones/stone-form.tsx:67
-#: src/stones/stone-laps.tsx:151
+#: src/stones/stone-form.tsx:57
+#: src/stones/stone-laps.tsx:148
 msgid "Lap"
 msgstr "Lap"
 
@@ -285,20 +285,20 @@ msgstr "List"
 msgid "Main"
 msgstr "Main"
 
-#: src/stones/stone-figures.tsx:50
+#: src/stones/stone-figures.tsx:37
 msgid "Max cadence"
 msgstr "Max cadence"
 
-#: src/stones/stone-figures.tsx:42
-#: src/stones/stone-measurements.tsx:30
+#: src/stones/stone-figures.tsx:29
+#: src/stones/stone-measurements.tsx:31
 msgid "Max heart rate"
 msgstr "Max heart rate"
 
-#: src/stones/stone-figures.tsx:54
+#: src/stones/stone-figures.tsx:41
 msgid "Max power"
 msgstr "Max power"
 
-#: src/stones/stone-figures.tsx:62
+#: src/stones/stone-figures.tsx:49
 msgid "Max temperature"
 msgstr "Max temperature"
 
@@ -306,17 +306,17 @@ msgstr "Max temperature"
 msgid "Measurements"
 msgstr "Measurements"
 
-#: src/stones/stone-figures.tsx:58
+#: src/stones/stone-figures.tsx:45
 msgid "Min temperature"
 msgstr "Min temperature"
 
 #: src/stones/headline-numbers.tsx:34
 #: src/stones/latest-stone.tsx:45
-#: src/stones/stone-laps.tsx:163
+#: src/stones/stone-laps.tsx:160
 #: src/stones/stone-numbers.tsx:21
 #: src/stones/stone-plate.tsx:43
-#: src/stones/stone-splits.tsx:47
-#: src/stones/stone-stretches.tsx:67
+#: src/stones/stone-splits.tsx:43
+#: src/stones/stone-stretches.tsx:64
 msgid "Moving time"
 msgstr "Moving time"
 
@@ -349,7 +349,7 @@ msgstr "No stone in the week before"
 msgid "No stones this week"
 msgstr "No stones this week"
 
-#: src/stones/stone-figures.tsx:56
+#: src/stones/stone-figures.tsx:43
 msgid "Normalized power"
 msgstr "Normalized power"
 
@@ -375,11 +375,12 @@ msgstr "Other"
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:135
-#: src/stones/stone-laps.tsx:167
+#: src/stones/stone-charts.tsx:104
+#: src/stones/stone-charts.tsx:105
+#: src/stones/stone-laps.tsx:164
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
-#: src/stones/stone-splits.tsx:51
+#: src/stones/stone-splits.tsx:47
 msgid "Pace"
 msgstr "Pace"
 
@@ -410,7 +411,7 @@ msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 
-#: src/stones/stone-charts.tsx:141
+#: src/stones/stone-charts.tsx:109
 msgid "Power"
 msgstr "Power"
 
@@ -422,7 +423,7 @@ msgstr "Previous"
 msgid "Reading {reading}…"
 msgstr "Reading {reading}…"
 
-#: src/stones/stone-laps.tsx:242
+#: src/stones/stone-laps.tsx:234
 msgid "Recovery"
 msgstr "Recovery"
 
@@ -439,11 +440,11 @@ msgstr "Remove {name}"
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
 
-#: src/stones/stone-laps.tsx:244
+#: src/stones/stone-laps.tsx:236
 msgid "Rest"
 msgstr "Rest"
 
-#: src/stones/stone-measurements.tsx:24
+#: src/stones/stone-measurements.tsx:25
 msgid "Resting heart rate"
 msgstr "Resting heart rate"
 
@@ -451,7 +452,7 @@ msgstr "Resting heart rate"
 msgid "Road running"
 msgstr "Road running"
 
-#: src/stones/stone-stretches.tsx:101
+#: src/stones/stone-stretches.tsx:100
 msgid "Running"
 msgstr "Running"
 
@@ -508,23 +509,23 @@ msgstr "Something went wrong, try again."
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:137
-#: src/stones/stone-laps.tsx:167
+#: src/stones/stone-charts.tsx:107
+#: src/stones/stone-laps.tsx:164
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
-#: src/stones/stone-splits.tsx:51
+#: src/stones/stone-splits.tsx:47
 msgid "Speed"
 msgstr "Speed"
 
-#: src/stones/stone-splits.tsx:32
+#: src/stones/stone-splits.tsx:31
 msgid "Splits"
 msgstr "Splits"
 
-#: src/stones/stone-stretches.tsx:105
+#: src/stones/stone-stretches.tsx:104
 msgid "Standing"
 msgstr "Standing"
 
-#: src/stones/stone-stretches.tsx:64
+#: src/stones/stone-stretches.tsx:61
 msgid "Start"
 msgstr "Start"
 
@@ -532,8 +533,8 @@ msgstr "Start"
 msgid "started {time}"
 msgstr "started {time}"
 
-#: src/stones/stone-charts.tsx:145
-#: src/stones/stone-form.tsx:100
+#: src/stones/stone-charts.tsx:111
+#: src/stones/stone-form.tsx:90
 msgid "Step length"
 msgstr "Step length"
 
@@ -564,15 +565,15 @@ msgstr "Stones: your completed activities"
 msgid "Strength"
 msgstr "Strength"
 
-#: src/stones/stone-stretches.tsx:61
+#: src/stones/stone-stretches.tsx:58
 msgid "Stretch"
 msgstr "Stretch"
 
-#: src/stones/stone-stretches.tsx:31
+#: src/stones/stone-stretches.tsx:29
 msgid "Stretches"
 msgstr "Stretches"
 
-#: src/stones/stone-figures.tsx:20
+#: src/stones/stone-figures.tsx:18
 msgid "Summary"
 msgstr "Summary"
 
@@ -588,7 +589,7 @@ msgstr "That email and password don't match."
 msgid "The stone and its watch file, {fileName}, will be gone for good. You can place the stone again from the same file."
 msgstr "The stone and its watch file, {fileName}, will be gone for good. You can place the stone again from the same file."
 
-#: src/stones/stone-laps.tsx:45
+#: src/stones/stone-laps.tsx:42
 msgid "The watch recorded no laps: this stone keeps its totals only."
 msgstr "The watch recorded no laps: this stone keeps its totals only."
 
@@ -658,22 +659,22 @@ msgstr "Turned away"
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða doesn't recognise that passkey. Sign in with your password instead."
 
-#: src/stones/stone-charts.tsx:147
-#: src/stones/stone-form.tsx:102
+#: src/stones/stone-charts.tsx:113
+#: src/stones/stone-form.tsx:92
 msgid "Vertical oscillation"
 msgstr "Vertical oscillation"
 
-#: src/stones/stone-charts.tsx:149
-#: src/stones/stone-form.tsx:104
+#: src/stones/stone-charts.tsx:117
+#: src/stones/stone-form.tsx:94
 msgid "Vertical ratio"
 msgstr "Vertical ratio"
 
 #: src/stones/stone-card.tsx:25
-#: src/stones/stone-stretches.tsx:103
+#: src/stones/stone-stretches.tsx:102
 msgid "Walking"
 msgstr "Walking"
 
-#: src/stones/stone-laps.tsx:238
+#: src/stones/stone-laps.tsx:230
 msgid "Warm-up"
 msgstr "Warm-up"
 
@@ -685,7 +686,7 @@ msgstr "Week"
 msgid "Week of"
 msgstr "Week of"
 
-#: src/stones/stone-measurements.tsx:18
+#: src/stones/stone-measurements.tsx:19
 msgid "Weight"
 msgstr "Weight"
 

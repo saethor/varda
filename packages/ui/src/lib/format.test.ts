@@ -43,12 +43,12 @@ describe('formatting a distance', () => {
 describe('formatting a pace', () => {
   it('shows the time per kilometre', () => {
     // 3 km in 15 minutes.
-    expect(formatPace(3000, 900, 1000)).toBe('5:00 /km');
+    expect(formatPace(3000, 900, 'kilometre')).toBe('5:00 /km');
   });
 
   it('shows the time per 100 metres', () => {
     // 1500 m in 26:15.
-    expect(formatPace(1500, 1575, 100)).toBe('1:45 /100 m');
+    expect(formatPace(1500, 1575, '100 metres')).toBe('1:45 /100 m');
   });
 });
 
@@ -63,7 +63,7 @@ describe('formatting a speed', () => {
 describe('leaving the unit out, for a column whose header names it', () => {
   it('shows the bare distance, pace and speed', () => {
     expect(formatDistance(1234, 'is', { unit: false })).toBe('1,23');
-    expect(formatPace(1000, 300, 1000, { unit: false })).toBe('5:00');
+    expect(formatPace(1000, 300, 'kilometre', { unit: false })).toBe('5:00');
     expect(formatSpeed(10_000, 3600, 'en', { unit: false })).toBe('10.0');
   });
 });

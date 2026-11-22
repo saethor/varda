@@ -1,5 +1,8 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
+  type CadenceCounts,
   formatCadence,
   formatDistance,
   formatDuration,
@@ -14,8 +17,9 @@ import type { StoneDetail } from '../lib/stones.ts';
 import { chartDomain, chartPath } from './chart-line.ts';
 import type { ChartAxis } from './chart-series.ts';
 import { type ChartKind, type StoneChart, stoneCharts } from './chart-set.ts';
-import { steppingSports } from './figures-shown.ts';
+import { cadenceCountsOf } from './figures-shown.ts';
 import { formatForm } from './form-shown.ts';
+import { StoneSection } from './stone-section.tsx';
 
 /** The drawing box of every chart: as wide as the most points a chart draws, stretched to the column. */
 const box = { width: 1000, height: 100 };
@@ -30,42 +34,41 @@ export function StoneCharts({ stone }: { stone: Pick<StoneDetail, 'sport' | 'str
   const { i18n } = useLingui();
   const set = stoneCharts(stone);
   if (set === null) return null;
-  const steps = steppingSports.includes(stone.sport.sport);
 
   return (
-    <section aria-labelledby="charts" className="flex flex-col gap-3">
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-foreground pb-2">
-        <h2 id="charts" className="text-lg font-semibold">
-          <Trans>Charts</Trans>
-        </h2>
-        <p className="text-sm text-muted-foreground tabular-nums">
+    <StoneSection
+      id="charts"
+      title={<Trans>Charts</Trans>}
+      note={
+        <>
           <AxisName axis={set.axis} /> · {axisValue(set.axis, set.end, i18n.locale)}
-        </p>
-      </header>
+        </>
+      }
+    >
       <div className="flex flex-col divide-y">
         {set.charts.map((chart) => (
-          <Chart key={chart.kind} chart={chart} end={set.end} steps={steps} />
+          <Chart key={chart.kind} chart={chart} end={set.end} counts={cadenceCountsOf(stone.sport.sport)} />
         ))}
       </div>
-    </section>
+    </StoneSection>
   );
 }
 
 /** One chart: its name and range over a plain line. Running form's charts are drawn by this too. */
-export function Chart({ chart, end, steps }: { chart: StoneChart; end: number; steps: boolean }) {
+export function Chart({ chart, end, counts }: { chart: StoneChart; end: number; counts: CadenceCounts }) {
   const { i18n } = useLingui();
-  const name = useChartName(chart.kind);
+  const { name, format } = chartKinds[chart.kind];
   const domain = chartDomain(chart.segments);
   if (domain === null) return null;
   const [low, high] = domain;
-  const value = (v: number) => shownValue(chart, v, steps, i18n.locale);
+  const value = (v: number) => format(v, i18n.locale, counts);
   // The faster end of a pace chart is its fewer seconds, at the top.
   const [top, bottom] = chart.invert ? [low, high] : [high, low];
 
   return (
     <figure className="flex flex-col gap-1 py-3">
       <figcaption className="flex flex-wrap items-baseline justify-between gap-x-4 text-sm">
-        <span className="font-medium">{name}</span>
+        <span className="font-medium">{i18n._(name)}</span>
         <span className="text-muted-foreground tabular-nums">
           {value(bottom)} – {value(top)}
         </span>
@@ -75,7 +78,7 @@ export function Chart({ chart, end, steps }: { chart: StoneChart; end: number; s
         preserveAspectRatio="none"
         className="h-20 w-full overflow-visible sm:h-24"
         role="img"
-        aria-label={`${name}: ${value(bottom)} – ${value(top)}`}
+        aria-label={`${i18n._(name)}: ${value(bottom)} – ${value(top)}`}
       >
         <path
           d={chartPath(chart.segments, { ...box, xMax: end, domain, invert: chart.invert })}
@@ -91,32 +94,34 @@ export function Chart({ chart, end, steps }: { chart: StoneChart; end: number; s
   );
 }
 
-/** A chart's value as the stone screen shows it, in its unit. */
-function shownValue(chart: StoneChart, value: number, steps: boolean, locale: string): string {
-  switch (chart.kind) {
-    case 'heart-rate':
-      return formatHeartRate(value, locale);
-    case 'pace':
-      return formatPace(chart.per ?? 1000, value, chart.per ?? 1000);
-    case 'speed':
-      // The chart holds km/h: as metres over seconds, that is the value in metres per 3.6 s.
-      return formatSpeed(value, 3.6, locale);
-    case 'elevation':
-      return formatElevation(value, locale);
-    case 'power':
-      return formatPower(value, locale);
-    case 'cadence':
-      return formatCadence(value, steps ? 'steps' : 'revolutions', locale);
-    case 'step-length':
-      return formatForm('stepLength', value, locale);
-    case 'vertical-oscillation':
-      return formatForm('verticalOscillation', value, locale);
-    case 'vertical-ratio':
-      return formatForm('verticalRatio', value, locale);
-    case 'ground-contact-time':
-      return formatForm('groundContactTime', value, locale);
-  }
-}
+/** Each kind of chart's name, and how it shows a value (given in SI units) in its unit. */
+const chartKinds: Record<
+  ChartKind,
+  { name: MessageDescriptor; format: (value: number, locale: string, counts: CadenceCounts) => string }
+> = {
+  'heart-rate': { name: msg`Heart rate`, format: (bpm, locale) => formatHeartRate(bpm, locale) },
+  // A pace chart holds seconds a metre: that many seconds over one metre.
+  'pace-per-kilometre': { name: msg`Pace`, format: (seconds) => formatPace(1, seconds, 'kilometre') },
+  'pace-per-100-metres': { name: msg`Pace`, format: (seconds) => formatPace(1, seconds, '100 metres') },
+  // A speed chart holds metres a second: that many metres in one second.
+  speed: { name: msg`Speed`, format: (metres, locale) => formatSpeed(metres, 1, locale) },
+  elevation: { name: msg`Elevation`, format: (metres, locale) => formatElevation(metres, locale) },
+  power: { name: msg`Power`, format: (watts, locale) => formatPower(watts, locale) },
+  cadence: { name: msg`Cadence`, format: (perMinute, locale, counts) => formatCadence(perMinute, counts, locale) },
+  'step-length': { name: msg`Step length`, format: (metres, locale) => formatForm('stepLength', metres, locale) },
+  'vertical-oscillation': {
+    name: msg`Vertical oscillation`,
+    format: (metres, locale) => formatForm('verticalOscillation', metres, locale),
+  },
+  'vertical-ratio': {
+    name: msg`Vertical ratio`,
+    format: (percent, locale) => formatForm('verticalRatio', percent, locale),
+  },
+  'ground-contact-time': {
+    name: msg`Ground contact time`,
+    format: (seconds, locale) => formatForm('groundContactTime', seconds, locale),
+  },
+};
 
 export function axisValue(axis: ChartAxis, end: number, locale: string): string {
   return axis === 'distance' ? formatDistance(end, locale) : formatDuration(end);
@@ -124,30 +129,4 @@ export function axisValue(axis: ChartAxis, end: number, locale: string): string 
 
 export function AxisName({ axis }: { axis: ChartAxis }): ReactNode {
   return axis === 'distance' ? <Trans>Along the distance</Trans> : <Trans>Along the moving time</Trans>;
-}
-
-function useChartName(kind: ChartKind): string {
-  const { t } = useLingui();
-  switch (kind) {
-    case 'heart-rate':
-      return t`Heart rate`;
-    case 'pace':
-      return t`Pace`;
-    case 'speed':
-      return t`Speed`;
-    case 'elevation':
-      return t`Elevation`;
-    case 'power':
-      return t`Power`;
-    case 'cadence':
-      return t`Cadence`;
-    case 'step-length':
-      return t`Step length`;
-    case 'vertical-oscillation':
-      return t`Vertical oscillation`;
-    case 'vertical-ratio':
-      return t`Vertical ratio`;
-    case 'ground-contact-time':
-      return t`Ground contact time`;
-  }
 }

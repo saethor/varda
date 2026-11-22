@@ -2,6 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import type { Stone } from '../lib/stones.ts';
 import { type FigureKey, figuresShown } from './figures-shown.ts';
+import { FigureGrid, StoneSection } from './stone-section.tsx';
 
 /**
  * The stone's summary: the figures its watch recorded (heart rate, ascent and descent, cadence,
@@ -14,23 +15,9 @@ export function StoneFigures({ stone }: { stone: Stone }) {
   if (shown.length === 0) return null;
 
   return (
-    <section aria-labelledby="summary" className="flex flex-col gap-3">
-      <header className="border-b border-foreground pb-2">
-        <h2 id="summary" className="text-lg font-semibold">
-          <Trans>Summary</Trans>
-        </h2>
-      </header>
-      <dl className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-x-6 gap-y-4 tabular-nums">
-        {shown.map(({ key, value }) => (
-          <div key={key} className="flex flex-col gap-1">
-            <dt className="text-xs text-muted-foreground">
-              <FigureLabel figure={key} />
-            </dt>
-            <dd className="text-xl whitespace-nowrap">{value}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
+    <StoneSection id="summary" title={<Trans>Summary</Trans>} note={null}>
+      <FigureGrid figures={shown.map(({ key, value }) => ({ key, label: <FigureLabel figure={key} />, value }))} />
+    </StoneSection>
   );
 }
 

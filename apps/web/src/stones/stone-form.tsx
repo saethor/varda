@@ -5,6 +5,7 @@ import type { StoneDetail } from '../lib/stones.ts';
 import { formCharts } from './chart-set.ts';
 import { type FormKey, formShown, lapForm } from './form-shown.ts';
 import { AxisName, axisValue, Chart } from './stone-charts.tsx';
+import { ColumnUnit, FigureGrid, StoneSection, tableCell } from './stone-section.tsx';
 
 /**
  * A run's running form: the watch's averages for the stone (step length, vertical oscillation,
@@ -19,57 +20,46 @@ export function StoneForm({ stone }: { stone: StoneDetail }) {
   if (shown.length === 0 && laps.length === 0 && charts === null) return null;
 
   return (
-    <section aria-labelledby="form" className="flex flex-col gap-3">
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-foreground pb-2">
-        <h2 id="form" className="text-lg font-semibold">
-          <Trans>Running form</Trans>
-        </h2>
-        {charts !== null && (
-          <p className="text-sm text-muted-foreground tabular-nums">
+    <StoneSection
+      id="form"
+      title={<Trans>Running form</Trans>}
+      note={
+        charts === null ? null : (
+          <>
             <AxisName axis={charts.axis} /> · {axisValue(charts.axis, charts.end, i18n.locale)}
-          </p>
-        )}
-      </header>
+          </>
+        )
+      }
+    >
       {shown.length > 0 && (
-        <dl className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-x-6 gap-y-4 tabular-nums">
-          {shown.map(({ key, value }) => (
-            <div key={key} className="flex flex-col gap-1">
-              <dt className="text-xs text-muted-foreground">
-                <FormLabel form={key} />
-              </dt>
-              <dd className="text-xl whitespace-nowrap">{value}</dd>
-            </div>
-          ))}
-        </dl>
+        <FigureGrid figures={shown.map(({ key, value }) => ({ key, label: <FormLabel form={key} />, value }))} />
       )}
       {laps.length > 0 && <LapFormTable laps={laps} count={stone.laps.length} />}
       {charts !== null && (
         <div className="flex flex-col divide-y">
           {charts.charts.map((chart) => (
-            <Chart key={chart.kind} chart={chart} end={charts.end} steps />
+            <Chart key={chart.kind} chart={chart} end={charts.end} counts="steps" />
           ))}
         </div>
       )}
-    </section>
+    </StoneSection>
   );
 }
 
 /** Each lap's form averages, a column for each some lap recorded; units in the heads, bare values below. */
 function LapFormTable({ laps, count }: { laps: ReturnType<typeof lapForm>; count: number }) {
-  const cell = 'whitespace-nowrap px-2 py-2.5 first:pl-4 last:pr-4 sm:px-4';
-
   return (
     <div className="overflow-x-auto rounded-xs border bg-card">
       <table className="w-full tabular-nums">
         <thead className="text-left align-bottom text-xs text-muted-foreground">
           <tr className="[&>th]:whitespace-normal">
-            <th scope="col" className={cn(cell, 'font-medium')}>
+            <th scope="col" className={cn(tableCell, 'font-medium')}>
               <Trans>Lap</Trans>
             </th>
             {laps.map((column) => (
-              <th key={column.key} scope="col" className={cn(cell, 'text-right font-medium')}>
+              <th key={column.key} scope="col" className={cn(tableCell, 'text-right font-medium')}>
                 <FormLabel form={column.key} />
-                <span className="block font-normal">{column.unit}</span>
+                <ColumnUnit>{column.unit}</ColumnUnit>
               </th>
             ))}
           </tr>
@@ -78,11 +68,11 @@ function LapFormTable({ laps, count }: { laps: ReturnType<typeof lapForm>; count
           {Array.from({ length: count }, (_, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: laps are positional and never reorder
             <tr key={i} className="border-t">
-              <th scope="row" className={cn(cell, 'text-left font-normal')}>
+              <th scope="row" className={cn(tableCell, 'text-left font-normal')}>
                 {i + 1}
               </th>
               {laps.map((column) => (
-                <td key={column.key} className={cn(cell, 'text-right')}>
+                <td key={column.key} className={cn(tableCell, 'text-right')}>
                   {column.values[i] ?? '–'}
                 </td>
               ))}

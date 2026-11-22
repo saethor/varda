@@ -3,8 +3,11 @@ import {
   formatStepLength,
   formatVerticalOscillation,
   formatVerticalRatio,
+  type UnitOption,
+  units,
 } from '@varda/ui/lib/format';
 import type { Stone } from '../lib/stones.ts';
+import type { ValueFormat } from './figures-shown.ts';
 
 type Form = NonNullable<Stone['form']>;
 export type FormKey = keyof Form;
@@ -12,25 +15,16 @@ export type FormKey = keyof Form;
 // The order the form averages are shown in, as the watch shows them.
 const order: FormKey[] = ['stepLength', 'verticalOscillation', 'verticalRatio', 'groundContactTime'];
 
-const units: Record<FormKey, string> = {
-  stepLength: 'm',
-  verticalOscillation: 'mm',
-  verticalRatio: '%',
-  groundContactTime: 'ms',
+const formats: Record<FormKey, ValueFormat> = {
+  stepLength: { format: formatStepLength, unit: units.stepLength },
+  verticalOscillation: { format: formatVerticalOscillation, unit: units.verticalOscillation },
+  verticalRatio: { format: formatVerticalRatio, unit: units.verticalRatio },
+  groundContactTime: { format: formatGroundContactTime, unit: units.groundContactTime },
 };
 
 /** One form average as the screen shows it: m, mm, % or ms, with or without its unit. */
-export function formatForm(key: FormKey, value: number, locale: string, options: { unit?: boolean } = {}): string {
-  switch (key) {
-    case 'stepLength':
-      return formatStepLength(value, locale, options);
-    case 'verticalOscillation':
-      return formatVerticalOscillation(value, locale, options);
-    case 'verticalRatio':
-      return formatVerticalRatio(value, locale, options);
-    case 'groundContactTime':
-      return formatGroundContactTime(value, locale, options);
-  }
+export function formatForm(key: FormKey, value: number, locale: string, options: UnitOption = {}): string {
+  return formats[key].format(value, locale, options);
 }
 
 /** The form averages the watch recorded, in order, each formatted; one it didn't record is left out. */
@@ -52,6 +46,6 @@ export function lapForm(laps: Pick<Stone['laps'][number], 'form'>[], locale: str
       const value = form?.[key] ?? null;
       return value === null ? null : formatForm(key, value, locale, { unit: false });
     });
-    return values.every((value) => value === null) ? [] : [{ key, unit: units[key], values }];
+    return values.every((value) => value === null) ? [] : [{ key, unit: formats[key].unit, values }];
   });
 }

@@ -2,6 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { formatHeartRate, formatHeight, formatWeight } from '@varda/ui/lib/format';
 import type { ReactNode } from 'react';
 import type { StoneDetail } from '../lib/stones.ts';
+import { StoneSection } from './stone-section.tsx';
 
 /**
  * The athlete's measurements as the watch had them on the stone's day: weight, height, resting and
@@ -33,15 +34,11 @@ export function StoneMeasurements({ stone }: { stone: StoneDetail }) {
   if (shown.length === 0) return null;
 
   return (
-    <section aria-labelledby="measurements" className="flex flex-col gap-3">
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-foreground pb-2">
-        <h2 id="measurements" className="text-lg font-semibold">
-          <Trans>Measurements</Trans>
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          <Trans>As the watch had them that day</Trans>
-        </p>
-      </header>
+    <StoneSection
+      id="measurements"
+      title={<Trans>Measurements</Trans>}
+      note={<Trans>As the watch had them that day</Trans>}
+    >
       <dl className="grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-x-6 gap-y-4 tabular-nums">
         {shown.map((each) => (
           <div key={each.key} className="flex flex-col gap-1">
@@ -50,6 +47,6 @@ export function StoneMeasurements({ stone }: { stone: StoneDetail }) {
           </div>
         ))}
       </dl>
-    </section>
+    </StoneSection>
   );
 }

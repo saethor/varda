@@ -50,9 +50,9 @@ export function chartSegments(
   return segments;
 }
 
-/** Pace at each point, in seconds per `per` metres, from speed in metres per second; none when standing still. */
-export function paceOf(speed: Channel, per: 1000 | 100): Channel {
+/** Pace at each point, in seconds a metre, from speed in metres per second; none when standing still. */
+export function paceOf(speed: Channel): Channel {
   return speed.map((metresPerSecond) =>
-    metresPerSecond === null || metresPerSecond <= 0 ? null : per / metresPerSecond,
+    metresPerSecond === null || metresPerSecond <= 0 ? null : 1 / metresPerSecond,
   );
 }

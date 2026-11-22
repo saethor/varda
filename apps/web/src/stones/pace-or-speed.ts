@@ -1,21 +1,26 @@
-import { formatPace, formatSpeed, type UnitOption } from '@varda/ui/lib/format';
+import { formatPace, formatSpeed, type PaceDistance, paceHeadUnit, type UnitOption, units } from '@varda/ui/lib/format';
 import type { Sport } from '../lib/stones.ts';
 
 /** `unit` is what a column header shows above bare values: `min/km`, `min/100 m` or `km/h`. */
 export type PaceOrSpeed = { measure: 'pace' | 'speed'; value: string; unit: string };
 
-// How each sport talks about how fast it went. Strength and other sessions get neither: their
-// distance, when the watch records one at all, says little about the effort.
-const measureOf: Record<Sport, { pace: 1000 | 100 } | 'speed' | null> = {
-  'road-running': { pace: 1000 },
-  'trail-running': { pace: 1000 },
-  'track-running': { pace: 1000 },
-  'treadmill-running': { pace: 1000 },
-  walking: { pace: 1000 },
-  hiking: { pace: 1000 },
-  swimming: { pace: 100 },
-  cycling: 'speed',
-  skiing: 'speed',
+/** How a sport talks about how fast it went: its pace over a kilometre or 100 metres, or its speed. */
+export type HowFast = { measure: 'pace'; per: PaceDistance } | { measure: 'speed' };
+
+const perKilometre: HowFast = { measure: 'pace', per: 'kilometre' };
+
+// Strength and other sessions get neither: their distance, when the watch records one at all, says
+// little about the effort.
+const howFastBySport: Record<Sport, HowFast | null> = {
+  'road-running': perKilometre,
+  'trail-running': perKilometre,
+  'track-running': perKilometre,
+  'treadmill-running': perKilometre,
+  walking: perKilometre,
+  hiking: perKilometre,
+  swimming: { measure: 'pace', per: '100 metres' },
+  cycling: { measure: 'speed' },
+  skiing: { measure: 'speed' },
   strength: null,
   other: null,
 };
@@ -28,18 +33,18 @@ export function paceOrSpeed(
   locale: string,
   options: UnitOption = {},
 ): PaceOrSpeed | null {
-  const measure = measureOf[sport];
-  if (measure === null || metres === null || metres <= 0 || seconds <= 0) return null;
-  return measure === 'speed'
-    ? { measure: 'speed', value: formatSpeed(metres, seconds, locale, options), unit: 'km/h' }
+  const howFast = howFastBySport[sport];
+  if (howFast === null || metres === null || metres <= 0 || seconds <= 0) return null;
+  return howFast.measure === 'speed'
+    ? { measure: 'speed', value: formatSpeed(metres, seconds, locale, options), unit: units.speed }
     : {
         measure: 'pace',
-        value: formatPace(metres, seconds, measure.pace, options),
-        unit: measure.pace === 1000 ? 'min/km' : 'min/100 m',
+        value: formatPace(metres, seconds, howFast.per, options),
+        unit: paceHeadUnit(howFast.per),
       };
 }
 
-/** How `sport` talks about how fast it went: pace per 1000 or 100 metres, speed, or neither. */
-export function measureOfSport(sport: Sport): { pace: 1000 | 100 } | 'speed' | null {
-  return measureOf[sport];
+/** How `sport` talks about how fast it went, or neither. */
+export function howFastOf(sport: Sport): HowFast | null {
+  return howFastBySport[sport];
 }

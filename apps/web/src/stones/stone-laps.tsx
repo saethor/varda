@@ -1,5 +1,5 @@
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
-import { formatDistance, formatDuration } from '@varda/ui/lib/format';
+import { formatDistance, formatDuration, units } from '@varda/ui/lib/format';
 import { cn } from '@varda/ui/lib/utils';
 import { type PointerEvent, type ReactNode, useState } from 'react';
 import type { Stone } from '../lib/stones.ts';
@@ -8,6 +8,7 @@ import { lapEvery, lapStrip } from './lap-strip.ts';
 import { paceOrSpeed } from './pace-or-speed.ts';
 import { dyeFill, dyeOf } from './sport-dye.ts';
 import { FigureLabel } from './stone-figures.tsx';
+import { ColumnUnit, StoneSection } from './stone-section.tsx';
 
 /**
  * The stone's laps: a profile across the full width, a block per lap (width by distance, height by
@@ -23,23 +24,19 @@ export function StoneLaps({ stone }: { stone: Stone }) {
   const distance = every === null ? null : formatDistance(every, i18n.locale);
 
   return (
-    <section aria-labelledby="laps" className="flex flex-col gap-3">
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-foreground pb-2">
-        <h2 id="laps" className="text-lg font-semibold">
-          <Trans>Laps</Trans>
-        </h2>
-        {count > 0 && (
-          <p className="text-sm text-muted-foreground tabular-nums">
-            {distance === null ? (
-              <Plural value={count} one="# lap" other="# laps" />
-            ) : (
-              <Trans>
-                <Plural value={count} one="# lap" other="# laps" /> · a lap every {distance}
-              </Trans>
-            )}
-          </p>
-        )}
-      </header>
+    <StoneSection
+      id="laps"
+      title={<Trans>Laps</Trans>}
+      note={
+        count === 0 ? null : distance === null ? (
+          <Plural value={count} one="# lap" other="# laps" />
+        ) : (
+          <Trans>
+            <Plural value={count} one="# lap" other="# laps" /> · a lap every {distance}
+          </Trans>
+        )
+      }
+    >
       {count === 0 ? (
         <p className="text-muted-foreground">
           <Trans>The watch recorded no laps: this stone keeps its totals only.</Trans>
@@ -50,7 +47,7 @@ export function StoneLaps({ stone }: { stone: Stone }) {
           <LapTable stone={stone} active={active} onActive={setActive} />
         </>
       )}
-    </section>
+    </StoneSection>
   );
 }
 
@@ -125,9 +122,9 @@ function LapTable({
   onActive: (lap: number | null) => void;
 }) {
   const { i18n } = useLingui();
-  const bare = { unit: false };
+  const withoutUnit = { unit: false };
   const paces = stone.laps.map((lap) =>
-    paceOrSpeed(stone.sport.sport, lap.distance, lap.movingTime, i18n.locale, bare),
+    paceOrSpeed(stone.sport.sport, lap.distance, lap.movingTime, i18n.locale, withoutUnit),
   );
   // Every lap shares the stone's sport, so the column is pace or speed throughout, or not there at all.
   const measured = paces.find((pace) => pace !== null) ?? null;
@@ -157,7 +154,7 @@ function LapTable({
             )}
             <th scope="col" className={cn(cell, 'text-right font-medium')}>
               <Trans>Distance</Trans>
-              <Unit>km</Unit>
+              <ColumnUnit>{units.distance}</ColumnUnit>
             </th>
             <th scope="col" className={cn(cell, 'text-right font-medium', measured === null && paceLast)}>
               <Trans>Moving time</Trans>
@@ -165,7 +162,7 @@ function LapTable({
             {measured !== null && (
               <th scope="col" className={cn(cell, 'text-right font-medium', paceLast)}>
                 {measured.measure === 'pace' ? <Trans>Pace</Trans> : <Trans>Speed</Trans>}
-                <Unit>{measured.unit}</Unit>
+                <ColumnUnit>{measured.unit}</ColumnUnit>
               </th>
             )}
             {figures.map((column, c) => (
@@ -175,7 +172,7 @@ function LapTable({
                 className={cn(cell, 'text-right font-medium', c === figures.length - 1 && lastOnPhone)}
               >
                 <FigureLabel figure={column.key} />
-                <Unit>{column.unit}</Unit>
+                <ColumnUnit>{column.unit}</ColumnUnit>
               </th>
             ))}
             <th scope="col" className={cn(cell, 'text-right font-medium max-sm:hidden')}>
@@ -206,7 +203,7 @@ function LapTable({
                 <td className={cell}>{lap.intensity === null ? '–' : <IntensityName intensity={lap.intensity} />}</td>
               )}
               <td className={cn(cell, 'text-right')}>
-                {lap.distance === null ? '–' : formatDistance(lap.distance, i18n.locale, bare)}
+                {lap.distance === null ? '–' : formatDistance(lap.distance, i18n.locale, withoutUnit)}
               </td>
               <td className={cn(cell, 'text-right', measured === null && paceLast)}>
                 {formatDuration(lap.movingTime)}
@@ -224,11 +221,6 @@ function LapTable({
       </table>
     </div>
   );
-}
-
-/** A column's unit, under its name, so the cells below can hold bare values. */
-function Unit({ children }: { children: string }) {
-  return <span className="block font-normal">{children}</span>;
 }
 
 /** What part of the stone a lap was, as the watch marked it. */

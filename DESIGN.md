@@ -227,7 +227,7 @@ Undyed wool for every surface and all ink, a few dyed yarns for meaning, and the
 **Character:** Plain and native. The system face keeps screens quiet and fast in English and Icelandic. Personality comes from scale and weight on the numbers, and from the logo.
 
 ### Hierarchy
-- **Display** (`display`): the plate's lead figure (3rem from 640px, 2.25rem on phones), semibold, tight, tabular. The plate's other figures step down to 1.875rem (1.5rem on phones). The stone screen's lead distance uses the same voice.
+- **Display** (`display`): the plate's lead figure (3rem from 640px, 2.25rem on phones), semibold, tight, tabular. The plate's other figures step down to 1.875rem (1.5rem on phones). The stone plate's lead figure (distance, or moving time for strength) uses the same voice.
 - **Headline** (`headline`): the one page heading (`h1`, "Stones", "Sign in"), and the sport name on the plate (with tight tracking).
 - **Title** (`title`): section and dialog titles ("Laps", the calendar month).
 - **Body** (`body`): the document base. Station names (500 weight), week headings (600 weight), panel text and descriptions on the wide screens.
@@ -245,6 +245,8 @@ Undyed wool for every surface and all ink, a few dyed yarns for meaning, and the
 Signed-in screens sit under a full-width Svart shell bar (56px tall) holding the wordmark and the nav; the shell's inner row shares the page's width and side padding. Below it, a screen is either one centred column at most 28rem wide, or a wide screen at 72rem (`max-w-6xl`) set by a route's `staticData: { layout: 'wide' }`. Page padding is 20px on phones and 32px from 640px; blocks stack 24px apart. Signed-out screens (sign in, errors) have no shell: they keep the narrow 28rem column with the light wordmark and the tagline above the card, 32px padding.
 
 The stones list is the first wide screen. From 1024px it is a two-column grid (content plus a 20rem side column, 32px apart): a slim full-width Place a stone bar, then the latest-stone plate in the content column beside the 12-week stitch rows, which stick 32px from the top as the route scrolls beneath the plate. On phones it is one column in task order: plate, stitch rows, placing panel, route.
+
+The stone screen is the second wide screen, one column in reading order: "← Stones", the week row, the stone plate joined under it, the laps (profile, then table), the recording line, and the walk to the stones either side. Between the laps and the recording line the screen keeps room for planned against actual and the journey, once they exist. On phones the same order holds; the trace moves between the plate's heading and its figures.
 
 Inside panels, content insets 20px and items stack 12px apart. The plate insets 20px on phones and 28px from 640px. Spacing follows Tailwind's 4px step.
 
@@ -311,6 +313,18 @@ The light wordmark (`apps/web/src/assets/varda-wordmark.svg`, Basalt with Moss, 
 
 ### Latest-stone plate
 The one dark plate: Svart, 2px corners, 20px/28px inset, at least 224px tall. It holds the sport name (headline), the day and time in Shell Muted with the week ordinal in Lichen, then the figures in display type with caption labels in Shell Muted, and the stone's trace drawn in Lichen to the right. The whole plate is one link, focused with a Lichen outline.
+
+### Stone plate
+The stone screen's one dark plate, under its day in the week row. Svart, 20px/28px inset, a grid: on the left the sport as the page's `h1` (headline), the day and "started 6:40 AM" in Shell Muted (the year only when it isn't this one; the time never wraps), and the week ordinal in Lichen ("2nd stone this week", "last week", or "in the week of 9 Nov"; just after placing it reads "Placed. Your 2nd stone this week" as a live status). Below, the lead figure in display type, then the other figures (moving time, pace or speed, elapsed time) at 1.875rem over a 1px Shell Line rule. On the right, from 1024px, the trace takes 1.25 parts of the width: Lichen, a 3px line, its start marked with a dot, at least 320px tall. A stone with no trace (strength, treadmill, pool) drops the trace column; nothing stands in for it. Under a Monday or Sunday tab the plate's top corner is square, so tab and plate read as one shape.
+
+### Week row
+The stone's Mon–Sun week as one row above the plate: the dates in semibold with a "This week"/"Last week" note in Muted Ink, the whole week's totals right-aligned in small body type, then seven day cells 4px apart. Each cell holds its day (short weekday from 640px, narrow on phones, the date number) in caption type and a 16px stitch: Svart at 10% when empty, 4% when still ahead, today outlined 1px Svart, and a day with stones split into each stone's dye. Every other stone is a link (its target reaches 10px above and below the stitch; hover drops it to 75%; focus is the Indigo ring). The stone's own day is a Svart tab (2px top corners) that runs straight into the plate; its stone is marked `aria-current` and not linked, and other stones that day recede to 45% with a Lichen focus outline. Just after placing, the stone's stitch settles into the row with `stone-settle`.
+
+### Lap profile and table
+The laps under a "Laps" title over a 1px Svart rule, with the lap count right-aligned, naming the rhythm when the watch lapped at one distance ("13 laps · a lap every 1.00 km"). The profile runs the full width, 112px tall (144px from 640px): a block per lap, width by its share of the distance (of elapsed time when any lap has none), height by its speed against the other laps, filled with the sport's dye, 2px top corners, 2px apart; a lap with no speed is at 40%. Lap numbers sit under it in caption type, every one up to 16 laps, then every 5th or 10th. The table below is a Wool panel with hairline rows, units in the column heads and bare tabular values; elapsed time hides on phones. One active lap is shared: a mouse points, a finger taps (it holds until another is tapped), and the keyboard focuses a row (3px inset Indigo ring). The active lap's block stays full while the others drop to 30%, and its row fills Heather Hover in semibold. The profile is decorative to assistive tech; the table carries the figures. A stone with no laps says so in Muted Ink: "The watch recorded no laps: this stone keeps its totals only."
+
+### Walk
+The stone screen ends with the stones either side, two columns from 640px: each neighbour is a Wool panel (hairline, 2px corners) with "← Previous" or "Next →" in caption type, the sport, and its day, time and lead figure; ← and → walk too. Where there is no neighbour, the end takes the empty-state frame at the same size: "Your latest stone", or "No stone in the week before/after" with a link to the calendar.
 
 ### Stitch rows
 The last 12 weeks knitted as rows in a Wool panel: a table of seven day cells per week, each a 12px-tall stitch with 2px corners. An empty day is Svart at 10%, a day still ahead Svart at 4%, today carries a 1px Svart outline, and a day with stones is filled with each stone's dye, split side by side when there are several. A per-week count sits on the right (Muted Ink when zero). The stitch of the station being pointed at gets a 2px Svart outline.

@@ -8,8 +8,9 @@ msgstr ""
 "Language: en\n"
 
 #. placeholder {0}: totals.stones
-#: src/stones/stone-route.tsx:111
+#: src/stones/stone-route.tsx:136
 #: src/stones/stones-calendar.tsx:185
+#: src/stones/week-row.tsx:56
 msgid "{0, plural, one {# stone} other {# stones}}"
 msgstr "{0, plural, one {# stone} other {# stones}}"
 
@@ -22,17 +23,25 @@ msgstr "{0, plural, one {Last week} other {Last # weeks}}"
 msgid "{browser} on {operatingSystem}"
 msgstr "{browser} on {operatingSystem}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:95
-msgid "{day} · started {time}"
-msgstr "{day} · started {time}"
+#: src/stones/stone-laps.tsx:32
+msgid "{count, plural, one {# lap} other {# laps}}"
+msgstr "{count, plural, one {# lap} other {# laps}}"
 
-#: src/stones/latest-stone.tsx:63
-#: src/stones/stone-week-view.tsx:52
+#: src/stones/stone-laps.tsx:34
+msgid "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
+msgstr "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
+
+#: src/stones/latest-stone.tsx:75
+#: src/stones/stone-plate.tsx:154
 msgid "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone in the week of {weekOf}"
 msgstr "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone in the week of {weekOf}"
 
-#: src/stones/latest-stone.tsx:59
-#: src/stones/stone-week-view.tsx:46
+#: src/stones/stone-plate.tsx:148
+msgid "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone last week"
+msgstr "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone last week"
+
+#: src/stones/latest-stone.tsx:71
+#: src/stones/stone-plate.tsx:142
 msgid "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 
@@ -86,11 +95,12 @@ msgstr "Delete stone…"
 msgid "Delete this stone?"
 msgstr "Delete this stone?"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:169
 #: src/stones/headline-numbers.tsx:33
-#: src/stones/latest-stone.tsx:34
-#: src/stones/latest-stone.tsx:37
+#: src/stones/latest-stone.tsx:44
+#: src/stones/latest-stone.tsx:47
+#: src/stones/stone-laps.tsx:147
 #: src/stones/stone-numbers.tsx:20
+#: src/stones/stone-plate.tsx:42
 msgid "Distance"
 msgstr "Distance"
 
@@ -98,9 +108,10 @@ msgstr "Distance"
 msgid "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 msgstr "Drop the .fit file your watch saved here, or choose it. One file at a time, up to 25 MB."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:182
 #: src/stones/headline-numbers.tsx:36
+#: src/stones/stone-laps.tsx:160
 #: src/stones/stone-numbers.tsx:28
+#: src/stones/stone-plate.tsx:50
 msgid "Elapsed time"
 msgstr "Elapsed time"
 
@@ -118,11 +129,11 @@ msgstr "Enter a valid email address."
 msgid "Enter your name."
 msgstr "Enter your name."
 
-#: src/routes/_signed-in/stones.tsx:135
+#: src/routes/_signed-in/stones.tsx:138
 msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 msgstr "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:136
+#: src/routes/_signed-in/stones_.$stoneId.tsx:94
 msgid "From your watch · {fileName}"
 msgstr "From your watch · {fileName}"
 
@@ -138,11 +149,11 @@ msgstr "Hiking"
 msgid "Home"
 msgstr "Home"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:166
+#: src/stones/stone-laps.tsx:144
 msgid "Lap"
 msgstr "Lap"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:117
+#: src/stones/stone-laps.tsx:27
 msgid "Laps"
 msgstr "Laps"
 
@@ -150,7 +161,8 @@ msgstr "Laps"
 msgid "Last used"
 msgstr "Last used"
 
-#: src/stones/stone-route.tsx:83
+#: src/stones/stone-route.tsx:102
+#: src/stones/week-row.tsx:51
 msgid "Last week"
 msgstr "Last week"
 
@@ -162,10 +174,11 @@ msgstr "List"
 msgid "Main"
 msgstr "Main"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:173
 #: src/stones/headline-numbers.tsx:34
-#: src/stones/latest-stone.tsx:35
+#: src/stones/latest-stone.tsx:45
+#: src/stones/stone-laps.tsx:151
 #: src/stones/stone-numbers.tsx:21
+#: src/stones/stone-plate.tsx:43
 msgid "Moving time"
 msgstr "Moving time"
 
@@ -177,7 +190,7 @@ msgstr "Name"
 msgid "New to Varða? <0>Sign up</0>"
 msgstr "New to Varða? <0>Sign up</0>"
 
-#: src/stones/stone-week-view.tsx:184
+#: src/stones/stone-week-view.tsx:105
 msgid "Next"
 msgstr "Next"
 
@@ -185,15 +198,15 @@ msgstr "Next"
 msgid "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 msgstr "Next time, sign in with your fingerprint, face or device PIN instead of your password. You can also add a passkey later in Settings."
 
-#: src/stones/stone-week-view.tsx:125
+#: src/stones/stone-week-view.tsx:46
 msgid "No stone in the week after"
 msgstr "No stone in the week after"
 
-#: src/stones/stone-week-view.tsx:112
+#: src/stones/stone-week-view.tsx:33
 msgid "No stone in the week before"
 msgstr "No stone in the week before"
 
-#: src/stones/stone-route.tsx:91
+#: src/stones/stone-route.tsx:110
 #: src/stones/stones-calendar.tsx:163
 msgid "No stones this week"
 msgstr "No stones this week"
@@ -218,10 +231,11 @@ msgstr "Open that stone"
 msgid "Other"
 msgstr "Other"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:177
 #: src/stones/headline-numbers.tsx:35
-#: src/stones/latest-stone.tsx:39
+#: src/stones/latest-stone.tsx:49
+#: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
+#: src/stones/stone-plate.tsx:47
 msgid "Pace"
 msgstr "Pace"
 
@@ -240,15 +254,19 @@ msgstr "Password"
 msgid "Place a stone"
 msgstr "Place a stone"
 
-#: src/stones/stone-week-view.tsx:40
+#: src/stones/stone-plate.tsx:136
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone in the week of {weekOf}"
 msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone in the week of {weekOf}"
 
-#: src/stones/stone-week-view.tsx:34
+#: src/stones/stone-plate.tsx:130
+msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone last week"
+msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone last week"
+
+#: src/stones/stone-plate.tsx:124
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 
-#: src/stones/stone-week-view.tsx:188
+#: src/stones/stone-week-view.tsx:109
 msgid "Previous"
 msgstr "Previous"
 
@@ -273,7 +291,7 @@ msgstr "Remove {name}?"
 msgid "Road running"
 msgstr "Road running"
 
-#: src/stones/stone-week-view.tsx:211
+#: src/stones/stone-week-view.tsx:137
 msgid "See the calendar"
 msgstr "See the calendar"
 
@@ -282,7 +300,7 @@ msgstr "See the calendar"
 msgid "Settings"
 msgstr "Settings"
 
-#: src/routes/_signed-in/stones.tsx:106
+#: src/routes/_signed-in/stones.tsx:104
 msgid "Show earlier"
 msgstr "Show earlier"
 
@@ -320,33 +338,38 @@ msgstr "Skiing"
 msgid "Something went wrong, try again."
 msgstr "Something went wrong, try again."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:177
 #: src/stones/headline-numbers.tsx:35
-#: src/stones/latest-stone.tsx:39
+#: src/stones/latest-stone.tsx:49
+#: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
+#: src/stones/stone-plate.tsx:47
 msgid "Speed"
 msgstr "Speed"
 
-#: src/routes/_signed-in/stones.tsx:122
+#: src/stones/stone-plate.tsx:74
+msgid "started {time}"
+msgstr "started {time}"
+
+#: src/routes/_signed-in/stones.tsx:120
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Stone deleted. You can place it again from {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:60
+#: src/routes/_signed-in/stones_.$stoneId.tsx:55
 msgid "Stone not found"
 msgstr "Stone not found"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:50
-#: src/stones/stitch-weeks.tsx:54
+#: src/routes/_signed-in/stones_.$stoneId.tsx:45
+#: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
 msgstr "Stones"
 
-#: src/stones/stone-week-view.tsx:105
+#: src/stones/stone-week-view.tsx:26
 msgid "Stones before and after"
 msgstr "Stones before and after"
 
-#: src/routes/_signed-in/stones.tsx:132
+#: src/routes/_signed-in/stones.tsx:135
 msgid "Stones: your completed activities"
 msgstr "Stones: your completed activities"
 
@@ -366,11 +389,16 @@ msgstr "That email and password don't match."
 msgid "The stone and its watch file, {fileName}, will be gone for good. You can place the stone again from the same file."
 msgstr "The stone and its watch file, {fileName}, will be gone for good. You can place the stone again from the same file."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:121
+#: src/stones/stone-laps.tsx:43
 msgid "The watch recorded no laps: this stone keeps its totals only."
 msgstr "The watch recorded no laps: this stone keeps its totals only."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:63
+#. placeholder {0}: short(monday)
+#: src/stones/week-row.tsx:38
+msgid "The week of {0}"
+msgstr "The week of {0}"
+
+#: src/routes/_signed-in/stones_.$stoneId.tsx:58
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "There's no such stone. It may have been deleted, or the link may be wrong."
 
@@ -402,7 +430,8 @@ msgstr "This isn't a FIT file. Choose the .fit file your watch saved."
 msgid "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 msgstr "This passkey will no longer sign you in to Varða. You can still sign in with your password."
 
-#: src/stones/stone-route.tsx:78
+#: src/stones/stone-route.tsx:97
+#: src/stones/week-row.tsx:46
 msgid "This week"
 msgstr "This week"
 
@@ -438,7 +467,7 @@ msgstr "Walking"
 msgid "Week"
 msgstr "Week"
 
-#: src/stones/stitch-weeks.tsx:41
+#: src/stones/stitch-weeks.tsx:42
 msgid "Week of"
 msgstr "Week of"
 
@@ -450,7 +479,7 @@ msgstr "You already placed a stone from this session: the one placed from {fileN
 msgid "You already placed a stone from this session."
 msgstr "You already placed a stone from this session."
 
-#: src/stones/stone-week-view.tsx:119
+#: src/stones/stone-week-view.tsx:40
 msgid "Your latest stone"
 msgstr "Your latest stone"
 

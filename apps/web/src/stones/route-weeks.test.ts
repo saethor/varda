@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { routeWeeks, stitchRange, stitchRows } from './route-weeks.ts';
+import { routeWeeks, stitchRange, stitchRows, weekRow } from './route-weeks.ts';
 
 const stone = (id: string, localDate: string, distance: number | null, movingTime: number) => ({
   id,
@@ -45,5 +45,56 @@ describe('the stitch rows', () => {
     expect(rows[0]?.days.map((d) => d.ahead)).toEqual([false, false, false, true, true, true, true]);
     expect(rows[1]?.days[6]?.stones.map((s) => s.id)).toEqual(['b']);
     expect(rows[1]?.stones).toBe(1);
+  });
+});
+
+describe('the week a stone belongs to', () => {
+  // Monday 16 November 2026; today is Thursday 19.
+  const today = '2026-11-19';
+  const stones = [
+    stone('thu', '2026-11-19', 8000, 2400),
+    stone('tue', '2026-11-17', 12_400, 3738),
+    stone('mon', '2026-11-16', null, 2710),
+    stone('before', '2026-11-15', 20_000, 6000),
+    stone('after', '2026-11-23', 5000, 1500),
+  ];
+
+  it('is seven days from Monday, each with only its own stones', () => {
+    const week = weekRow(stones, '2026-11-16', today);
+    expect(week.days.map((d) => d.date)).toEqual([
+      '2026-11-16',
+      '2026-11-17',
+      '2026-11-18',
+      '2026-11-19',
+      '2026-11-20',
+      '2026-11-21',
+      '2026-11-22',
+    ]);
+    expect(week.days.map((d) => d.stones.map((s) => s.id))).toEqual([['mon'], ['tue'], [], ['thu'], [], [], []]);
+  });
+
+  it('marks the days after today as ahead', () => {
+    expect(weekRow(stones, '2026-11-16', today).days.map((d) => d.ahead)).toEqual([
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+    ]);
+  });
+
+  it('totals the whole week, distance only from the stones that have one', () => {
+    expect(weekRow(stones, '2026-11-16', today).totals).toEqual({
+      stones: 3,
+      distance: 20_400,
+      movingTime: 8848,
+    });
+  });
+
+  it('has no distance, never 0, when no stone that week has one', () => {
+    const strengthOnly = [stone('mon', '2026-11-16', null, 2710)];
+    expect(weekRow(strengthOnly, '2026-11-16', today).totals.distance).toBeNull();
   });
 });

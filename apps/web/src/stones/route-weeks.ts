@@ -69,15 +69,27 @@ export function stitchRange(today: LocalDate, weeks: number): { from: LocalDate;
 
 /** The last `weeks` weeks as rows of days, newest week first, each day with its stones. */
 export function stitchRows<S extends WeekStone>(stones: readonly S[], today: LocalDate, weeks: number): StitchRow<S>[] {
-  const earliestFirst = [...stones].sort((a, b) => a.start.getTime() - b.start.getTime());
   const { from } = stitchRange(today, weeks);
   const rows: StitchRow<S>[] = [];
-  for (let monday = mondayOf(today); monday >= from; monday = shift(monday, -7)) {
-    const days = Array.from({ length: 7 }, (_, i) => {
-      const date = shift(monday, i);
-      return { date, stones: earliestFirst.filter((s) => s.localDate === date), ahead: date > today };
-    });
-    rows.push({ monday, days, stones: days.reduce((n, d) => n + d.stones.length, 0) });
-  }
+  for (let monday = mondayOf(today); monday >= from; monday = shift(monday, -7))
+    rows.push(weekRow(stones, monday, today));
   return rows;
+}
+
+/**
+ * The Mon–Sun week starting `monday` as a row of days, each with its stones earliest first, and the
+ * whole week's totals. Days after `today` are ahead: not knitted yet.
+ */
+export function weekRow<S extends WeekStone>(
+  stones: readonly S[],
+  monday: LocalDate,
+  today: LocalDate,
+): StitchRow<S> & { totals: WeekTotals } {
+  const earliestFirst = [...stones].sort((a, b) => a.start.getTime() - b.start.getTime());
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const date = shift(monday, i);
+    return { date, stones: earliestFirst.filter((s) => s.localDate === date), ahead: date > today };
+  });
+  const inWeek = days.flatMap((d) => d.stones);
+  return { monday, days, stones: inWeek.length, totals: totalsOf(inWeek) };
 }

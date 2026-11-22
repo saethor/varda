@@ -26,7 +26,15 @@ _Avoid_: Edit, override
 
 **Lap**:
 A recorded section of a stone. Laps are matched to the workout steps of the workout the stone fulfils; the match can be corrected by hand.
-_Avoid_: Split (except for automatic per-kilometre splits)
+_Avoid_: Split (that is a kilometre)
+
+**Split**:
+Each whole kilometre of a stone, in order, and the remainder at the end, worked out from what the watch recorded along the way. A stone without distance, or a swim, has no splits.
+_Avoid_: Lap (laps are what the watch recorded), km split
+
+**Stretch**:
+A part of a run spent running, walking or standing, as the watch detected it.
+_Avoid_: Split, run/walk split, segment
 
 **Moving time**:
 How long a stone's or lap's timer ran, pauses excluded, as the watch recorded it. It is never worked out from speed.
@@ -45,7 +53,7 @@ Varða's own measure of how much strain a stone put on the athlete, calculated t
 _Avoid_: TSS, training stress, Garmin load
 
 **Effort**:
-The athlete's rating of how hard a stone felt, from 1 to 10.
+The athlete's rating of how hard a stone felt, from 1 to 10. A rating the athlete gave on the watch becomes the stone's effort; the athlete can change it.
 _Avoid_: RPE (in the UI), difficulty, feel
 
 **Day check-in**:

@@ -42,6 +42,10 @@ _Avoid_: Activity type, discipline
 The athlete's personal heart-rate, pace and power ranges, set by the athlete or a coach, each version valid from a date. A stone is always judged against the zones valid on its day.
 _Avoid_: Thresholds, settings
 
+**Measurements**:
+The athlete's weight, height, resting heart rate and max heart rate, each with the date it was true. A stone keeps the measurements its watch had that day; the athlete's current measurements are the most recent by date, whether entered in Varða or read from a watch, so placing an old stone never changes them. The athlete's name and zones never come from a watch. Coaches see resting and max heart rate; weight and height only if the athlete shares them.
+_Avoid_: Profile, body data, biometrics, user settings
+
 **Strength exercise**:
 A single strength movement within a workout or stone, made up of strength sets.
 _Avoid_: Exercise (unprefixed), movement, lift

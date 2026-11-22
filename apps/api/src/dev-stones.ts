@@ -1,7 +1,13 @@
 import type { ContractRouterClient } from '@orpc/contract';
 import { safe } from '@orpc/server';
 import type { Contract } from '@varda/contract';
-import { type WatchFileFigures, type WatchFileLap, type WatchFileOptions, watchFile } from '@varda/record/watch-files';
+import {
+  type WatchFileFigures,
+  type WatchFileLap,
+  type WatchFileOptions,
+  type WatchFileSplit,
+  watchFile,
+} from '@varda/record/watch-files';
 
 /** `count` laps of `distance` metres in `timerTime` seconds, each with 10 s stopped. */
 const laps = (count: number, distance: number, timerTime: number): WatchFileLap[] =>
@@ -9,6 +15,27 @@ const laps = (count: number, distance: number, timerTime: number): WatchFileLap[
 
 /** Track intervals: fast 400s with slow 200s between them. */
 const intervals = Array.from({ length: 5 }, () => [...laps(1, 400, 80), ...laps(1, 200, 75)]).flat();
+
+/**
+ * A long run with walk breaks, as the watch's run/walk detection splits it: 18 minutes running
+ * then a minute walking, five times over, standing at a crossing after the 2nd and 4th walk, and
+ * 4 minutes running to finish. 16 km in 6000 s on the timer, its 4 laps' totals.
+ */
+const runWalk: WatchFileSplit[] = (() => {
+  const splits: WatchFileSplit[] = [];
+  let at = 0;
+  const add = (type: WatchFileSplit['type'], time: number, distance: number) => {
+    splits.push({ type, start: at, time, distance });
+    at += time;
+  };
+  for (let i = 1; i <= 5; i++) {
+    add('rwdRun', 1080, 2990);
+    add('rwdWalk', 60, 80);
+    if (i % 2 === 0) add('rwdStand', 30, 0);
+  }
+  add('rwdRun', 240, 650);
+  return splits;
+})();
 
 /**
  * The stones every dev person gets: how many days before today, a UTC start time, and the watch
@@ -36,6 +63,7 @@ const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
   { daysAgo: 18, time: '03:30', file: { laps: laps(4, 5000, 1500), localOffset: -5 * 3600 } },
   { daysAgo: 21, time: '12:00', file: { sport: 'training', subSport: 'yoga', laps: [], distance: false, gps: false } },
   { daysAgo: 24, time: '10:30', file: { sport: 'crossCountrySkiing', laps: laps(2, 6000, 1500) } },
+  { daysAgo: 27, time: '09:30', file: { laps: laps(4, 4000, 1500), splits: runWalk } },
 ];
 
 /** The dev watch's model: a Forerunner 255 Music, as the real one. */

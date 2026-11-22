@@ -76,6 +76,8 @@ export type Session = {
   garminReference: GarminReference | null;
   /** The watch's own summary figures for the whole stone. */
   figures: Figures;
+  /** Running only: none for other sports, or when the watch detected none. */
+  stretches: Stretches | null;
 };
 
 /**
@@ -106,4 +108,27 @@ export type Stone = Session & {
   athlete: PersonId;
   /** The name of the watch file the stone was placed from. */
   fileName: string;
+};
+
+/** What a stretch of a run was spent doing. */
+export type StretchKind = 'running' | 'walking' | 'standing';
+
+/** A part of a run spent running, walking or standing, as the watch detected it (Record glossary). */
+export type Stretch = {
+  kind: StretchKind;
+  start: Date;
+  /** Seconds the timer ran. */
+  movingTime: number;
+  /** Metres, or none when the watch recorded none. Standing still is 0. */
+  distance: number | null;
+};
+
+/** All of a run's stretches of one kind, as the watch summed them. */
+export type StretchTotal = { movingTime: number; distance: number | null };
+
+/** A run's stretches, and the watch's own totals for each kind (none for a kind it didn't detect). */
+export type Stretches = {
+  /** In order of their start. */
+  inOrder: Stretch[];
+  totals: Record<StretchKind, StretchTotal | null>;
 };

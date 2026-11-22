@@ -30,6 +30,10 @@ function toStone({ laps, sport, figures, ...row }: Row): Stone {
     // Only Record writes this column, and only with a Sport.
     sport: sport as Stone['sport'],
     laps: laps.map((lap) => ({ ...lap, start: new Date(lap.start) })),
+    stretches: row.stretches && {
+      ...row.stretches,
+      inOrder: row.stretches.inOrder.map((stretch) => ({ ...stretch, start: new Date(stretch.start) })),
+    },
   };
 }
 
@@ -47,7 +51,14 @@ export function createPostgresStones(db: NodePgDatabase): Stones {
       // The unique (athlete, session key) constraint decides a race; the loser adds nothing.
       const added = await db
         .insert(stones)
-        .values({ ...stone, laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })) })
+        .values({
+          ...stone,
+          laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })),
+          stretches: stone.stretches && {
+            ...stone.stretches,
+            inOrder: stone.stretches.inOrder.map((stretch) => ({ ...stretch, start: stretch.start.toISOString() })),
+          },
+        })
         .onConflictDoNothing({ target: [stones.athlete, stones.sessionKey] })
         .returning({ id: stones.id });
       if (added.length > 0) return 'added';

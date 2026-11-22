@@ -78,3 +78,15 @@ it('rates some stones on the watch and not others, all from the same watch', asy
   expect(stones.some((stone) => stone.effort === null)).toBe(true);
   expect(new Set(stones.map((stone) => stone.device?.model))).toEqual(new Set(['Forerunner 255 Music']));
 });
+
+it('places a run with walking and standing stretches', async () => {
+  const { clientFor, stonesOf } = devApp();
+  await seedStones({ clientFor, athletes: [anna.id], today });
+
+  const opened = await Promise.all(
+    (await stonesOf(anna.id)).map(({ id }) => clientFor(anna.id).record.stones.get({ stoneId: id })),
+  );
+
+  const kinds = new Set(opened.flatMap((stone) => stone.stretches?.inOrder.map(({ kind }) => kind) ?? []));
+  expect([...kinds].sort()).toEqual(['running', 'standing', 'walking']);
+});

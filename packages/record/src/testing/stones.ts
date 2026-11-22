@@ -42,6 +42,18 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
     device: { manufacturer: 'Garmin', model: 'Forerunner 255 Music' },
     garminReference: { trainingLoad: 105.87, aerobicTrainingEffect: 3.2, anaerobicTrainingEffect: null },
     figures: noFigures,
+    stretches: {
+      inOrder: [
+        { kind: 'running', start, movingTime: 600, distance: 2000 },
+        { kind: 'standing', start: new Date(start.getTime() + 600_000), movingTime: 30, distance: 0 },
+        { kind: 'walking', start: new Date(start.getTime() + 630_000), movingTime: 270, distance: null },
+      ],
+      totals: {
+        running: { movingTime: 600, distance: 2000 },
+        walking: null,
+        standing: { movingTime: 30, distance: 0 },
+      },
+    },
   };
 }
 

@@ -31,6 +31,10 @@ msgstr "{count, plural, one {# hringur} other {# hringir}}"
 msgid "{count, plural, one {# lap} other {# laps}} · a lap every {distance}"
 msgstr "{count, plural, one {# hringur} other {# hringir}} · hringur á hverjum {distance}"
 
+#: src/stones/stone-stretches.tsx:34
+msgid "{count, plural, one {# stretch} other {# stretches}}"
+msgstr "{count, plural, one {# kafli} other {# kaflar}}"
+
 #: src/stones/from-the-watch.tsx:34
 msgid "{effort} of 10"
 msgstr "{effort} af 10"
@@ -133,6 +137,7 @@ msgstr "Lækkun"
 #: src/stones/stone-laps.tsx:147
 #: src/stones/stone-numbers.tsx:20
 #: src/stones/stone-plate.tsx:42
+#: src/stones/stone-stretches.tsx:70
 msgid "Distance"
 msgstr "Vegalengd"
 
@@ -243,6 +248,7 @@ msgstr "Minnsti hiti"
 #: src/stones/stone-laps.tsx:151
 #: src/stones/stone-numbers.tsx:21
 #: src/stones/stone-plate.tsx:43
+#: src/stones/stone-stretches.tsx:67
 msgid "Moving time"
 msgstr "Hreyfitími"
 
@@ -359,6 +365,10 @@ msgstr "Fjarlægja {name}?"
 msgid "Road running"
 msgstr "Götuhlaup"
 
+#: src/stones/stone-stretches.tsx:101
+msgid "Running"
+msgstr "Hlaup"
+
 #: src/stones/stone-week-view.tsx:137
 msgid "See the calendar"
 msgstr "Skoða dagatalið"
@@ -414,6 +424,14 @@ msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 msgid "Speed"
 msgstr "Hraði"
 
+#: src/stones/stone-stretches.tsx:105
+msgid "Standing"
+msgstr "Kyrrstaða"
+
+#: src/stones/stone-stretches.tsx:64
+msgid "Start"
+msgstr "Byrjar"
+
 #: src/stones/stone-plate.tsx:74
 msgid "started {time}"
 msgstr "hófst {time}"
@@ -422,12 +440,12 @@ msgstr "hófst {time}"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Steini eytt. Þú getur lagt hann aftur úr {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:57
+#: src/routes/_signed-in/stones_.$stoneId.tsx:58
 msgid "Stone not found"
 msgstr "Steinn fannst ekki"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:47
+#: src/routes/_signed-in/stones_.$stoneId.tsx:48
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -444,6 +462,14 @@ msgstr "Steinar: æfingarnar sem þú hefur lokið"
 #: src/stones/stone-card.tsx:15
 msgid "Strength"
 msgstr "Styrkur"
+
+#: src/stones/stone-stretches.tsx:61
+msgid "Stretch"
+msgstr "Kafli"
+
+#: src/stones/stone-stretches.tsx:31
+msgid "Stretches"
+msgstr "Kaflar"
 
 #: src/stones/stone-figures.tsx:20
 msgid "Summary"
@@ -470,7 +496,7 @@ msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur.
 msgid "The week of {0}"
 msgstr "Vikan frá {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:60
+#: src/routes/_signed-in/stones_.$stoneId.tsx:61
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "Þessi steinn er ekki til. Honum gæti hafa verið eytt, eða hlekkurinn er rangur."
 
@@ -532,6 +558,7 @@ msgid "Varða doesn't recognise that passkey. Sign in with your password instead
 msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn með lykilorðinu þínu."
 
 #: src/stones/stone-card.tsx:25
+#: src/stones/stone-stretches.tsx:103
 msgid "Walking"
 msgstr "Ganga"
 

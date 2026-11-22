@@ -9,6 +9,8 @@ import {
   type Mesg,
   type RecordMesg,
   type SessionMesg,
+  type SplitMesg,
+  type SplitSummaryMesg,
 } from '@garmin/fitsdk';
 import { fitEpoch } from '../domain/read-watch-file.ts';
 
@@ -56,6 +58,11 @@ export type WatchFileOptions = {
   garminReference?: { trainingLoad: number; aerobicTrainingEffect: number; anaerobicTrainingEffect: number };
   /** The session's summary figures. Each left out is one the watch didn't record; by default none. */
   figures?: WatchFileFigures;
+  /**
+   * The split records the watch wrote, in the order given: run/walk detection (`rwdRun`, `rwdWalk`,
+   * `rwdStand`) or Garmin's interval types. With a split summary per type. None by default.
+   */
+  splits?: WatchFileSplit[];
 };
 
 /**
@@ -82,12 +89,22 @@ export type WatchFileFigures = {
 /** A lap: metres, and seconds of timer and of elapsed time. */
 export type WatchFileLap = { distance: number; timerTime: number; elapsedTime: number };
 
+/** A split record: its FIT split type, seconds from the session's start, seconds of timer, metres. */
+export type WatchFileSplit = {
+  type: 'rwdRun' | 'rwdWalk' | 'rwdStand' | 'intervalActive' | 'intervalRest';
+  start: number;
+  time: number;
+  distance: number;
+};
+
 // Global FIT message numbers (FIT profile).
 const fileIdMesg = 0;
 const sessionMesg = 18;
 const lapMesg = 19;
 const recordMesg = 20;
 const activityMesg = 34;
+const splitMesg = 312;
+const splitSummaryMesg = 313;
 
 const garmin = 1;
 const forerunner255 = 3992;
@@ -146,6 +163,7 @@ export function watchFile({
   product = forerunner255,
   garminReference,
   figures = {},
+  splits = [],
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const total = (key: keyof WatchFileLap) => sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
@@ -252,6 +270,31 @@ export function watchFile({
     numSessions: 1 + brick.length,
     type: 'manual',
     totalTimerTime: total('timerTime'),
+  });
+
+  splits.forEach((split, i) => {
+    write<SplitMesg>({
+      mesgNum: splitMesg,
+      messageIndex: i,
+      // The encoder takes the type's name, as the decoder gives it back.
+      splitType: split.type as unknown as number,
+      startTime: at(split.start),
+      endTime: at(split.start + split.time),
+      totalTimerTime: split.time,
+      totalElapsedTime: split.time,
+      totalDistance: split.distance,
+    });
+  });
+  [...new Set(splits.map((split) => split.type))].forEach((type, i) => {
+    const ofType = splits.filter((split) => split.type === type);
+    write<SplitSummaryMesg>({
+      mesgNum: splitSummaryMesg,
+      messageIndex: i,
+      splitType: type as unknown as number,
+      numSplits: ofType.length,
+      totalTimerTime: sum(ofType.map((split) => split.time)),
+      totalDistance: sum(ofType.map((split) => split.distance)),
+    });
   });
 
   const bytes = encoder.close();

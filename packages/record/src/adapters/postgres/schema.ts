@@ -25,6 +25,14 @@ export type StoredLap = {
   trigger: 'manual' | 'distance' | 'time' | 'other';
 };
 
+type StretchTotal = { movingTime: number; distance: number | null } | null;
+
+/** A run's stretches as stored in `stones.stretches`: each start as an ISO instant. */
+export type StoredStretches = {
+  inOrder: { kind: 'running' | 'walking' | 'standing'; start: string; movingTime: number; distance: number | null }[];
+  totals: { running: StretchTotal; walking: StretchTotal; standing: StretchTotal };
+};
+
 export const stones = record.table(
   'stones',
   {
@@ -59,6 +67,8 @@ export const stones = record.table(
     }>(),
     // The watch's summary figures; null for stones placed before they were read (ADR 0009).
     figures: jsonb('figures').$type<Figures>(),
+    // A run's stretches, starts as ISO instants; null for other sports and stones placed before them.
+    stretches: jsonb('stretches').$type<StoredStretches>(),
   },
   (table) => [
     // A session is placed as a stone only once (Record glossary).

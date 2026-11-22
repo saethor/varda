@@ -1,14 +1,32 @@
 import { and, between, desc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Stones } from '../../application/ports.ts';
-import type { Stone } from '../../domain/stone.ts';
+import type { Figures, Stone } from '../../domain/stone.ts';
 import { stones } from './schema.ts';
 
 type Row = typeof stones.$inferSelect;
 
-function toStone({ laps, sport, ...row }: Row): Stone {
+/** What a stone placed before its figures were read holds: none of them. */
+const noFigures: Figures = {
+  averageHeartRate: null,
+  maxHeartRate: null,
+  ascent: null,
+  descent: null,
+  averageCadence: null,
+  maxCadence: null,
+  averagePower: null,
+  maxPower: null,
+  normalizedPower: null,
+  minTemperature: null,
+  averageTemperature: null,
+  maxTemperature: null,
+  calories: null,
+};
+
+function toStone({ laps, sport, figures, ...row }: Row): Stone {
   return {
     ...row,
+    figures: figures ?? noFigures,
     // Only Record writes this column, and only with a Sport.
     sport: sport as Stone['sport'],
     laps: laps.map((lap) => ({ ...lap, start: new Date(lap.start) })),

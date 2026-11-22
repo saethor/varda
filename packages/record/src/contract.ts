@@ -13,6 +13,27 @@ const LapSchema = z.object({
 });
 
 /**
+ * The watch's own figures, as recorded; each null when it recorded none (never 0). Heart rate in
+ * bpm, ascent and descent in metres, power in W, temperature in °C, calories in kcal. Cadence as
+ * the watch shows it: steps a minute for running, walking and hiking, rpm otherwise.
+ */
+const FiguresSchema = z.object({
+  averageHeartRate: z.number().nullable(),
+  maxHeartRate: z.number().nullable(),
+  ascent: z.number().nullable(),
+  descent: z.number().nullable(),
+  averageCadence: z.number().nullable(),
+  maxCadence: z.number().nullable(),
+  averagePower: z.number().nullable(),
+  maxPower: z.number().nullable(),
+  normalizedPower: z.number().nullable(),
+  minTemperature: z.number().nullable(),
+  averageTemperature: z.number().nullable(),
+  maxTemperature: z.number().nullable(),
+  calories: z.number().nullable(),
+});
+
+/**
  * A stone as the web app sees it, in a list and opened. Times in seconds, distance in metres or
  * none (never 0).
  */
@@ -36,6 +57,8 @@ const StoneSchema = z.object({
   laps: z.array(LapSchema),
   /** The line the stone traced over the ground, `[lat, lon]` pairs in degrees, or none without GPS. */
   trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
+  /** The watch's summary figures for the whole stone. */
+  figures: FiguresSchema,
 });
 
 /** A stone opened on its own screen: everything a listed stone has, and what only its screen shows. */

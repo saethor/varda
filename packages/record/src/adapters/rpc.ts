@@ -34,6 +34,7 @@ function toListedStone({
   elapsedTime,
   laps,
   trace,
+  figures,
 }: Stone) {
   return {
     id,
@@ -47,6 +48,7 @@ function toListedStone({
     elapsedTime,
     laps,
     trace,
+    figures,
   };
 }
 

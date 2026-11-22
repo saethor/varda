@@ -55,6 +55,30 @@ export type Session = {
   laps: Lap[];
   /** None when the watch recorded fewer than 2 positions (indoors, in a pool, in the gym). */
   trace: Trace | null;
+  /** The watch's own summary figures for the whole stone. */
+  figures: Figures;
+};
+
+/**
+ * The figures the watch recorded for a stone (or a lap), as recorded, never worked out by Varða
+ * (ADR 0009). Each is null when the watch recorded none, never 0. Heart rate in bpm, ascent and
+ * descent in metres, power in W, temperature in °C, calories in kcal. Cadence is as the watch shows
+ * it: steps a minute for running, walking and hiking (both legs), revolutions a minute otherwise.
+ */
+export type Figures = {
+  averageHeartRate: number | null;
+  maxHeartRate: number | null;
+  ascent: number | null;
+  descent: number | null;
+  averageCadence: number | null;
+  maxCadence: number | null;
+  averagePower: number | null;
+  maxPower: number | null;
+  normalizedPower: number | null;
+  minTemperature: number | null;
+  averageTemperature: number | null;
+  maxTemperature: number | null;
+  calories: number | null;
 };
 
 /** A training session the athlete actually did (Record glossary). */

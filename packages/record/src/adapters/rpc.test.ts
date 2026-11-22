@@ -21,7 +21,8 @@ describe('placing a stone', () => {
     const { stoneId } = await client.stones.place({ file: fitFile(watchFile(), 'morning-run.fit') });
     const stones = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
 
-    expect(stones).toEqual([
+    // Only the fields named here, so a ticket adding a field doesn't rewrite this; each tests its own.
+    expect(stones).toMatchObject([
       {
         id: stoneId,
         localDate: '2026-11-02',

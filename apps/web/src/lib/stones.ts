@@ -10,6 +10,8 @@ import { type client, orpc } from './orpc.ts';
 /** A stone as the contract shows it. */
 export type Stone = Awaited<ReturnType<typeof client.record.stones.list>>[number];
 export type Sport = Stone['sport']['sport'];
+/** A stone as the contract shows it opened, on its own screen: a listed stone and more. */
+export type StoneDetail = Awaited<ReturnType<typeof client.record.stones.get>>;
 
 /** The signed-in person's stones, 4 whole weeks at a time back from `today`, newest first. */
 export const feedQuery = (today: LocalDate) =>

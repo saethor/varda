@@ -2,7 +2,7 @@ import { Trans } from '@lingui/react/macro';
 import { ORPCError } from '@orpc/client';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, notFound, useRouterState } from '@tanstack/react-router';
-import { stoneQuery, weekAroundQuery } from '../../lib/stones.ts';
+import { type StoneDetail, stoneQuery, weekAroundQuery } from '../../lib/stones.ts';
 import { DeleteStone } from '../../stones/delete-stone.tsx';
 import { todayHere } from '../../stones/feed-window.ts';
 import { StoneLaps } from '../../stones/stone-laps.tsx';
@@ -68,7 +68,7 @@ function NoSuchStone() {
  */
 function StoneScreen() {
   const { stoneId } = Route.useParams();
-  const { data: stone } = useSuspenseQuery(stoneQuery(stoneId));
+  const stone: StoneDetail = useSuspenseQuery(stoneQuery(stoneId)).data;
   const { data: around } = useSuspenseQuery(weekAroundQuery(stone.localDate));
   const justPlaced = useRouterState({ select: (state) => state.location.state.placed === true });
   const today = todayHere(new Date());
@@ -84,7 +84,14 @@ function StoneScreen() {
         <StonePlate stone={stone} place={place} today={today} justPlaced={justPlaced} />
       </div>
 
+      {/* What the stone shows (spec #74), one section per ticket, each its own component that renders nothing without data. */}
+      {/* Summary (#76) */}
+      {/* Charts (#79) */}
+      {/* Splits (#83) */}
       <StoneLaps stone={stone} />
+      {/* Stretches (#80) */}
+      {/* Form (#84) */}
+      {/* Measurements (#78) */}
 
       {/* Reserved: planned against actual (the workout this stone fulfilled, its workout outcome) and the journey it moved along go here, between the stone's own record and the walk through the weeks. */}
 
@@ -95,6 +102,7 @@ function StoneScreen() {
           </p>
           <DeleteStone stone={stone} className="-ml-3 sm:ml-0 sm:-mr-3" />
         </div>
+        {/* Effort and device (#77) */}
         <WeekWalk stone={stone} place={place} today={today} />
       </footer>
     </section>

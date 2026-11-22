@@ -6,7 +6,7 @@ import { placeStone } from '../application/place-stone.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
 import { maxWatchFileBytes, recordContract } from '../contract.ts';
 import { SessionAlreadyPlaced, StoneNotFound, WatchFileTurnedAway } from '../domain/errors.ts';
-import type { Stone } from '../domain/stone.ts';
+import type { PersonId, Stone } from '../domain/stone.ts';
 
 const os = implement(recordContract).$context<SharedContext>();
 
@@ -21,8 +21,8 @@ const requirePerson = os.middleware(async ({ context, next }) => {
   return await next({ context: { person: context.person } });
 });
 
-/** A stone as the contract shows it. */
-function toContractStone({
+/** A stone as the contract lists it. */
+function toListedStone({
   id,
   localDate,
   start,
@@ -50,6 +50,14 @@ function toContractStone({
   };
 }
 
+/** A stone as the contract shows it opened, to `viewer`: its athlete, or someone coaching them. */
+// biome-ignore lint/correctness/noUnusedFunctionParameters: measurements (#78) leave out what a coach mustn't see.
+function toStoneDetail(stone: Stone, viewer: PersonId) {
+  return {
+    ...toListedStone(stone),
+  };
+}
+
 // The Record context's part of the API contract (ADR 0006). Each procedure translates the domain
 // errors its use case throws into the typed errors its contract declares; anything else is a 500.
 export function createRecordRouter(adapters: RecordAdapters) {
@@ -70,11 +78,11 @@ export function createRecordRouter(adapters: RecordAdapters) {
       list: os.stones.list
         .use(requirePerson)
         .handler(async ({ context, input }) =>
-          (await adapters.stones.ofAthlete(context.person, input)).map(toContractStone),
+          (await adapters.stones.ofAthlete(context.person, input)).map(toListedStone),
         ),
       get: os.stones.get.use(requirePerson).handler(async ({ context, input: { stoneId }, errors }) => {
         try {
-          return toContractStone(await openStone(adapters, context.person, stoneId));
+          return toStoneDetail(await openStone(adapters, context.person, stoneId), context.person);
         } catch (error) {
           if (error instanceof StoneNotFound) throw errors.NOT_FOUND();
           throw error;

@@ -12,7 +12,10 @@ const LapSchema = z.object({
   trigger: z.enum(lapTriggers),
 });
 
-/** A stone as the web app sees it. Times in seconds, distance in metres or none (never 0). */
+/**
+ * A stone as the web app sees it, in a list and opened. Times in seconds, distance in metres or
+ * none (never 0).
+ */
 const StoneSchema = z.object({
   id: z.uuid(),
   /** The local date where the stone started, `YYYY-MM-DD`. */
@@ -34,6 +37,9 @@ const StoneSchema = z.object({
   /** The line the stone traced over the ground, `[lat, lon]` pairs in degrees, or none without GPS. */
   trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
 });
+
+/** A stone opened on its own screen: everything a listed stone has, and what only its screen shows. */
+const StoneDetailSchema = StoneSchema.extend({});
 
 /** The largest watch file a stone is placed from: 25 MB. The web app checks it before sending, too. */
 export const maxWatchFileBytes = 25_000_000;
@@ -63,7 +69,7 @@ export const recordContract = {
         NOT_FOUND: { status: 404 },
       })
       .input(z.object({ stoneId: z.uuid() }))
-      .output(StoneSchema),
+      .output(StoneDetailSchema),
     /** Deletes the signed-in person's stone and its recording, so the same file can be placed again. */
     delete: signedInProcedure
       .errors({

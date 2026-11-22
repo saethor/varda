@@ -1,15 +1,17 @@
 import { type LocalDate, shiftDate as shift } from './local-date.ts';
+import { mondayOf } from './stone-week.ts';
 
 const weeksPerWindow = 4;
 
 /**
- * The local dates the feed loads at a time: 4 weeks, both ends included. Window 0 ends today;
- * each "Show earlier" loads the next window back, so no day is loaded twice or skipped.
+ * The local dates the list loads at a time, both ends included: whole Mon–Sun weeks, so no week is
+ * cut in two and its totals are whole. Window 0 is this week so far and the 3 weeks before it; each
+ * "Show earlier" loads the 4 weeks before that, so no day is loaded twice or skipped.
  */
 export function feedWindow(today: LocalDate, window: number): { from: LocalDate; to: LocalDate } {
   const days = weeksPerWindow * 7;
-  const to = shift(today, -window * days);
-  return { from: shift(to, -(days - 1)), to };
+  const nextMonday = shift(mondayOf(today), 7 - window * days);
+  return { from: shift(nextMonday, -days), to: window === 0 ? today : shift(nextMonday, -1) };
 }
 
 /** Today's date where the person is. */

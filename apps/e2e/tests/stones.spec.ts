@@ -23,8 +23,9 @@ test('an athlete places a stone from a watch file, opens it and deletes it', asy
     .locator('input[type=file]')
     .setInputFiles({ name: fileName, mimeType: 'application/octet-stream', buffer });
 
-  // The new stone opens on its own screen.
-  await expect(page.getByText(`Stone placed from ${fileName}`)).toBeVisible();
+  // The new stone opens on its own screen, saying it joined its week, with the file as provenance.
+  await expect(page.getByRole('status')).toContainText(/^Placed\. Your \d+\w* stone/);
+  await expect(page.getByText(`From your watch · ${fileName}`)).toBeVisible();
   await expect(page.getByRole('heading', { level: 1, name: 'Road running' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Laps' })).toBeVisible();
   const stonePath = new URL(page.url()).pathname;
@@ -33,7 +34,7 @@ test('an athlete places a stone from a watch file, opens it and deletes it', asy
   // Back on the stones, it is in the feed.
   await page.locator('section').getByRole('link', { name: 'Stones', exact: true }).click();
   await expect(page).toHaveURL(/\/stones$/);
-  const card = page.locator(`h2 a[href="${stonePath}"]`);
+  const card = page.locator(`h3 a[href="${stonePath}"]`);
   await expect(card).toHaveText('Road running');
 
   await card.click();
@@ -45,7 +46,7 @@ test('an athlete places a stone from a watch file, opens it and deletes it', asy
 
   await expect(page).toHaveURL(/\/stones$/);
   await expect(page.getByText(`Stone deleted. You can place it again from ${fileName}.`)).toBeVisible();
-  await expect(page.locator(`h2 a[href="${stonePath}"]`)).toHaveCount(0);
+  await expect(page.locator(`h3 a[href="${stonePath}"]`)).toHaveCount(0);
 
   await page.goto(stonePath);
   await expect(page.getByRole('heading', { name: 'Stone not found' })).toBeVisible();

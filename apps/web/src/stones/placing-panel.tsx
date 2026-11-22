@@ -56,7 +56,7 @@ export function PlacingPanel({
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
       className={cn(
-        'flex flex-col gap-3 rounded-xl border bg-card p-5',
+        'flex flex-col gap-3 rounded-xs border bg-card p-5',
         className,
         dragging && 'border-primary bg-primary/5',
       )}

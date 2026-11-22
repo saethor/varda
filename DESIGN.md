@@ -1,20 +1,37 @@
 ---
 name: Varða
-description: A training diary built around the journey. Calm highland earth, one stone at a time.
+description: A training diary built around the journey. Undyed wool, dyed yarns, one stone at a time.
 colors:
-  basalt: "#2b2e2f"
-  snow: "#f3f1ec"
-  ash-card: "#faf9f6"
-  weathered-stone: "#ebe7dd"
-  pale-scree: "#d8d3c7"
-  scree: "#8f8878"
-  tephra: "#6f695d"
-  deep-moss: "#4f6841"
-  moss: "#5e7a4e"
+  svart: "#2a2420"
+  heather: "#dedfdc"
+  wool: "#f4f4f2"
+  heather-deep: "#cbcdc8"
+  heather-hover: "#cfd1cc"
+  heather-muted: "#d3d5d0"
+  hairline: "#c3c5c0"
+  field-edge: "#7c7a74"
+  muted-ink: "#5c5752"
+  shell-ink: "#f2f1ec"
+  shell-muted: "#b3ab9f"
+  shell-line: "#4a423c"
+  dye-running: "#a4482a"
+  dye-strength: "#2f4a6e"
+  dye-cross-training: "#3f5e45"
+  dye-other: "#8d8a84"
   lichen: "#b5c26a"
-  ember: "#e0662a"
   lava: "#8c2f39"
+  basalt: "#2b2e2f"
+  moss: "#5e7a4e"
+  snow: "#f3f1ec"
+  ember: "#e0662a"
 typography:
+  display:
+    fontFamily: "ui-sans-serif, system-ui, sans-serif"
+    fontSize: "3rem"
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: "-0.025em"
+    fontFeature: "\"tnum\""
   headline:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.5rem"
@@ -27,6 +44,11 @@ typography:
     lineHeight: "1.75rem"
   body:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: "1.5rem"
+  body-sm:
+    fontFamily: "ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: "1.25rem"
@@ -38,158 +60,199 @@ typography:
   caption:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.75rem"
-    fontWeight: 500
+    fontWeight: 400
     lineHeight: "1rem"
 rounded:
-  sm: "4px"
-  md: "6px"
-  lg: "8px"
-  xl: "12px"
+  xs: "2px"
+  sm: "2px"
+  md: "2px"
+  lg: "3px"
+  xl: "4px"
+  full: "9999px"
 spacing:
+  hair: "4px"
   tight: "8px"
   snug: "12px"
   base: "16px"
+  panel: "20px"
   section: "24px"
-  field: "28px"
+  plate: "28px"
   page: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.deep-moss}"
-    textColor: "{colors.snow}"
+    backgroundColor: "{colors.svart}"
+    textColor: "{colors.wool}"
     typography: "{typography.label}"
     rounded: "{rounded.md}"
     padding: "8px 16px"
     height: "36px"
   button-secondary:
-    backgroundColor: "{colors.weathered-stone}"
-    textColor: "{colors.basalt}"
+    backgroundColor: "{colors.heather-deep}"
+    textColor: "{colors.svart}"
     typography: "{typography.label}"
     rounded: "{rounded.md}"
     padding: "8px 16px"
     height: "36px"
   button-outline:
-    backgroundColor: "{colors.snow}"
-    textColor: "{colors.basalt}"
+    backgroundColor: "{colors.heather}"
+    textColor: "{colors.svart}"
     rounded: "{rounded.md}"
     padding: "8px 16px"
     height: "36px"
   button-ghost-hover:
-    backgroundColor: "{colors.lichen}"
-    textColor: "{colors.basalt}"
+    backgroundColor: "{colors.heather-hover}"
+    textColor: "{colors.svart}"
   button-destructive:
     backgroundColor: "{colors.lava}"
-    textColor: "{colors.snow}"
+    textColor: "{colors.wool}"
     rounded: "{rounded.md}"
     padding: "8px 16px"
     height: "36px"
   input:
-    textColor: "{colors.basalt}"
+    textColor: "{colors.svart}"
     rounded: "{rounded.md}"
     padding: "4px 12px"
     height: "36px"
+  panel:
+    backgroundColor: "{colors.wool}"
+    textColor: "{colors.svart}"
+    rounded: "{rounded.xs}"
+    padding: "20px"
   card:
-    backgroundColor: "{colors.ash-card}"
-    textColor: "{colors.basalt}"
+    backgroundColor: "{colors.wool}"
+    textColor: "{colors.svart}"
     rounded: "{rounded.xl}"
     padding: "24px"
-  badge-outline:
-    textColor: "{colors.basalt}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.md}"
-    padding: "2px 8px"
+  plate:
+    backgroundColor: "{colors.svart}"
+    textColor: "{colors.shell-ink}"
+    rounded: "{rounded.xs}"
+    padding: "28px"
+  shell-bar:
+    backgroundColor: "{colors.svart}"
+    textColor: "{colors.shell-ink}"
+    height: "56px"
+  nav-link:
+    textColor: "{colors.shell-muted}"
+    typography: "{typography.body-sm}"
+  nav-link-active:
+    textColor: "{colors.shell-ink}"
+  view-toggle-active:
+    backgroundColor: "{colors.svart}"
+    textColor: "{colors.wool}"
+    typography: "{typography.label}"
+    padding: "6px 12px"
+  view-toggle:
+    textColor: "{colors.svart}"
+    typography: "{typography.label}"
+    padding: "6px 12px"
+  station:
+    backgroundColor: "{colors.wool}"
+    rounded: "{rounded.full}"
+    size: "20px"
   alert-destructive:
-    backgroundColor: "{colors.ash-card}"
+    backgroundColor: "{colors.wool}"
     textColor: "{colors.lava}"
-    typography: "{typography.body}"
+    typography: "{typography.body-sm}"
     rounded: "{rounded.lg}"
     padding: "12px 16px"
-  nav-link:
-    textColor: "{colors.tephra}"
-    typography: "{typography.body}"
-  nav-link-active:
-    textColor: "{colors.basalt}"
 ---
 
 # Design System: Varða
 
 ## Overview
 
-**Creative North Star: "The Highland Waymark"**
+**Creative North Star: "The Sauðalitir Yoke"**
 
-A varða is a pile of stones on an open, pale highland. You can see it from far off because almost nothing else is there. Varða's interface works the same way: calm, earthy marks on a quiet field of snow, where each mark has earned its place the way a cairn has on a long route. The mood is calm, earthy, reflective and precise. Splitsmith, the planning area, brings the heat of the forge with Ember. Varða itself stays cool and mossy.
+Varða is dressed in sauðalitir, the colours of undyed Icelandic wool: a light grey heather ground, near-white wool for cards and panels, and black-brown svart for ink, the shell bar and one dark plate per screen. Colour enters only as dyed yarn, one dye per sport group, the way a lopapeysa yoke takes a few dyed rows on undyed wool. Brand Lichen is the one bright, and it lives on the dark. The mood is calm, plain and exact, like a well-knitted, well-kept field notebook. Splitsmith, the planning area, keeps Ember for its forge. Varða itself stays in wool.
 
-The system is a warm-stone retune of shadcn/ui (new-york). The defaults have been moved off neutral gray onto basalt, snow and moss, and the restraint is deliberate. Density is low and the pace is unhurried: one narrow column, generous gaps, and one clear action per moment. Depth is tonal, not lifted. The brand mostly shows in the palette, the cairn mark and the vocabulary, not in ornament. Brand moments can get bolder, but working screens should feel like a well-kept field notebook.
+The system is a retuned shadcn/ui (new-york): the defaults are moved onto the wool palette, corners are pulled in to knitted-edge tightness (2–4px), and depth is tonal. Density is moderate on the wide desktop screens and unhurried on phones. Numbers carry the content, so they are set large, semibold and tabular. Records read as structure (rows of stitches, a route line with stations, ink rules across week heads) rather than as stacks of identical cards. The brand shows in the palette, the drawn wordmark and the vocabulary, not in ornament.
 
-Rejected: a Strava-style social feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (dark panels, walls of metric tiles), and generic neutral-gray shadcn SaaS.
+Rejected: a Strava-style social feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (walls of dark metric tiles), a stack of identical activity cards, and generic neutral-gray shadcn SaaS.
 
 **Key Characteristics:**
-- Snow ground, basalt ink, deep-moss action, lichen as the light touch.
-- Flat and tonal: Ash Card lifts off Snow by value, with a hairline Pale Scree border.
-- One narrow, centred column (28rem) on the focused screens; the stones screen goes wide (72rem).
-- The system sans at small sizes. Hierarchy comes from weight and a few steps of scale.
+- Heather ground, wool panels, svart ink and shell. Lichen only on svart.
+- Four dyed yarns name the sport group: rust, indigo, bottle green and undyed grey.
+- A dark svart shell bar on every signed-in screen, and at most one dark plate below it.
+- 1px hairlines, ink rules for structure, tight 2–4px corners, no shadows in the page flow.
+- The system sans, with tabular numerals for every figure.
 - Light only. There is no dark mode.
 
 ## Colors
 
-The palette comes from the Icelandic highlands: volcanic rock, old snow, moss, lichen, ember and lava. Every neutral is warmed toward ash, never cooled toward gray.
+Undyed wool for every surface and all ink, a few dyed yarns for meaning, and the brand marks keeping their own colours.
 
 ### Primary
-- **Deep Moss** (`deep-moss`): the primary action colour. It fills primary buttons, in-sentence links, selected field options (at 5% tint) and text selection. It is darker than brand Moss so that Snow text on it clears AA (5.5:1).
-- **Moss** (`moss`): the brand green from the logo and the focus ring colour. Do not put text on it: Snow on Moss is only 4.26:1.
+- **Svart** (`svart`): black-brown wool, the ink of the system. All body text and headings, primary button fills, the active segment of segmented controls, the shell bar, the latest-stone plate, ink rules under week heads, the route line, and text selection (Wool on Svart). In-sentence links are Svart and always underlined.
 
 ### Secondary
-- **Lichen** (`lichen`): the accent. It is the hover fill for ghost and outline buttons and outline badge links, always with Basalt text (7.1:1). In the logo it is the capstone colour on dark backgrounds.
+- **Dyed yarns** (`dye-running`, `dye-strength`, `dye-cross-training`, `dye-other`): one per sport group, so the sport reads before the name. Running is rust, strength is indigo, cross-training is bottle green, and anything else is undyed grey. They fill stitch cells, ring and fill route stations, and nothing else on the stones screen.
+- **Strength Indigo** (`dye-strength`) doubles as the focus ring on the light ground (6.8:1 on Heather), the only dye with a system role.
 
 ### Tertiary
-- **Ember** (`ember`): Splitsmith's forge accent, reserved for the planning area. Snow on Ember is 3.05:1 and Basalt on Ember is 3.98:1, so Ember is for fills, marks and large type only, never small text.
+- **Lichen** (`lichen`): the one bright. Used on Svart only: the shell's active-nav underline and focus outline, the plate's "nth stone this week" line, the plate's trace, and the plate's focus outline (7.9:1 on Svart). It is also the capstone colour of the logo on dark.
+- **Ember** (`ember`): Splitsmith's forge accent, reserved for the planning area. Fills, marks and large type only, never small text.
 
 ### Neutral
-- **Basalt** (`basalt`): all ink, meaning body text, headings and card text. It reads 12.1:1 on Snow.
-- **Snow** (`snow`): the page background, and the text on Deep Moss and Lava fills.
-- **Ash Card** (`ash-card`): cards, popovers and alerts, one step lighter than Snow so they lift by value.
-- **Weathered Stone** (`weathered-stone`): secondary button fills and muted surfaces.
-- **Pale Scree** (`pale-scree`): every border, divider and separator.
-- **Scree** (`scree`): input borders, darker than Pale Scree so fields read as fields (3.1:1 on Snow, which meets the non-text minimum).
-- **Tephra** (`tephra`): muted text, meaning descriptions, the tagline, placeholders and inactive nav (4.8:1 on Snow, 5.2:1 on Ash Card).
+- **Heather** (`heather`): the page ground, a near-neutral light grey.
+- **Wool** (`wool`): cards, panels, popovers and alerts, one step lighter than Heather so they lift by value. Also the text on Svart and Lava fills.
+- **Heather Deep** (`heather-deep`): secondary button fills ("Show earlier").
+- **Heather Hover** (`heather-hover`): the hover fill of ghost and outline buttons and unselected segments.
+- **Heather Muted** (`heather-muted`): muted surfaces, such as calendar week totals.
+- **Hairline** (`hairline`): every border, divider and row separator.
+- **Field Edge** (`field-edge`): input borders and the dotted route through empty weeks (3.2:1 on Heather).
+- **Muted Ink** (`muted-ink`): secondary text, meaning dates, descriptions, the tagline, column heads and zero counts (5.3:1 on Heather, 6.5:1 on Wool). It is warmer than the grey surfaces, a brown-grey of the same wool as Svart.
+- **Shell Ink / Shell Muted / Shell Line** (`shell-ink`, `shell-muted`, `shell-line`): text, secondary text and rules on the Svart shell and plate (13.5:1 and 6.7:1 on Svart).
+
+### Brand marks
+- **Basalt, Moss, Snow** (`basalt`, `moss`, `snow`): the logo's own colours, kept for the drawn wordmark and cairn. They are not interface colours.
 
 ### Error
-- **Lava** (`lava`): errors and destructive actions only. It is the text colour of destructive alerts and field errors, and the fill of destructive buttons (7.7:1 on Ash Card).
+- **Lava** (`lava`): errors and destructive actions only. Destructive alert and field-error text, and destructive button fills (7.4:1 on Wool).
 
 ### Named Rules
-**The Lava, Never Ember Rule.** Errors are Lava. Ember belongs to Splitsmith's forge and never signals a problem.
+**The Lava, Never Ember Rule.** Errors are Lava. Ember belongs to Splitsmith's forge and never signals a problem, and no dye ever signals one either.
 
-**The Logo Pairing Rule.** On light backgrounds the cairn and wordmark are Basalt with a Moss accent. On dark backgrounds they are Snow with a Lichen accent. Never mix the pairs, for example Lichen on Snow.
+**The Logo Pairing Rule.** On light backgrounds the wordmark and cairn are Basalt with a Moss accent. On dark backgrounds (the Svart shell) they are Snow with a Lichen accent. Never mix the pairs, for example Lichen on Snow.
 
-**The Warm Neutral Rule.** No cool or pure grays. Every new neutral sits on the ash hue (about 85–90° in OKLCH) like the existing ramp.
+**The Lichen On Dark Rule.** Lichen appears only on Svart. On the light ground the highlight is Svart ink or a Strength Indigo ring, never Lichen.
+
+**The Dyed Yarn Rule.** A dye names a sport group and nothing else. Dyes are fills, rings and marks, never small text on the ground (Running is 4.4:1 on Heather, Other 2.6:1). A new sport joins one of the four groups; it does not get a new dye.
 
 ## Typography
 
 **Body Font:** the system sans (`ui-sans-serif, system-ui, sans-serif`)
 **Brand type:** the VARÐA wordmark and the tagline are drawn as vector shapes in `logo/final/`, not set in a font.
 
-**Character:** Plain and native. The system face keeps working screens quiet and fast in both English and Icelandic, and the logo carries the personality.
+**Character:** Plain and native. The system face keeps screens quiet and fast in English and Icelandic. Personality comes from scale and weight on the numbers, and from the logo.
 
 ### Hierarchy
-- **Headline** (`headline`): the one page heading, an `h1` inside the card title (for example "Sign in", "Hi, {name}").
-- **Title** (`title`): dialog titles.
-- **Body** (`body`): descriptions, nav links, alerts, field help and errors. The document base is 16px, and inputs use 16px on phones (so iOS doesn't zoom) and drop to 14px from 768px.
-- **Label** (`label`): field labels, buttons and card titles at the base size.
-- **Caption** (`caption`): badges such as "Last used", and developer tooling.
+- **Display** (`display`): the plate's lead figure (3rem from 640px, 2.25rem on phones), semibold, tight, tabular. The plate's other figures step down to 1.875rem (1.5rem on phones). The stone screen's lead distance uses the same voice.
+- **Headline** (`headline`): the one page heading (`h1`, "Stones", "Sign in"), and the sport name on the plate (with tight tracking).
+- **Title** (`title`): section and dialog titles ("Laps", the calendar month).
+- **Body** (`body`): the document base. Station names (500 weight), week headings (600 weight), panel text and descriptions on the wide screens.
+- **Body small** (`body-sm`): dates beside a name, week totals, nav links, alerts, field help and errors. Inputs use 16px on phones (so iOS doesn't zoom) and drop to 14px from 768px.
+- **Label** (`label`): buttons, segments and field labels.
+- **Caption** (`caption`): stat labels on the plate, stitch-row heads and counts, badges and developer tooling.
 
 ### Named Rules
 **The Two-Language Rule.** Every label must fit in both English and Icelandic. Icelandic words run long, so never set fixed widths on text-bearing controls and never truncate a label to make it fit.
 
+**The Tabular Figures Rule.** Every number (distance, time, pace, dates, counts) is set with tabular numerals so columns and rows align.
+
 ## Layout
 
-Today every screen is one centred column, at most 28rem wide, with 32px padding and a 24px gap between its blocks: the brand header, the nav, then a card. Inside a card, content insets 24px and fields stack 28px apart. Inline groups (nav links, a button with its badge) sit 16px apart, and tight pairs 8px apart. Spacing follows Tailwind's 4px step.
+Signed-in screens sit under a full-width Svart shell bar (56px tall) holding the wordmark and the nav; the shell's inner row shares the page's width and side padding. Below it, a screen is either one centred column at most 28rem wide, or a wide screen at 72rem (`max-w-6xl`) set by a route's `staticData: { layout: 'wide' }`. Page padding is 20px on phones and 32px from 640px; blocks stack 24px apart. Signed-out screens (sign in, errors) have no shell: they keep the narrow 28rem column with the light wordmark and the tagline above the card, 32px padding.
 
-Phones are the first scene: placing a stone right after a session. The column already fits a phone, and dialogs keep 16px clear of the screen edges. Dialog footers stack their buttons on phones (primary on top) and lay them out in a row, aligned right, from 640px. The planning and analysis screens on desktop (journey, stages, the Path) do not exist yet. When they arrive, widen the layout for those screens and leave the narrow column for the focused, one-action screens. The stones screen is the first wide one: a route sets `staticData: { layout: 'wide' }` and the column grows to 72rem (`max-w-6xl`), with the stones feed beside a 20rem placing panel from 1024px, and one column below that.
+The stones list is the first wide screen. From 1024px it is a two-column grid (content plus a 20rem side column, 32px apart): a slim full-width Place a stone bar, then the latest-stone plate in the content column beside the 12-week stitch rows, which stick 32px from the top as the route scrolls beneath the plate. On phones it is one column in task order: plate, stitch rows, placing panel, route.
 
-Lists inside a card are a single bordered block with hairline dividers between rows (12px × 16px row padding), not separate cards.
+Inside panels, content insets 20px and items stack 12px apart. The plate insets 20px on phones and 28px from 640px. Spacing follows Tailwind's 4px step.
+
+Lists are rows, not cards: hairline dividers between rows (12px vertical padding), with ink rules where a group begins.
 
 ## Elevation & Depth
 
-Flat and tonal. Surfaces separate by value (Ash Card on Snow, Weathered Stone fills) and by a hairline Pale Scree border, not by shadow. Shadows are only for things that float above the page: dialogs, and the dev menu pinned to a corner. Outline buttons and inputs carry an almost invisible `shadow-xs` lip that comes from shadcn.
+Flat and tonal. Surfaces separate by value (Wool on Heather, Svart for the shell and the plate) and by 1px hairlines, never by shadow. Shadows are only for things that float above the page: dialogs, and the dev menu pinned to a corner. Outline buttons and inputs keep shadcn's almost invisible `shadow-xs` lip.
 
 ### Shadow Vocabulary
 - **Lip** (`box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05)`): outline buttons and inputs only.
@@ -197,73 +260,84 @@ Flat and tonal. Surfaces separate by value (Ash Card on Snow, Weathered Stone fi
 - **Dialog** (`box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)`): alert dialogs, over a 50% black scrim.
 
 ### Named Rules
-**The Lift-By-Value Rule.** A surface in the page flow is lifted by a lighter tone and a hairline, never by a shadow. If it doesn't float over something, it gets no shadow. That includes cards, which drop shadcn's default `shadow-sm`.
+**The Lift-By-Value Rule.** A surface in the page flow is lifted by a lighter tone and a hairline, never by a shadow. If it doesn't float over something, it gets no shadow.
+
+**The One Plate Rule.** Below the shell, a screen has at most one dark Svart plate, and it holds the screen's lead content. Everything else sits on Heather or Wool.
 
 ## Shapes
 
-Gently rounded and consistent, echoing the cairn's stones (4-unit corners on 20-unit-tall stones). Controls (buttons, inputs, badges, bordered lists) use 6px. Alerts and dialogs use 8px. Cards are the softest at 12px. Native leftovers such as the dev menu's select use 4px. Borders are 1px hairlines in Pale Scree, or Scree on inputs. There is no pill shape, and stones in the logo are never re-spaced or re-proportioned in UI.
+Tight, like knitted edges. Controls, panels, the plate, stitch cells and segmented controls use 2px corners; alerts and dialogs 3px; shadcn cards 4px at most. Borders are 1px hairlines, or Field Edge on inputs; Svart 1px rules mark structure (week heads, the segmented control's frame). The only round shapes are the route's stations and interchange rings. There is no pill shape, and stones in the logo are never re-spaced or re-proportioned in UI.
 
 ## Components
 
-Quiet and sure-footed: plain shapes, one clear action, and states that answer at once without fuss.
+Quiet and exact: plain shapes, one clear action, ink for structure, and dye only where it names a sport.
 
 ### Buttons
-- **Shape:** gently rounded (6px), 36px tall by default. There are also 24px (xs), 32px (sm) and 40px (lg) sizes, and square icon sizes to match.
-- **Primary:** Deep Moss fill with Snow label at 500 weight. Hover drops the fill to 90% opacity. Use it for the one forward action on a screen.
-- **Secondary:** a Weathered Stone fill with Basalt label. Hover takes it to 80%. Use it for the alternative route (sign in with a passkey, sign out).
-- **Outline / Ghost:** an outline button is Snow with a Pale Scree hairline and a Lip shadow, and a ghost button is bare. Both fill with Lichen on hover.
-- **Destructive:** a Lava fill with Snow label.
-- **Link:** Deep Moss text that underlines on hover. Links inside running text are always underlined (4px offset, 500 weight).
-- **Focus:** a solid 3px Moss ring on `:focus-visible`. **Disabled:** 50% opacity, with no pointer events.
+- **Shape:** tight corners (2px), 36px tall by default, with 24px (xs), 32px (sm) and 40px (lg) sizes and square icon sizes to match.
+- **Primary:** a Svart fill with a Wool label at 500 weight; hover drops the fill to 90%. The one forward action on a screen ("Choose a watch file").
+- **Secondary:** a Heather Deep fill with a Svart label; hover takes it to 80%. The alternative route ("Show earlier", sign in with a passkey).
+- **Outline / Ghost:** outline is Heather with a hairline and a Lip shadow; ghost is bare. Both fill with Heather Hover on hover.
+- **Destructive:** a Lava fill with a Wool label.
+- **Link:** Svart text, underlined (4px offset, 500 weight) in running text.
+- **Focus:** a solid 3px Strength Indigo ring on `:focus-visible`. **Disabled:** 50% opacity, no pointer events.
+
+### Segmented control (view toggle)
+- **Style:** a 1px Svart frame with 2px corners, segments 6px × 12px in label type. The current segment is a Svart fill with Wool text and carries `aria-current="page"`; others are Svart text that fill Heather Hover on hover. Focus is a 2px inset Strength Indigo outline. It switches List and Calendar on the stones screen, in the URL.
 
 ### Chips (Badges)
-- **Style:** 6px corners, 2px × 8px padding, caption type. Outline badges are Basalt text on a Pale Scree hairline. Filled badges use Deep Moss, Weathered Stone or Lava.
-- **Use:** small status notes pinned to a control, such as "Last used" sitting on the top edge of its button on a Snow backing.
+- **Style:** 2px corners, 2px × 8px padding, caption type at 500. Outline badges are Svart text on a hairline; filled badges use Svart, Heather Deep or Lava.
 
 ### Cards / Containers
-- **Corner Style:** 12px.
-- **Background:** Ash Card with Basalt text.
-- **Shadow Strategy:** none by the Lift-By-Value Rule (see Elevation & Depth).
-- **Border:** a Pale Scree hairline.
-- **Internal Padding:** 24px around content, with a 24px gap between header, content and footer.
+- **Panel:** Wool, a 1px hairline, 2px corners, 20px inset (the placing panel, the stitch rows). While a file is dragged over it, the placing panel's border turns Svart over a 5% Svart tint.
+- **Card:** shadcn's card, Wool with a hairline, 4px corners, 24px inset, 24px between header, content and footer. No shadow (Lift-By-Value).
+- **Empty state:** a dashed Field Edge border at 60%, 2px corners, centred text.
 
 ### Inputs / Fields
-- **Style:** a transparent fill with a Scree hairline, 6px corners and 36px height, 12px side padding, and Tephra placeholder text.
-- **Focus:** the border turns Moss, with a solid 3px Moss ring.
-- **Error:** the border and ring turn Lava, the field's label turns Lava, and a Lava message appears below. Server-found problems replace the field's own message rather than stacking on it.
+- **Style:** a transparent fill with a Field Edge hairline, 2px corners, 36px height, 12px side padding, Muted Ink placeholder.
+- **Focus:** the border turns Strength Indigo, with a solid 3px Strength Indigo ring.
+- **Error:** the border and ring turn Lava, the label turns Lava, and a Lava message appears below. Server-found problems replace the field's own message rather than stacking on it.
 - **Disabled:** 50% opacity.
-- **Field group:** label, control and message stack 12px apart, and fields sit 28px apart.
 
 ### Alerts
-- **Style:** Ash Card fill, Pale Scree hairline, 8px corners, 12px × 16px padding, body type.
-- **Destructive:** Lava text on Ash Card, not a Lava fill. The problem is named calmly, without alarm.
+- **Style:** Wool fill, hairline, 3px corners, 12px × 16px padding, small body type.
+- **Destructive:** Lava text on Wool, not a Lava fill. The problem is named calmly.
 
-### Navigation
-- **Style:** a row of body-size text links 16px apart under the brand header. Inactive links are Tephra and turn Basalt on hover. The active link is Basalt. No underline, pill or background marks the active state.
-- **Mobile:** the same row. It has two links today.
+### Navigation (shell bar)
+- **Style:** a full-width Svart bar, 56px tall. The dark wordmark (`apps/web/src/assets/varda-wordmark-dark.svg`, Snow with the Lichen stone, 16px tall) leads, then the links 20px apart in small body type. Inactive links are Shell Muted and turn Shell Ink on hover or focus; the active link is Shell Ink over a 2px Lichen underline at the bar's bottom edge. Focus on the bar uses a Lichen outline, since the indigo ring would vanish on Svart.
+- **Mobile:** the same row, with 20px side padding.
 
-### Brand Header
-The brand sits at the top of the column: the drawn VARÐA wordmark (24px tall, `alt="Varða"`), with the tagline "One stone at a time." 8px below it in Tephra. The tagline is translated text, not the outlined tagline from the logo files, so it reads in Icelandic too. The wordmark is `apps/web/src/assets/varda-wordmark.svg`, a copy of `logo/final/varda-wordmark.svg` cropped to the letters. Below about 24px tall, use the cairn mark instead.
+### Brand Header (signed-out screens)
+The light wordmark (`apps/web/src/assets/varda-wordmark.svg`, Basalt with Moss, 24px tall, `alt="Varða"`) tops the narrow column, with the tagline "One stone at a time." 8px below in Muted Ink. The tagline is translated text, not the outlined tagline from the logo files. Below about 16px tall, use the cairn mark instead.
+
+### Latest-stone plate
+The one dark plate: Svart, 2px corners, 20px/28px inset, at least 224px tall. It holds the sport name (headline), the day and time in Shell Muted with the week ordinal in Lichen, then the figures in display type with caption labels in Shell Muted, and the stone's trace drawn in Lichen to the right. The whole plate is one link, focused with a Lichen outline.
+
+### Stitch rows
+The last 12 weeks knitted as rows in a Wool panel: a table of seven day cells per week, each a 12px-tall stitch with 2px corners. An empty day is Svart at 10%, a day still ahead Svart at 4%, today carries a 1px Svart outline, and a day with stones is filled with each stone's dye, split side by side when there are several. A per-week count sits on the right (Muted Ink when zero). The stitch of the station being pointed at gets a 2px Svart outline.
+
+### Route line
+Stones as stations on one line down a 24px gutter. The line is a 4px Svart rule; through a week with no stones it runs as a dotted Field Edge line at 70%. Each week head is an interchange ring (14px, a 3px Svart ring on Heather) on the line, beside the week's dates in semibold, a "This week"/"Last week" note in Muted Ink, and right-aligned totals, over a 1px Svart rule. Each stone is a station: a 20px Wool circle with a 4px ring in its dye, on a row with hairline dividers; on wider screens its figures take fixed right-aligned columns with a small trace at the end, and on phones the lead figure sits beside the name with the rest under it. Hovering or focusing a row tints it with Wool at 70%, fills its station with the dye, and outlines its stitch in the stitch rows (one shared active stone). A stone just placed settles onto the line with `stone-settle` (720ms, from 32px above and 30% opacity, after 280ms; motion-safe only).
 
 ### Dialogs
-Alert dialogs fade and zoom in from 95% over 150ms on a 50% black scrim (tw-animate-css). With reduced motion on, they only fade.
+Alert dialogs fade and zoom in from 95% over 150ms on a 50% black scrim (tw-animate-css), with 3px corners and the Dialog shadow. With reduced motion on, they only fade.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** put the one forward action in Deep Moss and the alternative in Weathered Stone.
+- **Do** put the one forward action in Svart and the alternative in Heather Deep.
 - **Do** use Lava, and only Lava, for errors and destructive actions.
-- **Do** lift in-flow surfaces by tone (Ash Card on Snow) and a Pale Scree hairline.
-- **Do** show focus as a solid 3px Moss ring on every interactive element.
+- **Do** lift in-flow surfaces by tone (Wool on Heather) and a 1px hairline.
+- **Do** show focus on every interactive element: a solid 3px Strength Indigo ring on the light ground, a Lichen outline on Svart.
 - **Do** keep inputs at 16px on phones so iOS doesn't zoom.
-- **Do** use the drawn wordmark and cairn from `logo/final/`, Basalt with Moss on light and Snow with Lichen on dark.
-- **Do** keep new neutrals on the warm ash hue.
+- **Do** use the drawn wordmark and cairn from `logo/final/`: Basalt with Moss on light, Snow with Lichen on dark.
+- **Do** colour a stone by its sport group's dye, and set every figure in tabular numerals.
+- **Do** keep corners at 2px on controls and panels, 4px at most anywhere.
 
 ### Don't:
 - **Don't** use Ember for errors, warnings or anything outside Splitsmith, and never for small text.
-- **Don't** put text on brand Moss. Use Deep Moss for fills behind text.
-- **Don't** add shadows to cards or other in-flow surfaces.
+- **Don't** use Lichen on the light ground, and don't pair Lichen with Snow outside the logo.
+- **Don't** set small text in a dye, or use a dye for anything but a sport group.
+- **Don't** put more than one dark plate on a screen below the shell.
+- **Don't** add shadows to cards, panels or other in-flow surfaces.
 - **Don't** retype VARÐA in a font, or recolour the capstone or the Ð stone.
-- **Don't** pair Lichen with Snow.
-- **Don't** drift toward a Strava-style feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (dark panels, walls of metric tiles), or neutral-gray SaaS.
-- **Don't** use cool or pure grays.
+- **Don't** drift toward a Strava-style feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (walls of dark metric tiles), a stack of identical activity cards, or neutral-gray SaaS.

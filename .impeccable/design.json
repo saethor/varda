@@ -1,102 +1,368 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-15T21:55:52+00:00",
+  "generatedAt": "2026-11-22T12:11:45+00:00",
   "title": "Design System: Varða",
   "extensions": {
     "colorMeta": {
-      "basalt": {
-        "role": "neutral",
-        "displayName": "Basalt",
-        "canonical": "oklch(29.9% 0.005 219.6)",
-        "tonalRamp": ["#0a0b0c", "#202223", "#383b3c", "#535657", "#777b7c", "#9c9fa0", "#c5c8c9", "#edefef"]
-      },
-      "snow": {
-        "role": "neutral",
-        "displayName": "Snow",
-        "canonical": "oklch(95.8% 0.007 88.6)",
-        "tonalRamp": ["#0c0b09", "#22221f", "#3c3a37", "#575551", "#7c7a76", "#a09e9a", "#c8c7c4", "#efeeec"]
-      },
-      "ash-card": {
-        "role": "neutral",
-        "displayName": "Ash Card",
-        "canonical": "oklch(98.2% 0.004 91.4)",
-        "tonalRamp": ["#0b0b0a", "#222220", "#3b3a39", "#565553", "#7b7a78", "#9f9e9c", "#c8c7c5", "#efeeed"]
-      },
-      "weathered-stone": {
-        "role": "neutral",
-        "displayName": "Weathered Stone",
-        "canonical": "oklch(92.8% 0.014 88.7)",
-        "tonalRamp": ["#0c0b08", "#23211d", "#3d3a34", "#58554d", "#7e7a71", "#a19e96", "#cac7c0", "#f0eee9"]
-      },
-      "pale-scree": {
-        "role": "neutral",
-        "displayName": "Pale Scree",
-        "canonical": "oklch(86.8% 0.017 88.0)",
-        "tonalRamp": ["#0d0b07", "#24211c", "#3d3a33", "#59554b", "#7e7a6f", "#a29e94", "#cac7bf", "#f1eee8"]
-      },
-      "scree": {
-        "role": "neutral",
-        "displayName": "Scree",
-        "canonical": "oklch(62.8% 0.025 87.2)",
-        "tonalRamp": ["#0d0b06", "#252119", "#3f3a2f", "#5b5547", "#817a6a", "#a49e90", "#ccc7bb", "#f2eee5"]
-      },
-      "tephra": {
-        "role": "neutral",
-        "displayName": "Tephra",
-        "canonical": "oklch(52.3% 0.020 84.6)",
-        "tonalRamp": ["#0d0b07", "#24211b", "#3e3a31", "#5a554a", "#807a6d", "#a39e93", "#cbc7be", "#f1eee7"]
-      },
-      "deep-moss": {
+      "svart": {
         "role": "primary",
-        "displayName": "Deep Moss",
-        "canonical": "oklch(48.6% 0.067 134.8)",
-        "tonalRamp": ["#050e02", "#182610", "#2e4124", "#465d39", "#69835b", "#8fa782", "#bbceb1", "#e5f4de"]
+        "displayName": "Svart",
+        "canonical": "#2a2420",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262321",
+          "#433f3c",
+          "#625c58",
+          "#857f7a",
+          "#a6a09c",
+          "#cbc6c3",
+          "#f1eeec"
+        ]
       },
-      "moss": {
-        "role": "primary",
-        "displayName": "Moss",
-        "canonical": "oklch(54.6% 0.073 134.7)",
-        "tonalRamp": ["#050e01", "#17270e", "#2d4121", "#445e36", "#688458", "#8ea880", "#bacfaf", "#e4f4dc"]
+      "heather": {
+        "role": "neutral",
+        "displayName": "Heather",
+        "canonical": "#dedfdc",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242423",
+          "#3f403e",
+          "#5d5e5c",
+          "#80807e",
+          "#a1a2a0",
+          "#c7c7c6",
+          "#eeeeed"
+        ]
+      },
+      "wool": {
+        "role": "neutral",
+        "displayName": "Wool",
+        "canonical": "#f4f4f2",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242423",
+          "#40403f",
+          "#5e5e5c",
+          "#80807f",
+          "#a1a1a0",
+          "#c7c7c6",
+          "#eeeeee"
+        ]
+      },
+      "heather-deep": {
+        "role": "neutral",
+        "displayName": "Heather Deep",
+        "canonical": "#cbcdc8",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242422",
+          "#3f403d",
+          "#5d5e5a",
+          "#7f817d",
+          "#a1a29e",
+          "#c7c8c5",
+          "#eeefed"
+        ]
+      },
+      "heather-hover": {
+        "role": "neutral",
+        "displayName": "Heather Hover",
+        "canonical": "#cfd1cc",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242422",
+          "#3f403d",
+          "#5d5e5a",
+          "#7f817d",
+          "#a1a29e",
+          "#c7c8c5",
+          "#eeefed"
+        ]
+      },
+      "heather-muted": {
+        "role": "neutral",
+        "displayName": "Heather Muted",
+        "canonical": "#d3d5d0",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242422",
+          "#3f403d",
+          "#5d5e5a",
+          "#7f817d",
+          "#a1a29f",
+          "#c7c8c5",
+          "#eeefed"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#c3c5c0",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242422",
+          "#3f403d",
+          "#5d5e5a",
+          "#7f817d",
+          "#a1a29e",
+          "#c7c8c5",
+          "#eeefed"
+        ]
+      },
+      "field-edge": {
+        "role": "neutral",
+        "displayName": "Field Edge",
+        "canonical": "#7c7a74",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#252421",
+          "#41403c",
+          "#5f5d58",
+          "#82807b",
+          "#a3a19d",
+          "#c8c7c4",
+          "#efeeec"
+        ]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#5c5752",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262421",
+          "#423f3c",
+          "#615d58",
+          "#847f7a",
+          "#a5a19d",
+          "#cac7c4",
+          "#f0eeec"
+        ]
+      },
+      "shell-ink": {
+        "role": "neutral",
+        "displayName": "Shell Ink",
+        "canonical": "#f2f1ec",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242422",
+          "#40403d",
+          "#5e5e5a",
+          "#81807c",
+          "#a2a19e",
+          "#c8c7c5",
+          "#efeeed"
+        ]
+      },
+      "shell-muted": {
+        "role": "neutral",
+        "displayName": "Shell Muted",
+        "canonical": "#b3ab9f",
+        "tonalRamp": [
+          "#0d0b08",
+          "#27231f",
+          "#443f38",
+          "#635d53",
+          "#867f75",
+          "#a6a198",
+          "#cbc7c0",
+          "#f1eeea"
+        ]
+      },
+      "shell-line": {
+        "role": "neutral",
+        "displayName": "Shell Line",
+        "canonical": "#4a423c",
+        "tonalRamp": [
+          "#0d0b09",
+          "#272320",
+          "#443f3a",
+          "#635c56",
+          "#877e78",
+          "#a7a09b",
+          "#cbc6c2",
+          "#f1eeeb"
+        ]
+      },
+      "dye-running": {
+        "role": "secondary",
+        "displayName": "Running Rust",
+        "canonical": "#a4482a",
+        "tonalRamp": [
+          "#190501",
+          "#3c170c",
+          "#642e1c",
+          "#8f452e",
+          "#b7674e",
+          "#d28e79",
+          "#edbaa9",
+          "#ffe6db"
+        ]
+      },
+      "dye-strength": {
+        "role": "secondary",
+        "displayName": "Strength Indigo",
+        "canonical": "#2f4a6e",
+        "tonalRamp": [
+          "#050b15",
+          "#182535",
+          "#2e4159",
+          "#465f80",
+          "#6782a6",
+          "#8da3c2",
+          "#b8c9e0",
+          "#e5f0fe"
+        ]
+      },
+      "dye-cross-training": {
+        "role": "secondary",
+        "displayName": "Cross-training Bottle Green",
+        "canonical": "#3f5e45",
+        "tonalRamp": [
+          "#060d07",
+          "#1a281d",
+          "#314635",
+          "#4a664f",
+          "#6b8970",
+          "#91a994",
+          "#bbcdbd",
+          "#e6f2e8"
+        ]
+      },
+      "dye-other": {
+        "role": "secondary",
+        "displayName": "Undyed Grey",
+        "canonical": "#8d8a84",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#252421",
+          "#413f3c",
+          "#605d58",
+          "#83807a",
+          "#a3a19d",
+          "#c9c7c4",
+          "#efeeec"
+        ]
       },
       "lichen": {
-        "role": "secondary",
-        "displayName": "Lichen",
-        "canonical": "oklch(78.5% 0.114 116.0)",
-        "tonalRamp": ["#0b0d00", "#202500", "#393f00", "#535c00", "#778228", "#9ba65c", "#c4ce94", "#ecf4c9"]
-      },
-      "ember": {
         "role": "tertiary",
-        "displayName": "Ember",
-        "canonical": "oklch(65.1% 0.168 43.7)",
-        "tonalRamp": ["#240000", "#480100", "#6f1400", "#982900", "#c74f04", "#e87d4d", "#ffaf8a", "#ffddc1"]
+        "displayName": "Lichen",
+        "canonical": "#b5c26a",
+        "tonalRamp": [
+          "#0b0d00",
+          "#232700",
+          "#3e4407",
+          "#5b6414",
+          "#7d8839",
+          "#9fa86b",
+          "#c5cda0",
+          "#edf2d6"
+        ]
       },
       "lava": {
         "role": "error",
         "displayName": "Lava",
-        "canonical": "oklch(44.5% 0.126 17.6)",
-        "tonalRamp": ["#1f0003", "#400a12", "#651e26", "#8b333c", "#b9575e", "#da8185", "#fab1b3", "#ffdedf"]
+        "canonical": "#8c2f39",
+        "tonalRamp": [
+          "#190405",
+          "#3d1519",
+          "#652b2f",
+          "#904147",
+          "#b96368",
+          "#d38b8d",
+          "#eeb7b8",
+          "#ffe4e5"
+        ]
+      },
+      "basalt": {
+        "role": "brand",
+        "displayName": "Basalt",
+        "canonical": "#2b2e2f",
+        "tonalRamp": [
+          "#0a0b0c",
+          "#232425",
+          "#3e4041",
+          "#5b5e5f",
+          "#7e8182",
+          "#9fa2a3",
+          "#c6c8c8",
+          "#edefef"
+        ]
+      },
+      "moss": {
+        "role": "brand",
+        "displayName": "Moss",
+        "canonical": "#5e7a4e",
+        "tonalRamp": [
+          "#070d04",
+          "#1c2815",
+          "#34462a",
+          "#4e6640",
+          "#6f8961",
+          "#94a988",
+          "#bdcdb4",
+          "#e8f2e2"
+        ]
+      },
+      "snow": {
+        "role": "brand",
+        "displayName": "Snow",
+        "canonical": "#f3f1ec",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#252422",
+          "#41403d",
+          "#5f5d5a",
+          "#82807c",
+          "#a3a19e",
+          "#c8c7c5",
+          "#efeeed"
+        ]
+      },
+      "ember": {
+        "role": "tertiary",
+        "displayName": "Ember",
+        "canonical": "#e0662a",
+        "tonalRamp": [
+          "#180501",
+          "#3c1808",
+          "#632f17",
+          "#8e4727",
+          "#b66947",
+          "#d09074",
+          "#ecbba6",
+          "#ffe7d9"
+        ]
       }
     },
     "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The plate's lead figure (3rem, 2.25rem on phones) and the stone screen's lead distance."
+      },
       "headline": {
         "displayName": "Headline",
-        "purpose": "The one page heading, an h1 in the card title."
+        "purpose": "The one page heading, and the sport name on the plate."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Dialog titles."
+        "purpose": "Section and dialog titles."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Descriptions, nav, alerts, field help and errors."
+        "purpose": "Document base: station names, week headings, panel text."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Dates beside a name, week totals, nav, alerts, field help and errors."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Field labels, buttons, card titles."
+        "purpose": "Buttons, segments, field labels."
       },
       "caption": {
         "displayName": "Caption",
-        "purpose": "Badges and developer tooling."
+        "purpose": "Plate stat labels, stitch-row heads and counts, badges."
       }
     },
     "shadows": [
@@ -120,12 +386,17 @@
       {
         "name": "ease-standard",
         "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
-        "purpose": "Default state transitions on buttons, inputs, badges and links."
+        "purpose": "Default state transitions on buttons, inputs, segments, stations and rows."
+      },
+      {
+        "name": "stone-settle",
+        "value": "720ms cubic-bezier(0.16, 1, 0.3, 1) 280ms both; from translateY(-32px) and 30% opacity",
+        "purpose": "A just-placed stone settles onto its station on the route. Motion-safe only."
       },
       {
         "name": "dialog-enter",
         "value": "150ms fade + zoom from 95% (tw-animate-css)",
-        "purpose": "Alert dialog open and close. With reduced motion on, the zoom is dropped and only the fade remains."
+        "purpose": "Alert dialog open and close. With reduced motion on, only the fade remains."
       }
     ],
     "breakpoints": [
@@ -136,6 +407,10 @@
       {
         "name": "md",
         "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
       }
     ]
   },
@@ -145,98 +420,112 @@
       "kind": "button",
       "refersTo": "button-primary",
       "description": "The one forward action on a screen.",
-      "html": "<button class=\"ds-btn-primary\">Sign in</button>",
-      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#4f6841;color:#f3f1ec;} .ds-btn-primary:hover{background:color-mix(in oklab,#4f6841 90%,transparent);} .ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;} .ds-btn-primary:disabled{opacity:.5;pointer-events:none;}"
+      "html": "<button class=\"ds-btn-primary\">Choose a watch file</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:2px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#2a2420;color:#f4f4f2;} .ds-btn-primary:hover{background:color-mix(in oklab,#2a2420 90%,transparent);} .ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px #2f4a6e;} .ds-btn-primary:disabled{opacity:.5;pointer-events:none;}"
     },
     {
       "name": "Secondary Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "The alternative route, such as signing in with a passkey or signing out.",
-      "html": "<button class=\"ds-btn-secondary\">Sign in with a passkey</button>",
-      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#ebe7dd;color:#2b2e2f;} .ds-btn-secondary:hover{background:color-mix(in oklab,#ebe7dd 80%,transparent);} .ds-btn-secondary:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;}"
+      "description": "The alternative route, such as Show earlier or signing in with a passkey.",
+      "html": "<button class=\"ds-btn-secondary\">Show earlier</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:2px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#cbcdc8;color:#2a2420;} .ds-btn-secondary:hover{background:color-mix(in oklab,#cbcdc8 80%,transparent);} .ds-btn-secondary:focus-visible{outline:none;box-shadow:0 0 0 3px #2f4a6e;} .ds-btn-secondary:disabled{opacity:.5;pointer-events:none;}"
     },
     {
       "name": "Outline Button",
       "kind": "button",
       "refersTo": "button-outline",
-      "description": "Cancel and other low-weight actions; fills with Lichen on hover.",
+      "description": "A quiet action with a hairline edge.",
       "html": "<button class=\"ds-btn-outline\">Cancel</button>",
-      "css": ".ds-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#f3f1ec;color:#2b2e2f;border:1px solid #d8d3c7;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);} .ds-btn-outline:hover{background:#b5c26a;color:#2b2e2f;} .ds-btn-outline:focus-visible{outline:none;border-color:#5e7a4e;box-shadow:0 0 0 3px #5e7a4e;}"
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:2px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#dedfdc;color:#2a2420;border:1px solid #c3c5c0;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);} .ds-btn-outline:hover{background:#cfd1cc;} .ds-btn-outline:focus-visible{outline:none;box-shadow:0 0 0 3px #2f4a6e;} .ds-btn-outline:disabled{opacity:.5;pointer-events:none;}"
     },
     {
       "name": "Destructive Button",
       "kind": "button",
       "refersTo": "button-destructive",
-      "description": "Confirms a destructive action. Lava, never Ember.",
-      "html": "<button class=\"ds-btn-destructive\">Remove passkey</button>",
-      "css": ".ds-btn-destructive{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#8c2f39;color:#f3f1ec;} .ds-btn-destructive:hover{background:color-mix(in oklab,#8c2f39 90%,transparent);} .ds-btn-destructive:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;}"
+      "description": "Destructive actions only, in Lava.",
+      "html": "<button class=\"ds-btn-destructive\">Delete stone</button>",
+      "css": ".ds-btn-destructive{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:2px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#8c2f39;color:#f4f4f2;} .ds-btn-destructive:hover{background:color-mix(in oklab,#8c2f39 90%,transparent);} .ds-btn-destructive:focus-visible{outline:none;box-shadow:0 0 0 3px #2f4a6e;} .ds-btn-destructive:disabled{opacity:.5;pointer-events:none;}"
     },
     {
       "name": "Text Field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Labelled input; Scree hairline, Moss ring on focus, Lava when invalid.",
-      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Email</span><input class=\"ds-input\" type=\"email\" placeholder=\"you@example.com\"></label><label class=\"ds-field ds-field-invalid\"><span class=\"ds-field-label\">Password</span><input class=\"ds-input\" type=\"password\" aria-invalid=\"true\" value=\"short\"><span class=\"ds-field-error\">Use at least 12 characters.</span></label>",
-      "css": ".ds-field{display:flex;flex-direction:column;gap:12px;width:280px;margin-bottom:20px;color:#2b2e2f;font-family:ui-sans-serif,system-ui,sans-serif;} .ds-field-label{font-size:14px;font-weight:500;line-height:1.375;} .ds-input{height:36px;padding:4px 12px;border:1px solid #8f8878;border-radius:6px;background:transparent;color:#2b2e2f;font-size:14px;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);transition:color 150ms,box-shadow 150ms;outline:none;} .ds-input::placeholder{color:#6f695d;} .ds-input:focus-visible{border-color:#5e7a4e;box-shadow:0 0 0 3px #5e7a4e;} .ds-field-invalid{color:#8c2f39;} .ds-field-invalid .ds-input{border-color:#8c2f39;box-shadow:0 0 0 3px #8c2f39;} .ds-field-error{font-size:14px;}"
+      "description": "Field Edge hairline, 2px corners, indigo focus ring.",
+      "html": "<input class=\"ds-input\" placeholder=\"you@example.com\">",
+      "css": ".ds-input{height:36px;width:100%;padding:4px 12px;border:1px solid #7c7a74;border-radius:2px;background:transparent;color:#2a2420;font:400 16px/24px ui-sans-serif,system-ui,sans-serif;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);outline:none;transition:box-shadow 150ms,border-color 150ms;} .ds-input::placeholder{color:#5c5752;} .ds-input:focus-visible{border-color:#2f4a6e;box-shadow:0 0 0 3px #2f4a6e;} .ds-input[aria-invalid=true]{border-color:#8c2f39;box-shadow:0 0 0 3px #8c2f39;}"
     },
     {
-      "name": "Card",
-      "kind": "card",
-      "refersTo": "card",
-      "description": "The one container per screen; lifted by tone and hairline, no shadow.",
-      "html": "<div class=\"ds-card\"><h1 class=\"ds-card-title\">Hi, Anna</h1><p class=\"ds-card-desc\">Your cairn has 12 stones.</p></div>",
-      "css": ".ds-card{display:flex;flex-direction:column;gap:24px;width:320px;padding:24px;background:#faf9f6;color:#2b2e2f;border:1px solid #d8d3c7;border-radius:12px;font-family:ui-sans-serif,system-ui,sans-serif;} .ds-card-title{margin:0;font-size:24px;line-height:32px;font-weight:600;} .ds-card-desc{margin:0;font-size:14px;line-height:20px;color:#6f695d;}"
-    },
-    {
-      "name": "Last Used Badge",
-      "kind": "chip",
-      "refersTo": "badge-outline",
-      "description": "Small status note pinned to the top edge of its control.",
-      "html": "<div class=\"ds-badge-wrap\"><button class=\"ds-badge-btn\">Sign in</button><span class=\"ds-badge\">Last used</span></div>",
-      "css": ".ds-badge-wrap{position:relative;display:inline-flex;flex-direction:column;width:240px;} .ds-badge-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:8px 16px;border-radius:6px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;border:0;cursor:pointer;transition:all 150ms cubic-bezier(0.4,0,0.2,1);background:#4f6841;color:#f3f1ec;} .ds-badge{position:absolute;top:-10px;right:8px;display:inline-flex;align-items:center;padding:2px 8px;border:1px solid #d8d3c7;border-radius:6px;background:#f3f1ec;color:#2b2e2f;font:500 12px/16px ui-sans-serif,system-ui,sans-serif;white-space:nowrap;}"
-    },
-    {
-      "name": "Error Alert",
-      "kind": "custom",
-      "refersTo": "alert-destructive",
-      "description": "Names a problem calmly: Lava text on Ash Card, not a Lava fill.",
-      "html": "<div class=\"ds-alert\" role=\"alert\">That email and password don't match.</div>",
-      "css": ".ds-alert{width:300px;padding:12px 16px;border:1px solid #d8d3c7;border-radius:8px;background:#faf9f6;color:#8c2f39;font:400 14px/20px ui-sans-serif,system-ui,sans-serif;}"
-    },
-    {
-      "name": "Main Nav",
+      "name": "Shell Bar",
       "kind": "nav",
-      "refersTo": "nav-link",
-      "description": "Text links under the brand header; active is Basalt, inactive Tephra.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><a href=\"#\" class=\"ds-nav-link\" aria-current=\"page\">Home</a><a href=\"#\" class=\"ds-nav-link\">Settings</a></nav>",
-      "css": ".ds-nav{display:flex;gap:16px;font:400 14px/20px ui-sans-serif,system-ui,sans-serif;} .ds-nav-link{color:#6f695d;text-decoration:none;transition:color 150ms;} .ds-nav-link:hover,.ds-nav-link[aria-current=page]{color:#2b2e2f;} .ds-nav-link:focus-visible{outline:none;box-shadow:0 0 0 3px #5e7a4e;border-radius:4px;}"
+      "refersTo": "shell-bar",
+      "description": "The Svart bar on every signed-in screen; the active link is underlined in Lichen.",
+      "html": "<header class=\"ds-shell\"><span class=\"ds-shell-mark\">VAR<span>Ð</span>A</span><nav class=\"ds-shell-nav\"><a href=\"#\">Home</a><a href=\"#\" aria-current=\"page\">Stones</a><a href=\"#\">Settings</a></nav></header>",
+      "css": ".ds-shell{display:flex;align-items:center;gap:32px;height:56px;padding:0 32px;background:#2a2420;color:#f2f1ec;} .ds-shell-mark{font:700 18px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.02em;color:#f3f1ec;} .ds-shell-mark span{color:#b5c26a;} .ds-shell-nav{display:flex;gap:20px;height:100%;} .ds-shell-nav a{display:flex;align-items:center;height:100%;padding:0 4px;border-bottom:2px solid transparent;color:#b3ab9f;text-decoration:none;font:400 14px/20px ui-sans-serif,system-ui,sans-serif;transition:color 150ms;} .ds-shell-nav a:hover,.ds-shell-nav a:focus-visible{color:#f2f1ec;outline:none;} .ds-shell-nav a:focus-visible{border-bottom-color:#b5c26a;} .ds-shell-nav a[aria-current=page]{color:#f2f1ec;border-bottom-color:#b5c26a;}"
+    },
+    {
+      "name": "View Toggle",
+      "kind": "chip",
+      "refersTo": "view-toggle-active",
+      "description": "Segmented List/Calendar switch: Svart frame, Svart fill on the current segment.",
+      "html": "<nav class=\"ds-seg\"><a href=\"#\" aria-current=\"page\">List</a><a href=\"#\">Calendar</a></nav>",
+      "css": ".ds-seg{display:inline-flex;overflow:hidden;border:1px solid #2a2420;border-radius:2px;} .ds-seg a{padding:6px 12px;font:500 14px/20px ui-sans-serif,system-ui,sans-serif;color:#2a2420;text-decoration:none;transition:background 150ms;} .ds-seg a:hover{background:#cfd1cc;} .ds-seg a[aria-current=page]{background:#2a2420;color:#f4f4f2;} .ds-seg a:focus-visible{outline:2px solid #2f4a6e;outline-offset:-2px;}"
+    },
+    {
+      "name": "Latest-stone Plate",
+      "kind": "card",
+      "refersTo": "plate",
+      "description": "The one dark plate per screen: sport, day, week ordinal in Lichen, figures in display type.",
+      "html": "<a class=\"ds-plate\" href=\"#\"><span class=\"ds-plate-name\">Road running</span><span class=\"ds-plate-meta\">Sun, Nov 15 · 6:40 AM · <em>2nd stone this week</em></span><span class=\"ds-plate-stats\"><span><small>Distance</small><b>3.00 km</b></span><span><small>Moving time</small><i>15:00</i></span><span><small>Pace</small><i>5:00 /km</i></span></span></a>",
+      "css": ".ds-plate{display:flex;flex-direction:column;gap:24px;min-height:224px;justify-content:space-between;padding:28px;border-radius:2px;background:#2a2420;color:#f2f1ec;text-decoration:none;font-family:ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;} .ds-plate:focus-visible{outline:2px solid #b5c26a;outline-offset:2px;} .ds-plate-name{font-size:24px;font-weight:600;letter-spacing:-.025em;} .ds-plate-meta{color:#b3ab9f;margin-top:-20px;} .ds-plate-meta em{font-style:normal;color:#b5c26a;} .ds-plate-stats{display:flex;flex-wrap:wrap;gap:16px 40px;} .ds-plate-stats span{display:flex;flex-direction:column;gap:4px;} .ds-plate-stats small{font-size:12px;color:#b3ab9f;} .ds-plate-stats b{font-size:48px;line-height:1;font-weight:600;letter-spacing:-.025em;} .ds-plate-stats i{font-style:normal;font-size:30px;line-height:36px;font-weight:600;letter-spacing:-.025em;}"
+    },
+    {
+      "name": "Route Station",
+      "kind": "custom",
+      "refersTo": "station",
+      "description": "A stone on the route line: a dye-ringed station on a 4px Svart line; hover fills the station and tints the row.",
+      "html": "<ol class=\"ds-route\"><li><span class=\"ds-st ds-run\"></span><b>Road running</b><span>Sun, Nov 15 · 6:40 AM</span><i>3.00 km</i></li><li><span class=\"ds-st ds-xt\"></span><b>Cycling</b><span>Mon, Nov 9 · 5:30 PM</span><i>30.00 km</i></li></ol>",
+      "css": ".ds-route{list-style:none;margin:0;padding:0 0 0 36px;position:relative;font:400 16px/24px ui-sans-serif,system-ui,sans-serif;color:#2a2420;font-variant-numeric:tabular-nums;} .ds-route::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:4px;background:#2a2420;} .ds-route li{position:relative;display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid #c3c5c0;transition:background 150ms;} .ds-route li:hover{background:color-mix(in oklab,#f4f4f2 70%,transparent);} .ds-route b{font-weight:500;} .ds-route span:not(.ds-st){font-size:14px;color:#5c5752;} .ds-route i{font-style:normal;margin-left:auto;} .ds-st{position:absolute;left:-34px;top:50%;margin-top:-10px;width:20px;height:20px;box-sizing:border-box;border-radius:50%;border:4px solid;background:#f4f4f2;z-index:1;transition:background 150ms;} .ds-run{border-color:#a4482a;} .ds-xt{border-color:#3f5e45;} .ds-route li:hover .ds-run{background:#a4482a;} .ds-route li:hover .ds-xt{background:#3f5e45;}"
+    },
+    {
+      "name": "Stitch Row",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "One week of the 12-week stitch rows: a 12px stitch per day, dyed by sport, today outlined.",
+      "html": "<div class=\"ds-stitch\"><span class=\"ds-wk\">Nov 9</span><i class=\"xt\"></i><i></i><i class=\"run\"></i><i></i><i class=\"run\"></i><i></i><i class=\"run today\"></i><span class=\"ds-n\">4</span></div>",
+      "css": ".ds-stitch{display:grid;grid-template-columns:56px repeat(7,1fr) 32px;gap:2px;align-items:center;padding:20px;background:#f4f4f2;border:1px solid #c3c5c0;border-radius:2px;font:400 12px/16px ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;} .ds-wk{color:#5c5752;} .ds-n{text-align:right;color:#2a2420;} .ds-stitch i{height:12px;border-radius:2px;background:rgb(42 36 32 / 0.1);} .ds-stitch i.run{background:#a4482a;} .ds-stitch i.xt{background:#3f5e45;} .ds-stitch i.today{outline:1px solid #2a2420;outline-offset:1px;}"
     }
   ],
   "narrative": {
-    "northStar": "The Highland Waymark",
-    "overview": "**Creative North Star: \"The Highland Waymark\"**\n\nA varða is a pile of stones on an open, pale highland. You can see it from far off because almost nothing else is there. Varða's interface works the same way: calm, earthy marks on a quiet field of snow, where each mark has earned its place the way a cairn has on a long route. The mood is calm, earthy, reflective and precise. Splitsmith, the planning area, brings the heat of the forge with Ember. Varða itself stays cool and mossy.\n\nThe system is a warm-stone retune of shadcn/ui (new-york). The defaults have been moved off neutral gray onto basalt, snow and moss, and the restraint is deliberate. Density is low and the pace is unhurried: one narrow column, generous gaps, and one clear action per moment. Depth is tonal, not lifted. The brand mostly shows in the palette, the cairn mark and the vocabulary, not in ornament. Brand moments can get bolder, but working screens should feel like a well-kept field notebook.\n\nRejected: a Strava-style social feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (dark panels, walls of metric tiles), and generic neutral-gray shadcn SaaS.",
+    "northStar": "The Sauðalitir Yoke",
+    "overview": "Varða is dressed in sauðalitir, the colours of undyed Icelandic wool: a light grey heather ground, near-white wool for cards and panels, and black-brown svart for ink, the shell bar and one dark plate per screen. Colour enters only as dyed yarn, one dye per sport group, the way a lopapeysa yoke takes a few dyed rows on undyed wool. Brand Lichen is the one bright, and it lives on the dark. The mood is calm, plain and exact, like a well-knitted, well-kept field notebook. Splitsmith, the planning area, keeps Ember for its forge. Varða itself stays in wool.\n\nThe system is a retuned shadcn/ui (new-york): the defaults are moved onto the wool palette, corners are pulled in to knitted-edge tightness (2–4px), and depth is tonal. Density is moderate on the wide desktop screens and unhurried on phones. Numbers carry the content, so they are set large, semibold and tabular. Records read as structure (rows of stitches, a route line with stations, ink rules across week heads) rather than as stacks of identical cards. The brand shows in the palette, the drawn wordmark and the vocabulary, not in ornament.\n\nRejected: a Strava-style social feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (walls of dark metric tiles), a stack of identical activity cards, and generic neutral-gray shadcn SaaS.",
     "keyCharacteristics": [
-      "Snow ground, basalt ink, deep-moss action, lichen as the light touch.",
-      "Flat and tonal: Ash Card lifts off Snow by value, with a hairline Pale Scree border.",
-      "One narrow, centred column on every screen today (28rem).",
-      "The system sans at small sizes. Hierarchy comes from weight and a few steps of scale.",
+      "Heather ground, wool panels, svart ink and shell. Lichen only on svart.",
+      "Four dyed yarns name the sport group: rust, indigo, bottle green and undyed grey.",
+      "A dark svart shell bar on every signed-in screen, and at most one dark plate below it.",
+      "1px hairlines, ink rules for structure, tight 2–4px corners, no shadows in the page flow.",
+      "The system sans, with tabular numerals for every figure.",
       "Light only. There is no dark mode."
     ],
     "rules": [
       {
         "name": "The Lava, Never Ember Rule",
-        "body": "Errors are Lava. Ember belongs to Splitsmith's forge and never signals a problem.",
+        "body": "Errors are Lava. Ember belongs to Splitsmith's forge and never signals a problem, and no dye ever signals one either.",
         "section": "colors"
       },
       {
         "name": "The Logo Pairing Rule",
-        "body": "On light backgrounds the cairn and wordmark are Basalt with a Moss accent. On dark backgrounds they are Snow with a Lichen accent. Never mix the pairs, for example Lichen on Snow.",
+        "body": "On light backgrounds the wordmark and cairn are Basalt with a Moss accent. On dark backgrounds (the Svart shell) they are Snow with a Lichen accent. Never mix the pairs, for example Lichen on Snow.",
         "section": "colors"
       },
       {
-        "name": "The Warm Neutral Rule",
-        "body": "No cool or pure grays. Every new neutral sits on the ash hue (about 85–90° in OKLCH) like the existing ramp.",
+        "name": "The Lichen On Dark Rule",
+        "body": "Lichen appears only on Svart. On the light ground the highlight is Svart ink or a Strength Indigo ring, never Lichen.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dyed Yarn Rule",
+        "body": "A dye names a sport group and nothing else. Dyes are fills, rings and marks, never small text on the ground (Running is 4.4:1 on Heather, Other 2.6:1). A new sport joins one of the four groups; it does not get a new dye.",
         "section": "colors"
       },
       {
@@ -245,28 +534,39 @@
         "section": "typography"
       },
       {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number (distance, time, pace, dates, counts) is set with tabular numerals so columns and rows align.",
+        "section": "typography"
+      },
+      {
         "name": "The Lift-By-Value Rule",
-        "body": "A surface in the page flow is lifted by a lighter tone and a hairline, never by a shadow. If it doesn't float over something, it gets no shadow. That includes cards, which drop shadcn's default `shadow-sm`.",
+        "body": "A surface in the page flow is lifted by a lighter tone and a hairline, never by a shadow. If it doesn't float over something, it gets no shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Plate Rule",
+        "body": "Below the shell, a screen has at most one dark Svart plate, and it holds the screen's lead content. Everything else sits on Heather or Wool.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do put the one forward action in Deep Moss and the alternative in Weathered Stone.",
+      "Do put the one forward action in Svart and the alternative in Heather Deep.",
       "Do use Lava, and only Lava, for errors and destructive actions.",
-      "Do lift in-flow surfaces by tone (Ash Card on Snow) and a Pale Scree hairline.",
-      "Do show focus as a solid 3px Moss ring on every interactive element.",
+      "Do lift in-flow surfaces by tone (Wool on Heather) and a 1px hairline.",
+      "Do show focus on every interactive element: a solid 3px Strength Indigo ring on the light ground, a Lichen outline on Svart.",
       "Do keep inputs at 16px on phones so iOS doesn't zoom.",
-      "Do use the drawn wordmark and cairn from `logo/final/`, Basalt with Moss on light and Snow with Lichen on dark.",
-      "Do keep new neutrals on the warm ash hue."
+      "Do use the drawn wordmark and cairn from `logo/final/`: Basalt with Moss on light, Snow with Lichen on dark.",
+      "Do colour a stone by its sport group's dye, and set every figure in tabular numerals.",
+      "Do keep corners at 2px on controls and panels, 4px at most anywhere."
     ],
     "donts": [
       "Don't use Ember for errors, warnings or anything outside Splitsmith, and never for small text.",
-      "Don't put text on brand Moss. Use Deep Moss for fills behind text.",
-      "Don't add shadows to cards or other in-flow surfaces.",
+      "Don't use Lichen on the light ground, and don't pair Lichen with Snow outside the logo.",
+      "Don't set small text in a dye, or use a dye for anything but a sport group.",
+      "Don't put more than one dark plate on a screen below the shell.",
+      "Don't add shadows to cards, panels or other in-flow surfaces.",
       "Don't retype VARÐA in a font, or recolour the capstone or the Ð stone.",
-      "Don't pair Lichen with Snow.",
-      "Don't drift toward a Strava-style feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (dark panels, walls of metric tiles), or neutral-gray SaaS.",
-      "Don't use cool or pure grays."
+      "Don't drift toward a Strava-style feed (bright orange, kudos, leaderboards), Garmin Connect or TrainingPeaks density (walls of dark metric tiles), a stack of identical activity cards, or neutral-gray SaaS."
     ]
   }
 }

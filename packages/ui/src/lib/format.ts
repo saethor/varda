@@ -10,20 +10,30 @@ export function formatDuration(seconds: number): string {
   return hours > 0 ? `${hours}:${String(minutes).padStart(2, '0')}:${secs}` : `${minutes}:${secs}`;
 }
 
+/**
+ * Whether a value carries its unit. Leave it out only where the unit is already shown nearby, as in a
+ * table whose column header names it.
+ */
+export interface UnitOption {
+  unit?: boolean;
+}
+
+const withUnit = (value: string, unit: string, { unit: shown = true }: UnitOption) =>
+  shown ? `${value} ${unit}` : value;
+
 /** A distance in kilometres to two decimals, written the way `locale` writes numbers. */
-export function formatDistance(metres: number, locale: string): string {
+export function formatDistance(metres: number, locale: string, options: UnitOption = {}): string {
   const kilometres = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  return `${kilometres.format(metres / 1000)} km`;
+  return withUnit(kilometres.format(metres / 1000), 'km', options);
 }
 
 /** A pace: the moving time per kilometre (`5:00 /km`) or per 100 metres (`1:45 /100 m`). */
-export function formatPace(metres: number, seconds: number, per: 1000 | 100): string {
-  const unit = per === 1000 ? 'km' : '100 m';
-  return `${formatDuration((seconds / metres) * per)} /${unit}`;
+export function formatPace(metres: number, seconds: number, per: 1000 | 100, options: UnitOption = {}): string {
+  return withUnit(formatDuration((seconds / metres) * per), per === 1000 ? '/km' : '/100 m', options);
 }
 
 /** A speed in kilometres per hour to one decimal, written the way `locale` writes numbers. */
-export function formatSpeed(metres: number, seconds: number, locale: string): string {
+export function formatSpeed(metres: number, seconds: number, locale: string, options: UnitOption = {}): string {
   const kmh = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  return `${kmh.format((metres / seconds) * 3.6)} km/h`;
+  return withUnit(kmh.format((metres / seconds) * 3.6), 'km/h', options);
 }

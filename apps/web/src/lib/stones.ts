@@ -3,13 +3,15 @@ import { useNavigate } from '@tanstack/react-router';
 import { type Month, monthOnScreen } from '../stones/calendar-month.ts';
 import { feedWindow } from '../stones/feed-window.ts';
 import type { LocalDate } from '../stones/local-date.ts';
+import { stitchRange } from '../stones/route-weeks.ts';
+import { weekAround } from '../stones/stone-week.ts';
 import { type client, orpc } from './orpc.ts';
 
 /** A stone as the contract shows it. */
 export type Stone = Awaited<ReturnType<typeof client.record.stones.list>>[number];
 export type Sport = Stone['sport']['sport'];
 
-/** The signed-in person's stones, 4 weeks at a time back from `today`, newest first. */
+/** The signed-in person's stones, 4 whole weeks at a time back from `today`, newest first. */
 export const feedQuery = (today: LocalDate) =>
   orpc.record.stones.list.infiniteOptions({
     input: (window: number) => feedWindow(today, window),
@@ -18,6 +20,22 @@ export const feedQuery = (today: LocalDate) =>
     getNextPageParam: (_last, windows) => windows.length,
   });
 
+/** How many weeks the stitch rows show. */
+export const stitchWeeks = 12;
+
+/** The signed-in person's stones in the weeks the stitch rows show, back from `today`. */
+export const stitchQuery = (today: LocalDate) =>
+  orpc.record.stones.list.queryOptions({ input: stitchRange(today, stitchWeeks) });
+
+const justPlacedKey = 'varda:just-placed';
+
+/** The stone placed since the list was last open, if any; reading it clears it, so it settles only once. */
+export function takeJustPlaced(): string | null {
+  const stoneId = sessionStorage.getItem(justPlacedKey);
+  sessionStorage.removeItem(justPlacedKey);
+  return stoneId;
+}
+
 /** Places a stone from a watch file, refreshes the stones loaded, and opens the new stone, saying it was placed. */
 export function usePlaceStone() {
   const queryClient = useQueryClient();
@@ -25,6 +43,7 @@ export function usePlaceStone() {
   return useMutation(
     orpc.record.stones.place.mutationOptions({
       onSuccess: async ({ stoneId }) => {
+        sessionStorage.setItem(justPlacedKey, stoneId);
         await queryClient.invalidateQueries({ queryKey: orpc.record.stones.list.key() });
         await navigate({ to: '/stones/$stoneId', params: { stoneId }, state: { placed: true } });
       },
@@ -56,3 +75,6 @@ export const stoneQuery = (stoneId: string) => orpc.record.stones.get.queryOptio
 
 /** The signed-in person's stones in the month the calendar shows: its whole Mon–Sun weeks. */
 export const calendarQuery = (month: Month) => orpc.record.stones.list.queryOptions({ input: monthOnScreen(month) });
+
+/** The signed-in person's stones in a stone's Mon–Sun week and the week either side, for its place line and neighbours. */
+export const weekAroundQuery = (date: LocalDate) => orpc.record.stones.list.queryOptions({ input: weekAround(date) });

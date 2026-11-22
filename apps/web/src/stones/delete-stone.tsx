@@ -11,20 +11,21 @@ import {
   AlertDialogTrigger,
 } from '@varda/ui/components/alert-dialog';
 import { Button, buttonVariants } from '@varda/ui/components/button';
+import { cn } from '@varda/ui/lib/utils';
 import { SomethingWentWrongAlert } from '../components/form.tsx';
 import { type Stone, useDeleteStone } from '../lib/stones.ts';
 
 /** Deletes the stone and its watch file, once the athlete confirms it in a modal. */
-export function DeleteStone({ stone }: { stone: Stone }) {
+export function DeleteStone({ stone, className }: { stone: Stone; className?: string }) {
   const deleting = useDeleteStone(stone);
   const fileName = stone.fileName;
 
   return (
-    <div className="flex flex-col items-end gap-3">
+    <div className={cn('flex flex-col items-end gap-3', className)}>
       {deleting.isError && <SomethingWentWrongAlert />}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="outline" size="sm" disabled={deleting.isPending}>
+          <Button variant="ghost" size="sm" className="text-muted-foreground" disabled={deleting.isPending}>
             <Trans>Delete stone…</Trans>
           </Button>
         </AlertDialogTrigger>

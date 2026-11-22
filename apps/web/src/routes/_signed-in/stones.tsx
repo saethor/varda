@@ -1,13 +1,18 @@
 import { Trans } from '@lingui/react/macro';
-import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useRouterState } from '@tanstack/react-router';
 import { Alert, AlertDescription } from '@varda/ui/components/alert';
 import { Button } from '@varda/ui/components/button';
-import { calendarQuery, feedQuery, usePlaceStone } from '../../lib/stones.ts';
+import { cn } from '@varda/ui/lib/utils';
+import { useState } from 'react';
+import { calendarQuery, feedQuery, stitchQuery, stitchWeeks, takeJustPlaced, usePlaceStone } from '../../lib/stones.ts';
 import { monthOf } from '../../stones/calendar-month.ts';
-import { todayHere } from '../../stones/feed-window.ts';
+import { feedWindow, todayHere } from '../../stones/feed-window.ts';
+import { LatestStone } from '../../stones/latest-stone.tsx';
 import { PlacingPanel } from '../../stones/placing-panel.tsx';
-import { StoneCard } from '../../stones/stone-card.tsx';
+import { routeWeeks, stitchRows } from '../../stones/route-weeks.ts';
+import { StitchWeeks } from '../../stones/stitch-weeks.tsx';
+import { StoneRoute } from '../../stones/stone-route.tsx';
 import { StonesCalendar, StonesHeading } from '../../stones/stones-calendar.tsx';
 import { stonesSearch } from '../../stones/stones-view.ts';
 
@@ -26,7 +31,10 @@ export const Route = createFileRoute('/_signed-in/stones')({
   loader: async ({ context, deps }) =>
     deps.view === 'calendar'
       ? await context.queryClient.ensureQueryData(calendarQuery(deps.month ?? monthOf(context.today)))
-      : await context.queryClient.ensureInfiniteQueryData(feedQuery(context.today)),
+      : await Promise.all([
+          context.queryClient.ensureInfiniteQueryData(feedQuery(context.today)),
+          context.queryClient.ensureQueryData(stitchQuery(context.today)),
+        ]),
   staticData: { layout: 'wide' },
   component: FeedOrCalendar,
 });
@@ -48,19 +56,45 @@ function FeedOrCalendar() {
 function Stones() {
   const { today } = Route.useRouteContext();
   const feed = useSuspenseInfiniteQuery(feedQuery(today));
+  const { data: lastWeeks } = useSuspenseQuery(stitchQuery(today));
   const placing = usePlaceStone();
+  // The stone pointed at in the route, picked out in the stitch rows.
+  const [activeId, setActiveId] = useState<string | null>(null);
+  // A stone placed since the list was last open settles onto the route, once.
+  const [justPlaced] = useState(takeJustPlaced);
   const stones = feed.data.pages.flat();
+  const latest = stones[0];
+  const oldest = feedWindow(today, feed.data.pages.length - 1).from;
 
   return (
     <section className="flex flex-col gap-6">
       <StonesHeading view="feed" />
       <JustDeleted />
-      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-8 lg:order-2">
-          <PlacingPanel placing={placing} stones={stones} />
-        </aside>
-        <div className="flex flex-col gap-4 lg:order-1">
-          {stones.length === 0 ? <NoStones /> : stones.map((stone) => <StoneCard key={stone.id} stone={stone} />)}
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-x-8">
+        <PlacingPanel
+          placing={placing}
+          stones={stones}
+          className="order-3 lg:order-none lg:col-span-2 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:py-3"
+        />
+        {latest === undefined ? (
+          <NoStones className="order-1 lg:order-none lg:col-start-1" />
+        ) : (
+          <LatestStone stone={latest} stones={stones} today={today} className="order-1 lg:order-none lg:col-start-1" />
+        )}
+        <StitchWeeks
+          rows={stitchRows(lastWeeks, today, stitchWeeks)}
+          today={today}
+          activeId={activeId}
+          className="order-2 lg:sticky lg:top-8 lg:order-none lg:col-start-2 lg:row-span-2"
+        />
+        <div className="order-4 flex flex-col gap-6 lg:order-none lg:col-start-1">
+          <StoneRoute
+            weeks={routeWeeks(stones, oldest, today)}
+            today={today}
+            activeId={activeId}
+            onActive={setActiveId}
+            justPlaced={justPlaced}
+          />
           <Button
             variant="secondary"
             className="self-center"
@@ -89,9 +123,14 @@ function JustDeleted() {
   );
 }
 
-function NoStones() {
+function NoStones({ className }: { className?: string }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-16 text-center">
+    <div
+      className={cn(
+        'flex flex-col items-center gap-2 rounded-xs border border-dashed border-input/60 px-6 py-16 text-center',
+        className,
+      )}
+    >
       <p className="font-semibold">
         <Trans>Stones: your completed activities</Trans>
       </p>

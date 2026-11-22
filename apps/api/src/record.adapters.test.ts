@@ -34,7 +34,7 @@ describeRecordings('local disk', async () => ({ recordings: (await recordAdapter
 
 // A stone placed before its laps' figures were read holds laps in their old shape; only Postgres
 // keeps such rows, so only it is asked to read them.
-it('reads laps stored before their figures, intensity and workout step were read, with none of them', async () => {
+it('reads laps stored before their figures, intensity, workout step and form were read, with none of them', async () => {
   const { stones } = await recordAdapters();
   const id = ids.next();
   const oldLap = {
@@ -52,12 +52,14 @@ it('reads laps stored before their figures, intensity and workout step were read
 
   const stone = await stones.byId(id);
 
+  expect(stone?.form).toBeNull();
   expect(stone?.laps).toEqual([
     {
       ...oldLap,
       start: new Date(oldLap.start),
       intensity: null,
       workoutStep: null,
+      form: null,
       figures: {
         averageHeartRate: null,
         maxHeartRate: null,

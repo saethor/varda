@@ -1,6 +1,7 @@
 // Part of reading a watch file: FIT words (record, timer event, stance time) stay in here.
 import type { EventMesg, RecordMesg, SessionMesg } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
+import { isRunning } from './read-form.ts';
 import type { StreamChannel, Streams } from './stone.ts';
 
 /**
@@ -21,6 +22,8 @@ export function streamsOf(
   const seconds = points.map(({ timestamp }) => timestamp.getTime() / 1000);
   const hasDistance = Boolean(session.totalDistance);
   const steps = stepsPerMinute.has(sport);
+  // Only running has running form, whatever else the watch wrote.
+  const form = (read: (point: RecordMesg) => unknown) => (isRunning(sport) ? channel(points, read) : null);
 
   return {
     offset: seconds.map((at) => at - start.getTime() / 1000),
@@ -34,10 +37,10 @@ export function streamsOf(
     cadence: channel(points, (p) => cadenceOf(p, steps)),
     temperature: channel(points, (p) => p.temperature),
     position: positionChannel(points),
-    stepLength: channel(points, (p) => millimetres(p.stepLength)),
-    verticalOscillation: channel(points, (p) => millimetres(p.verticalOscillation)),
-    verticalRatio: channel(points, (p) => p.verticalRatio),
-    groundContactTime: channel(points, (p) => milliseconds(p.stanceTime)),
+    stepLength: form((p) => millimetres(p.stepLength)),
+    verticalOscillation: form((p) => millimetres(p.verticalOscillation)),
+    verticalRatio: form((p) => p.verticalRatio),
+    groundContactTime: form((p) => milliseconds(p.stanceTime)),
   };
 }
 

@@ -4,6 +4,7 @@ import type { Contract } from '@varda/contract';
 import {
   type WatchFileChannel,
   type WatchFileFigures,
+  type WatchFileForm,
   type WatchFileLap,
   type WatchFileOptions,
   type WatchFileSplit,
@@ -35,6 +36,7 @@ const intervalLaps: WatchFileLap[] = [
     intensity: 'warmup',
     workoutStep: 0,
     figures: { averageHeartRate: 132, maxHeartRate: 146, ascent: 2, descent: 2, averageCadence: 81, averagePower: 251 },
+    form: { stepLength: 1065, verticalOscillation: 84.2, verticalRatio: 7.9, groundContactTime: 256 },
   },
   ...intervals.map((lap, i): WatchFileLap => {
     const rep = Math.floor(i / 2);
@@ -54,12 +56,20 @@ const intervalLaps: WatchFileLap[] = [
             normalizedPower: 375 + rep,
             calories: 24,
           },
+          // Longer steps and lighter feet on the reps, fading a little rep by rep.
+          form: {
+            stepLength: 1402 - rep * 9,
+            verticalOscillation: 91.5 + rep * 0.4,
+            verticalRatio: 6.5 + rep * 0.08,
+            groundContactTime: 208 + rep * 3,
+          },
         }
       : {
           ...lap,
           intensity: 'recovery',
           workoutStep: 2,
           figures: { averageHeartRate: 146 + rep * 2, maxHeartRate: 170 + rep * 2, averageCadence: 79, calories: 15 },
+          form: { stepLength: 842, verticalOscillation: 76.8, verticalRatio: 9.1, groundContactTime: 281 + rep * 2 },
         };
   }),
   {
@@ -69,6 +79,7 @@ const intervalLaps: WatchFileLap[] = [
     intensity: 'cooldown',
     workoutStep: 3,
     figures: { averageHeartRate: 138, maxHeartRate: 151, ascent: 1, descent: 1, averageCadence: 80, averagePower: 236 },
+    form: { stepLength: 1012, verticalOscillation: 82.6, verticalRatio: 8.2, groundContactTime: 262 },
   },
 ];
 
@@ -221,6 +232,20 @@ const devFigures: Partial<Record<number, WatchFileFigures>> = {
   24: { averageHeartRate: 139, maxHeartRate: 167, ascent: 198, descent: 201, calories: 905 },
 };
 
+/**
+ * The running form averages each dev run's watch recorded, by its `daysAgo`, as an FR255 writes
+ * them (mm, %, ms): easy runs on shorter steps, the long run fading, the treadmill a little bouncier.
+ * The ride, hike and skiing have none; their files hold no form.
+ */
+const devForm: Partial<Record<number, WatchFileForm>> = {
+  1: { stepLength: 1128, verticalOscillation: 86.1, verticalRatio: 7.6, groundContactTime: 248 },
+  3: { stepLength: 1215, verticalOscillation: 87.4, verticalRatio: 7.2, groundContactTime: 236 },
+  5: { stepLength: 984, verticalOscillation: 80.3, verticalRatio: 8.2, groundContactTime: 271 },
+  15: { stepLength: 1102, verticalOscillation: 92.7, verticalRatio: 8.4, groundContactTime: 244 },
+  18: { stepLength: 1146, verticalOscillation: 85.6, verticalRatio: 7.5, groundContactTime: 246 },
+  27: { stepLength: 1058, verticalOscillation: 83.9, verticalRatio: 7.9, groundContactTime: 259 },
+};
+
 /** A run's figures: heart rate, ascent and descent, power, and the rest an FR255 writes with them. */
 function run(averageHeartRate: number, maxHeartRate: number, ascent: number, descent: number, averagePower: number) {
   return {
@@ -255,6 +280,13 @@ const devMeasurements: NonNullable<WatchFileOptions['measurements']> = {
   maxHeartRate: 188,
 };
 
+/** The summary figures and running form the watch recorded for the dev stone of `daysAgo`, those it did. */
+function recordedOn(daysAgo: number): Pick<WatchFileOptions, 'figures' | 'form'> {
+  const figures = devFigures[daysAgo];
+  const form = devForm[daysAgo];
+  return { ...(figures === undefined ? {} : { figures }), ...(form === undefined ? {} : { form }) };
+}
+
 /** `time` UTC on the day `daysAgo` days before `today`'s UTC date. */
 function startOf(today: Date, daysAgo: number, time: string): Date {
   const day = new Date(today.getTime() - daysAgo * 86_400_000).toISOString().slice(0, 10);
@@ -280,7 +312,6 @@ export async function seedStones({
   for (const athlete of athletes) {
     for (const [entry, { daysAgo, time, file }] of devStones.entries()) {
       const start = startOf(today, daysAgo, time);
-      const figures = devFigures[daysAgo];
       const bytes = watchFile({
         measurements: devMeasurements,
         ...file,
@@ -289,7 +320,7 @@ export async function seedStones({
         start,
         serialNumber: devWatch,
         timeCreated: writtenAt(entry),
-        ...(figures === undefined ? {} : { figures }),
+        ...recordedOn(daysAgo),
       });
       const upload = new File([bytes as Uint8Array<ArrayBuffer>], `seed-${start.toISOString().slice(0, 10)}.fit`);
       const { error, isDefined } = await safe(clientFor(athlete).record.stones.place({ file: upload }));

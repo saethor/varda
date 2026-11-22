@@ -15,6 +15,7 @@ import { chartDomain, chartPath } from './chart-line.ts';
 import type { ChartAxis } from './chart-series.ts';
 import { type ChartKind, type StoneChart, stoneCharts } from './chart-set.ts';
 import { steppingSports } from './figures-shown.ts';
+import { formatForm } from './form-shown.ts';
 
 /** The drawing box of every chart: as wide as the most points a chart draws, stretched to the column. */
 const box = { width: 1000, height: 100 };
@@ -50,7 +51,8 @@ export function StoneCharts({ stone }: { stone: Pick<StoneDetail, 'sport' | 'str
   );
 }
 
-function Chart({ chart, end, steps }: { chart: StoneChart; end: number; steps: boolean }) {
+/** One chart: its name and range over a plain line. Running form's charts are drawn by this too. */
+export function Chart({ chart, end, steps }: { chart: StoneChart; end: number; steps: boolean }) {
   const { i18n } = useLingui();
   const name = useChartName(chart.kind);
   const domain = chartDomain(chart.segments);
@@ -105,14 +107,22 @@ function shownValue(chart: StoneChart, value: number, steps: boolean, locale: st
       return formatPower(value, locale);
     case 'cadence':
       return formatCadence(value, steps ? 'steps' : 'revolutions', locale);
+    case 'step-length':
+      return formatForm('stepLength', value, locale);
+    case 'vertical-oscillation':
+      return formatForm('verticalOscillation', value, locale);
+    case 'vertical-ratio':
+      return formatForm('verticalRatio', value, locale);
+    case 'ground-contact-time':
+      return formatForm('groundContactTime', value, locale);
   }
 }
 
-function axisValue(axis: ChartAxis, end: number, locale: string): string {
+export function axisValue(axis: ChartAxis, end: number, locale: string): string {
   return axis === 'distance' ? formatDistance(end, locale) : formatDuration(end);
 }
 
-function AxisName({ axis }: { axis: ChartAxis }): ReactNode {
+export function AxisName({ axis }: { axis: ChartAxis }): ReactNode {
   return axis === 'distance' ? <Trans>Along the distance</Trans> : <Trans>Along the moving time</Trans>;
 }
 
@@ -131,5 +141,13 @@ function useChartName(kind: ChartKind): string {
       return t`Power`;
     case 'cadence':
       return t`Cadence`;
+    case 'step-length':
+      return t`Step length`;
+    case 'vertical-oscillation':
+      return t`Vertical oscillation`;
+    case 'vertical-ratio':
+      return t`Vertical ratio`;
+    case 'ground-contact-time':
+      return t`Ground contact time`;
   }
 }

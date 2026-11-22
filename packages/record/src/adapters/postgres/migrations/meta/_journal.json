@@ -57,6 +57,13 @@
       "when": 1795374206730,
       "tag": "0007_add_stone_streams",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795375334093,
+      "tag": "0008_add_stone_form",
+      "breakpoints": true
     }
   ]
 }

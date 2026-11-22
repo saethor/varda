@@ -5,12 +5,16 @@ import {
   formatDistance,
   formatDuration,
   formatElevation,
+  formatGroundContactTime,
   formatHeartRate,
   formatHeight,
   formatPace,
   formatPower,
   formatSpeed,
+  formatStepLength,
   formatTemperature,
+  formatVerticalOscillation,
+  formatVerticalRatio,
   formatWeight,
 } from './format.ts';
 
@@ -92,5 +96,17 @@ describe("formatting the athlete's measurements", () => {
 
   it('shows height in centimetres', () => {
     expect(formatHeight(1.83)).toBe('183 cm');
+  });
+});
+
+describe('formatting running form', () => {
+  it('shows step length in metres to two decimals, oscillation in mm, ratio in percent, contact time in ms', () => {
+    expect(formatStepLength(1.184, 'en')).toBe('1.18 m');
+    expect(formatStepLength(1.2, 'is')).toBe('1,20 m');
+    expect(formatVerticalOscillation(0.0864, 'en')).toBe('86 mm');
+    expect(formatVerticalRatio(7.43, 'en')).toBe('7.4 %');
+    expect(formatVerticalRatio(7, 'is')).toBe('7,0 %');
+    expect(formatGroundContactTime(0.247, 'en')).toBe('247 ms');
+    expect(formatGroundContactTime(0.247, 'en', { unit: false })).toBe('247');
   });
 });

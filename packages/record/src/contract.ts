@@ -24,6 +24,17 @@ const FiguresSchema = z.object({
   calories: z.number().nullable(),
 });
 
+/**
+ * Running form, the watch's averages as recorded: step length and vertical oscillation in metres,
+ * vertical ratio in percent, ground contact time in seconds; each none when not recorded.
+ */
+const FormSchema = z.object({
+  stepLength: z.number().nullable(),
+  verticalOscillation: z.number().nullable(),
+  verticalRatio: z.number().nullable(),
+  groundContactTime: z.number().nullable(),
+});
+
 const lapIntensities = ['warm-up', 'active', 'recovery', 'rest', 'cool-down'] as const;
 
 /** A recorded section of a stone. Times in seconds, distance in metres or none. */
@@ -37,6 +48,8 @@ const LapSchema = z.object({
   figures: FiguresSchema,
   /** What part of the stone the lap was (`active` is the work); none when the watch didn't mark it. */
   intensity: z.enum(lapIntensities).nullable(),
+  /** Running only: the lap's form averages; none for other sports or when the watch recorded none. */
+  form: FormSchema.nullable(),
 });
 
 /**
@@ -69,6 +82,8 @@ const StoneSchema = z.object({
   device: z.object({ manufacturer: z.string(), model: z.string().nullable() }).nullable(),
   /** The watch's summary figures for the whole stone. */
   figures: FiguresSchema,
+  /** Running only: the stone's form averages; none for other sports or when the watch recorded none. */
+  form: FormSchema.nullable(),
 });
 
 const stretchKinds = ['running', 'walking', 'standing'] as const;

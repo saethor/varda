@@ -909,3 +909,77 @@ describe('richer laps (#81)', () => {
     ]);
   });
 });
+
+describe('running form (#84)', () => {
+  // As the watch writes them: step length and vertical oscillation in mm, ground contact time in ms.
+  const form = { stepLength: 1184, verticalOscillation: 86.4, verticalRatio: 7.4, groundContactTime: 247 };
+  const formLaps: WatchFileLap[] = [
+    {
+      distance: 1000,
+      timerTime: 300,
+      elapsedTime: 300,
+      form: { stepLength: 1200, verticalOscillation: 85, verticalRatio: 7.1, groundContactTime: 241 },
+    },
+    {
+      distance: 1000,
+      timerTime: 300,
+      elapsedTime: 300,
+      form: { stepLength: 1150, verticalOscillation: 88, verticalRatio: 7.7, groundContactTime: 255 },
+    },
+  ];
+  const placed = async (options: Parameters<typeof watchFile>[0]) => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile(options)) });
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+    return { opened: await client.stones.get({ stoneId }), listed };
+  };
+
+  it("keeps a run's form averages as the watch recorded them, in metres, percent and seconds", async () => {
+    const { opened, listed } = await placed({ form, laps: formLaps });
+
+    expect(opened.form?.stepLength).toBeCloseTo(1.184);
+    expect(opened.form?.verticalOscillation).toBeCloseTo(0.0864);
+    expect(opened.form?.verticalRatio).toBeCloseTo(7.4);
+    expect(opened.form?.groundContactTime).toBeCloseTo(0.247);
+    expect(listed?.form).toEqual(opened.form);
+  });
+
+  it("keeps each lap's form averages", async () => {
+    const { opened, listed } = await placed({ form, laps: formLaps });
+
+    expect(opened.laps[0]?.form?.stepLength).toBeCloseTo(1.2);
+    expect(opened.laps[0]?.form?.groundContactTime).toBeCloseTo(0.241);
+    expect(opened.laps[1]?.form?.verticalOscillation).toBeCloseTo(0.088);
+    expect(opened.laps[1]?.form?.verticalRatio).toBeCloseTo(7.7);
+    expect(listed?.laps.map((lap) => lap.form)).toEqual(opened.laps.map((lap) => lap.form));
+  });
+
+  it('leaves out a form average the watch did not record, never 0', async () => {
+    const { opened } = await placed({ form: { stepLength: 1184, verticalOscillation: 86.4, verticalRatio: 7.4 } });
+
+    expect(opened.form?.groundContactTime).toBeNull();
+    expect(opened.form?.stepLength).toBeCloseTo(1.184);
+  });
+
+  it('keeps no form for a run the watch recorded none on', async () => {
+    const { opened, listed } = await placed({ perSecond: true, without: ['form'] });
+
+    expect(opened.form).toBeNull();
+    expect(opened.laps.map((lap) => lap.form)).toEqual([null, null, null]);
+    expect(listed?.form).toBeNull();
+  });
+
+  it('keeps no form for a ride, on the stone, its laps or its streams, even with form in its file', async () => {
+    const { opened } = await placed({ sport: 'cycling', form, laps: formLaps, perSecond: true });
+
+    expect(opened.form).toBeNull();
+    expect(opened.laps.map((lap) => lap.form)).toEqual([null, null]);
+    expect(opened.streams).toMatchObject({
+      stepLength: null,
+      verticalOscillation: null,
+      verticalRatio: null,
+      groundContactTime: null,
+    });
+    expect(opened.streams?.heartRate).not.toBeNull();
+  });
+});

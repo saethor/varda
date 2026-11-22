@@ -37,6 +37,7 @@ function toListedStone({
   effort,
   device,
   figures,
+  form,
 }: ListedStone) {
   return {
     id,
@@ -54,6 +55,7 @@ function toListedStone({
     effort,
     device,
     figures,
+    form,
   };
 }
 

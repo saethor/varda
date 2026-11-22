@@ -70,11 +70,11 @@ msgstr "Bæta við aðgangslykli?"
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
-#: src/stones/stone-charts.tsx:116
+#: src/stones/stone-charts.tsx:126
 msgid "Along the distance"
 msgstr "Eftir vegalengd"
 
-#: src/stones/stone-charts.tsx:116
+#: src/stones/stone-charts.tsx:126
 msgid "Along the moving time"
 msgstr "Eftir hreyfitíma"
 
@@ -110,7 +110,7 @@ msgstr "Meðalafl"
 msgid "Average temperature"
 msgstr "Meðalhiti"
 
-#: src/stones/stone-charts.tsx:133
+#: src/stones/stone-charts.tsx:143
 msgid "Cadence"
 msgstr "Taktur"
 
@@ -127,7 +127,7 @@ msgstr "Hitaeiningar"
 msgid "Cancel"
 msgstr "Hætta við"
 
-#: src/stones/stone-charts.tsx:38
+#: src/stones/stone-charts.tsx:39
 msgid "Charts"
 msgstr "Gröf"
 
@@ -184,7 +184,7 @@ msgstr "Áreynsla"
 msgid "Elapsed time"
 msgstr "Heildartími"
 
-#: src/stones/stone-charts.tsx:129
+#: src/stones/stone-charts.tsx:139
 msgid "Elevation"
 msgstr "Hæð yfir sjó"
 
@@ -218,7 +218,12 @@ msgstr "Úr {model}-úrinu þínu · {fileName}"
 msgid "From your watch · {fileName}"
 msgstr "Úr úrinu þínu · {fileName}"
 
-#: src/stones/stone-charts.tsx:123
+#: src/stones/stone-charts.tsx:151
+#: src/stones/stone-form.tsx:106
+msgid "Ground contact time"
+msgstr "Snertitími við jörð"
+
+#: src/stones/stone-charts.tsx:133
 msgid "Heart rate"
 msgstr "Púls"
 
@@ -242,6 +247,7 @@ msgstr "Forsíða"
 msgid "Intensity"
 msgstr "Ákefð"
 
+#: src/stones/stone-form.tsx:67
 #: src/stones/stone-laps.tsx:151
 msgid "Lap"
 msgstr "Hringur"
@@ -356,7 +362,7 @@ msgstr "Annað"
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:125
+#: src/stones/stone-charts.tsx:135
 #: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -390,7 +396,7 @@ msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn síðustu viku"
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn þessa viku"
 
-#: src/stones/stone-charts.tsx:131
+#: src/stones/stone-charts.tsx:141
 msgid "Power"
 msgstr "Afl"
 
@@ -434,6 +440,10 @@ msgstr "Götuhlaup"
 #: src/stones/stone-stretches.tsx:101
 msgid "Running"
 msgstr "Hlaup"
+
+#: src/stones/stone-form.tsx:25
+msgid "Running form"
+msgstr "Hlaupastíll"
 
 #: src/stones/stone-week-view.tsx:137
 msgid "See the calendar"
@@ -484,7 +494,7 @@ msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
-#: src/stones/stone-charts.tsx:127
+#: src/stones/stone-charts.tsx:137
 #: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -503,16 +513,21 @@ msgstr "Byrjar"
 msgid "started {time}"
 msgstr "hófst {time}"
 
+#: src/stones/stone-charts.tsx:145
+#: src/stones/stone-form.tsx:100
+msgid "Step length"
+msgstr "Skreflengd"
+
 #: src/routes/_signed-in/stones.tsx:120
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Steini eytt. Þú getur lagt hann aftur úr {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:60
+#: src/routes/_signed-in/stones_.$stoneId.tsx:61
 msgid "Stone not found"
 msgstr "Steinn fannst ekki"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:50
+#: src/routes/_signed-in/stones_.$stoneId.tsx:51
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -563,7 +578,7 @@ msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur.
 msgid "The week of {0}"
 msgstr "Vikan frá {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:63
+#: src/routes/_signed-in/stones_.$stoneId.tsx:64
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "Þessi steinn er ekki til. Honum gæti hafa verið eytt, eða hlekkurinn er rangur."
 
@@ -623,6 +638,16 @@ msgstr "Hafnað"
 #: src/routes/sign-in.tsx:232
 msgid "Varða doesn't recognise that passkey. Sign in with your password instead."
 msgstr "Varða kannast ekki við þennan aðgangslykil. Skráðu þig frekar inn með lykilorðinu þínu."
+
+#: src/stones/stone-charts.tsx:147
+#: src/stones/stone-form.tsx:102
+msgid "Vertical oscillation"
+msgstr "Lóðrétt sveifla"
+
+#: src/stones/stone-charts.tsx:149
+#: src/stones/stone-form.tsx:104
+msgid "Vertical ratio"
+msgstr "Lóðrétt hlutfall"
 
 #: src/stones/stone-card.tsx:25
 #: src/stones/stone-stretches.tsx:103

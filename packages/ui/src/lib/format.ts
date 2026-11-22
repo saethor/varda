@@ -37,3 +37,19 @@ export function formatSpeed(metres: number, seconds: number, locale: string, opt
   const kmh = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   return withUnit(kmh.format((metres / seconds) * 3.6), 'km/h', options);
 }
+
+/** A weight in kilograms to one decimal, written the way `locale` writes numbers. */
+export function formatWeight(kilograms: number, locale: string, options: UnitOption = {}): string {
+  const kg = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  return withUnit(kg.format(kilograms), 'kg', options);
+}
+
+/** A height, given in metres, in whole centimetres. */
+export function formatHeight(metres: number, options: UnitOption = {}): string {
+  return withUnit(String(Math.round(metres * 100)), 'cm', options);
+}
+
+/** A heart rate in whole beats per minute. */
+export function formatHeartRate(bpm: number, options: UnitOption = {}): string {
+  return withUnit(String(Math.round(bpm)), 'bpm', options);
+}

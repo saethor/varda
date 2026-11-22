@@ -66,6 +66,10 @@ msgstr "Þegar lagður"
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
 
+#: src/stones/stone-measurements.tsx:42
+msgid "As the watch had them that day"
+msgstr "Eins og úrið hafði þær þann dag"
+
 #: src/stones/stones-calendar.tsx:50
 msgid "Calendar"
 msgstr "Dagatal"
@@ -133,9 +137,13 @@ msgstr "Sláðu inn nafnið þitt."
 msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 msgstr "Hvert hlaup, hjólatúr, sund eða æfing sem þú lýkur verður að steini. Leggðu stein úr .fit-skránni sem úrið vistaði."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:94
+#: src/routes/_signed-in/stones_.$stoneId.tsx:102
 msgid "From your watch · {fileName}"
 msgstr "Úr úrinu þínu · {fileName}"
+
+#: src/stones/stone-measurements.tsx:20
+msgid "Height"
+msgstr "Hæð"
 
 #: src/routes/_signed-in/index.tsx:34
 msgid "Hi, {name}"
@@ -173,6 +181,14 @@ msgstr "Listi"
 #: src/routes/_signed-in.tsx:37
 msgid "Main"
 msgstr "Aðalvalmynd"
+
+#: src/stones/stone-measurements.tsx:30
+msgid "Max heart rate"
+msgstr "Hámarkspúls"
+
+#: src/stones/stone-measurements.tsx:39
+msgid "Measurements"
+msgstr "Mælingar"
 
 #: src/stones/headline-numbers.tsx:34
 #: src/stones/latest-stone.tsx:45
@@ -287,6 +303,10 @@ msgstr "Fjarlægja {name}"
 msgid "Remove {name}?"
 msgstr "Fjarlægja {name}?"
 
+#: src/stones/stone-measurements.tsx:24
+msgid "Resting heart rate"
+msgstr "Hvíldarpúls"
+
 #: src/stones/stone-card.tsx:7
 msgid "Road running"
 msgstr "Götuhlaup"
@@ -354,12 +374,12 @@ msgstr "hófst {time}"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Steini eytt. Þú getur lagt hann aftur úr {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:55
+#: src/routes/_signed-in/stones_.$stoneId.tsx:56
 msgid "Stone not found"
 msgstr "Steinn fannst ekki"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:45
+#: src/routes/_signed-in/stones_.$stoneId.tsx:46
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -398,7 +418,7 @@ msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur.
 msgid "The week of {0}"
 msgstr "Vikan frá {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:58
+#: src/routes/_signed-in/stones_.$stoneId.tsx:59
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "Þessi steinn er ekki til. Honum gæti hafa verið eytt, eða hlekkurinn er rangur."
 
@@ -470,6 +490,10 @@ msgstr "Vika"
 #: src/stones/stitch-weeks.tsx:42
 msgid "Week of"
 msgstr "Vika hefst"
+
+#: src/stones/stone-measurements.tsx:18
+msgid "Weight"
+msgstr "Þyngd"
 
 #: src/stones/placing-refusal.tsx:62
 msgid "You already placed a stone from this session: the one placed from {fileName}, on {day}."

@@ -6,6 +6,7 @@ import { type StoneDetail, stoneQuery, weekAroundQuery } from '../../lib/stones.
 import { DeleteStone } from '../../stones/delete-stone.tsx';
 import { todayHere } from '../../stones/feed-window.ts';
 import { StoneLaps } from '../../stones/stone-laps.tsx';
+import { StoneMeasurements } from '../../stones/stone-measurements.tsx';
 import { StonePlate } from '../../stones/stone-plate.tsx';
 import { placeInWeek } from '../../stones/stone-week.ts';
 import { WeekWalk } from '../../stones/stone-week-view.tsx';
@@ -91,7 +92,7 @@ function StoneScreen() {
       <StoneLaps stone={stone} />
       {/* Stretches (#80) */}
       {/* Form (#84) */}
-      {/* Measurements (#78) */}
+      <StoneMeasurements stone={stone} />
 
       {/* Reserved: planned against actual (the workout this stone fulfilled, its workout outcome) and the journey it moved along go here, between the stone's own record and the walk through the weeks. */}
 

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { formatDistance, formatDuration, formatPace, formatSpeed } from './format.ts';
+import {
+  formatDistance,
+  formatDuration,
+  formatHeartRate,
+  formatHeight,
+  formatPace,
+  formatSpeed,
+  formatWeight,
+} from './format.ts';
 
 describe('formatting a duration', () => {
   it('shows minutes and seconds under an hour', () => {
@@ -48,5 +56,21 @@ describe('leaving the unit out, for a column whose header names it', () => {
     expect(formatDistance(1234, 'is', { unit: false })).toBe('1,23');
     expect(formatPace(1000, 300, 1000, { unit: false })).toBe('5:00');
     expect(formatSpeed(10_000, 3600, 'en', { unit: false })).toBe('10.0');
+  });
+});
+
+describe("formatting the athlete's measurements", () => {
+  it('shows weight in kilograms to one decimal, in the language shown', () => {
+    expect(formatWeight(71.3, 'en')).toBe('71.3 kg');
+    expect(formatWeight(68, 'is')).toBe('68,0 kg');
+  });
+
+  it('shows height in centimetres', () => {
+    expect(formatHeight(1.83)).toBe('183 cm');
+  });
+
+  it('shows a heart rate in beats per minute', () => {
+    expect(formatHeartRate(47)).toBe('47 bpm');
+    expect(formatHeartRate(152.6, { unit: false })).toBe('153');
   });
 });

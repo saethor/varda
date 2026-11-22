@@ -58,6 +58,14 @@ msgstr "Bæta við aðgangslykli?"
 msgid "Added {added}"
 msgstr "Bætt við {added}"
 
+#: src/stones/stone-charts.tsx:116
+msgid "Along the distance"
+msgstr "Eftir vegalengd"
+
+#: src/stones/stone-charts.tsx:116
+msgid "Along the moving time"
+msgstr "Eftir hreyfitíma"
+
 #: src/stones/placing-refusal.tsx:22
 msgid "Already placed"
 msgstr "Þegar lagður"
@@ -65,6 +73,10 @@ msgstr "Þegar lagður"
 #: src/routes/sign-up.tsx:104
 msgid "Already signed up? <0>Sign in</0>"
 msgstr "Hefurðu skráð þig áður? <0>Innskráning</0>"
+
+#: src/stones/stone-charts.tsx:133
+msgid "Cadence"
+msgstr "Taktur"
 
 #: src/stones/stones-calendar.tsx:50
 msgid "Calendar"
@@ -74,6 +86,10 @@ msgstr "Dagatal"
 #: src/stones/delete-stone.tsx:46
 msgid "Cancel"
 msgstr "Hætta við"
+
+#: src/stones/stone-charts.tsx:38
+msgid "Charts"
+msgstr "Gröf"
 
 #: src/stones/placing-panel.tsx:82
 msgid "Choose a watch file"
@@ -115,6 +131,10 @@ msgstr "Slepptu .fit-skránni sem úrið vistaði hér, eða veldu hana. Ein skr
 msgid "Elapsed time"
 msgstr "Heildartími"
 
+#: src/stones/stone-charts.tsx:129
+msgid "Elevation"
+msgstr "Hæð"
+
 #: src/routes/sign-in.tsx:97
 #: src/routes/sign-up.tsx:75
 msgid "Email"
@@ -133,9 +153,13 @@ msgstr "Sláðu inn nafnið þitt."
 msgid "Every run, ride, swim or session you finish becomes a stone. Place one from the .fit file your watch saved."
 msgstr "Hvert hlaup, hjólatúr, sund eða æfing sem þú lýkur verður að steini. Leggðu stein úr .fit-skránni sem úrið vistaði."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:94
+#: src/routes/_signed-in/stones_.$stoneId.tsx:102
 msgid "From your watch · {fileName}"
 msgstr "Úr úrinu þínu · {fileName}"
+
+#: src/stones/stone-charts.tsx:123
+msgid "Heart rate"
+msgstr "Hjartsláttur"
 
 #: src/routes/_signed-in/index.tsx:34
 msgid "Hi, {name}"
@@ -233,6 +257,7 @@ msgstr "Annað"
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
+#: src/stones/stone-charts.tsx:125
 #: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -265,6 +290,10 @@ msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn síðustu viku"
 #: src/stones/stone-plate.tsx:124
 msgid "Placed. Your {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} stone this week"
 msgstr "Lagður. {n, selectordinal, other {#.}} steinninn þinn þessa viku"
+
+#: src/stones/stone-charts.tsx:131
+msgid "Power"
+msgstr "Afl"
 
 #: src/stones/stone-week-view.tsx:109
 msgid "Previous"
@@ -340,6 +369,7 @@ msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 
 #: src/stones/headline-numbers.tsx:35
 #: src/stones/latest-stone.tsx:49
+#: src/stones/stone-charts.tsx:127
 #: src/stones/stone-laps.tsx:155
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
@@ -354,12 +384,12 @@ msgstr "hófst {time}"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Steini eytt. Þú getur lagt hann aftur úr {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:55
+#: src/routes/_signed-in/stones_.$stoneId.tsx:56
 msgid "Stone not found"
 msgstr "Steinn fannst ekki"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:45
+#: src/routes/_signed-in/stones_.$stoneId.tsx:46
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -398,7 +428,7 @@ msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur.
 msgid "The week of {0}"
 msgstr "Vikan frá {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:58
+#: src/routes/_signed-in/stones_.$stoneId.tsx:59
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "Þessi steinn er ekki til. Honum gæti hafa verið eytt, eða hlekkurinn er rangur."
 

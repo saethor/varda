@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDistance, formatDuration, formatPace, formatSpeed } from './format.ts';
+import { formatDistance, formatDuration, formatMeasure, formatPace, formatSpeed } from './format.ts';
 
 describe('formatting a duration', () => {
   it('shows minutes and seconds under an hour', () => {
@@ -48,5 +48,13 @@ describe('leaving the unit out, for a column whose header names it', () => {
     expect(formatDistance(1234, 'is', { unit: false })).toBe('1,23');
     expect(formatPace(1000, 300, 1000, { unit: false })).toBe('5:00');
     expect(formatSpeed(10_000, 3600, 'en', { unit: false })).toBe('10.0');
+  });
+});
+
+describe('formatting a whole-number measure', () => {
+  it('rounds heart rate, power, cadence or elevation to a whole number in its unit, in the language shown', () => {
+    expect(formatMeasure(151.6, 'bpm', 'en')).toBe('152 bpm');
+    expect(formatMeasure(1234.4, 'm', 'en')).toBe('1,234 m');
+    expect(formatMeasure(1234.4, 'm', 'is', { unit: false })).toBe('1.234');
   });
 });

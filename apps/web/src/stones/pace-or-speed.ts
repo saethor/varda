@@ -38,3 +38,8 @@ export function paceOrSpeed(
         unit: measure.pace === 1000 ? 'min/km' : 'min/100 m',
       };
 }
+
+/** How `sport` talks about how fast it went: pace per 1000 or 100 metres, speed, or neither. */
+export function measureOfSport(sport: Sport): { pace: 1000 | 100 } | 'speed' | null {
+  return measureOf[sport];
+}

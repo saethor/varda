@@ -37,3 +37,9 @@ export function formatSpeed(metres: number, seconds: number, locale: string, opt
   const kmh = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   return withUnit(kmh.format((metres / seconds) * 3.6), 'km/h', options);
 }
+
+/** A whole-number measure (heart rate, power, cadence, elevation) in `unit`, written the way `locale` writes numbers. */
+export function formatMeasure(value: number, unit: string, locale: string, options: UnitOption = {}): string {
+  const whole = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+  return withUnit(whole.format(value), unit, options);
+}

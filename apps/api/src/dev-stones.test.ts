@@ -67,3 +67,14 @@ it.each([
   expect(second).toEqual({ placed: 0, alreadyPlaced: first.placed });
   expect(await stonesOf(anna.id)).toHaveLength(first.placed);
 });
+
+it('rates some stones on the watch and not others, all from the same watch', async () => {
+  const { clientFor, stonesOf } = devApp();
+
+  await seedStones({ clientFor, athletes: [anna.id], today });
+  const stones = await stonesOf(anna.id);
+
+  expect(stones.some((stone) => stone.effort !== null)).toBe(true);
+  expect(stones.some((stone) => stone.effort === null)).toBe(true);
+  expect(new Set(stones.map((stone) => stone.device?.model))).toEqual(new Set(['Forerunner 255 Music']));
+});

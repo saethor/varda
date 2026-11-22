@@ -14,6 +14,7 @@ const fitFile = (bytes: Uint8Array, name = 'run.fit') => new File([bytes as Uint
 const everything = watchFile({
   rpe: 70,
   product: 3990,
+  measurements: { weight: 71.3, height: 1.83, restingHeartRate: 48, maxHeartRate: 193 },
   figures: { averageHeartRate: 152, maxHeartRate: 178, calories: 712 },
   splits: [
     { type: 'rwdRun', start: 0, time: 800, distance: 2800 },
@@ -53,6 +54,7 @@ describe('filling in stones placed before the richer stone screen', () => {
       device: { manufacturer: 'Garmin', model: 'Forerunner 255 Music' },
       figures: { averageHeartRate: 152, maxHeartRate: 178, calories: 712 },
       stretches: { totals: { running: { movingTime: 800, distance: 2800 } } },
+      measurements: { weight: 71.3, height: 1.83, restingHeartRate: 48, maxHeartRate: 193 },
     });
     const stored = await adapters.stones.byId(stoneId);
     expect(stored?.athlete).toBe(guðrún);
@@ -106,6 +108,7 @@ describe('filling in stones placed before the richer stone screen', () => {
     const report = await fillInStones(adapters);
 
     expect(report).toEqual({ filledIn: [], notFilledIn: [{ stoneId, reason: 'not-kept' }] });
+    expect(JSON.stringify(report)).not.toMatch(/71\.3|1\.83|193/);
     expect(await adapters.stones.byId(stoneId)).toEqual(before);
   });
 });

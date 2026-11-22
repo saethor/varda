@@ -179,7 +179,13 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
 
     it('replaces what a stone holds as read from its recording, keeping what places it', async () => {
       const { stones, ids } = await setup();
-      const added = { ...stone(ids, ids.next(), '2026-11-02'), effort: null, device: null, stretches: null };
+      const added = {
+        ...stone(ids, ids.next(), '2026-11-02'),
+        effort: null,
+        device: null,
+        stretches: null,
+        measurements: null,
+      };
       const { id, athlete, fileName, sessionKey, start, localOffset, localDate } = added;
       await stones.add(added);
       const reread = stone(ids, ids.next(), '2026-11-09');
@@ -195,6 +201,7 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
         garminReference: reread.garminReference,
         figures: { ...noFigures, averageHeartRate: 152, calories: 712 },
         stretches: reread.stretches,
+        measurements: reread.measurements,
       };
 
       await stones.replaceReading(added.id, reading);

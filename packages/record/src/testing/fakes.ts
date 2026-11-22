@@ -28,6 +28,15 @@ export function createInMemoryStones(): Stones {
     async remove(id) {
       byId.delete(id);
     },
+    async everyId() {
+      return [...byId.keys()];
+    },
+    async replaceReading(id, reading) {
+      const stone = byId.get(id);
+      if (stone === undefined) return;
+      const { sessionKey, start, localOffset, localDate, athlete, fileName } = stone;
+      byId.set(id, { ...reading, id, athlete, fileName, sessionKey, start, localOffset, localDate });
+    },
   };
 }
 

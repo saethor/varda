@@ -1,4 +1,4 @@
-import type { LocalDate, PersonId, SessionKey, Stone, StoneId } from '../domain/stone.ts';
+import type { LocalDate, PersonId, Reading, SessionKey, Stone, StoneId } from '../domain/stone.ts';
 
 /**
  * Who may see an athlete's stones: Record's own question, which apps/api answers with the
@@ -24,6 +24,14 @@ export type Stones = {
   withSessionKey(athlete: PersonId, sessionKey: SessionKey): Promise<Stone | null>;
   /** Removes the stone. Nothing happens when there is none. */
   remove(id: StoneId): Promise<void>;
+  /** The IDs of every athlete's stones, in no particular order. */
+  everyId(): Promise<StoneId[]>;
+  /**
+   * Replaces all the stone holds as read from its recording with `reading`, wherever it is kept,
+   * leaving its ID, athlete, file name, session and dates as they are. Nothing happens when there
+   * is no such stone.
+   */
+  replaceReading(id: StoneId, reading: Reading): Promise<void>;
 };
 
 /** The recordings stones were placed from: the original watch files, kept untouched (ADR 0002). */

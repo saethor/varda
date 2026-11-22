@@ -21,6 +21,7 @@
     "db:up": "docker compose up -d",
     "db:migrate": "pnpm --filter @varda/api db:migrate",
     "db:seed": "pnpm --filter @varda/api db:seed",
+    "db:fill-in-stones": "pnpm --filter @varda/api db:fill-in-stones",
     "db:down": "docker compose down",
     "i18n:extract": "pnpm --filter @varda/web i18n:extract",
     "i18n:compile": "pnpm --filter @varda/web i18n:compile"

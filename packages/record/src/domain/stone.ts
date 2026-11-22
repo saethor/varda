@@ -102,6 +102,13 @@ export type Figures = {
   calories: number | null;
 };
 
+/**
+ * What a stone holds as read from its recording, apart from what places it: the session it came
+ * from and when it was (`sessionKey`, `start`, `localOffset`, `localDate`). Re-reading a recording
+ * (the backfill, #82) replaces exactly this, so every field a later reader learns is part of it.
+ */
+export type Reading = Omit<Session, 'sessionKey' | 'start' | 'localOffset' | 'localDate'>;
+
 /** A training session the athlete actually did (Record glossary). */
 export type Stone = Session & {
   id: StoneId;

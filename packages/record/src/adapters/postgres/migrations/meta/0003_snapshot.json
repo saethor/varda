@@ -1,49 +1,9 @@
 {
-  "id": "fb954d06-0ddd-41dd-96f4-cb787f5e6867",
+  "id": "7d0efb80-7203-4884-828d-a4a19cbcf710",
   "prevId": "cd782e36-ffa1-4b19-a37f-619505104989",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "record.stone_streams": {
-      "name": "stone_streams",
-      "schema": "record",
-      "columns": {
-        "stone_id": {
-          "name": "stone_id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "streams": {
-          "name": "streams",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "stone_streams_stone_id_stones_id_fk": {
-          "name": "stone_streams_stone_id_stones_id_fk",
-          "tableFrom": "stone_streams",
-          "tableTo": "stones",
-          "schemaTo": "record",
-          "columnsFrom": [
-            "stone_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "record.stones": {
       "name": "stones",
       "schema": "record",
@@ -123,6 +83,24 @@
         },
         "trace": {
           "name": "trace",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "effort": {
+          "name": "effort",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "device": {
+          "name": "device",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "garmin_reference": {
+          "name": "garmin_reference",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false

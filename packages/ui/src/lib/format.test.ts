@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { formatDistance, formatDuration, formatMeasure, formatPace, formatSpeed } from './format.ts';
+import {
+  formatCadence,
+  formatCalories,
+  formatDistance,
+  formatDuration,
+  formatElevation,
+  formatHeartRate,
+  formatHeight,
+  formatPace,
+  formatPower,
+  formatSpeed,
+  formatTemperature,
+  formatWeight,
+} from './format.ts';
 
 describe('formatting a duration', () => {
   it('shows minutes and seconds under an hour', () => {
@@ -51,10 +64,33 @@ describe('leaving the unit out, for a column whose header names it', () => {
   });
 });
 
-describe('formatting a whole-number measure', () => {
-  it('rounds heart rate, power, cadence or elevation to a whole number in its unit, in the language shown', () => {
-    expect(formatMeasure(151.6, 'bpm', 'en')).toBe('152 bpm');
-    expect(formatMeasure(1234.4, 'm', 'en')).toBe('1,234 m');
-    expect(formatMeasure(1234.4, 'm', 'is', { unit: false })).toBe('1.234');
+describe("formatting a stone's figures", () => {
+  it('shows each as a whole number with its unit, the way the language shown writes numbers', () => {
+    expect(formatHeartRate(152.4, 'en')).toBe('152 bpm');
+    expect(formatElevation(1284.6, 'en')).toBe('1,285 m');
+    expect(formatElevation(1284.6, 'is')).toBe('1.285 m');
+    expect(formatPower(301, 'en')).toBe('301 W');
+    expect(formatTemperature(-4, 'en')).toBe('-4 °C');
+    expect(formatCalories(1712, 'en')).toBe('1,712 kcal');
+  });
+
+  it('shows cadence in steps a minute for a stepping sport and in revolutions otherwise', () => {
+    expect(formatCadence(169.58, 'steps', 'en')).toBe('170 spm');
+    expect(formatCadence(82, 'revolutions', 'en')).toBe('82 rpm');
+  });
+
+  it('leaves the unit out when asked', () => {
+    expect(formatHeartRate(152, 'en', { unit: false })).toBe('152');
+  });
+});
+
+describe("formatting the athlete's measurements", () => {
+  it('shows weight in kilograms to one decimal, in the language shown', () => {
+    expect(formatWeight(71.3, 'en')).toBe('71.3 kg');
+    expect(formatWeight(68, 'is')).toBe('68,0 kg');
+  });
+
+  it('shows height in centimetres', () => {
+    expect(formatHeight(1.83)).toBe('183 cm');
   });
 });

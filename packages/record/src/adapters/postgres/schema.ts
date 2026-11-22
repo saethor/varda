@@ -10,7 +10,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import type { Streams } from '../../domain/stone.ts';
+import type { Figures, Measurements, Streams } from '../../domain/stone.ts';
 
 // The Record context's own Postgres schema (ADR 0005). Change it, then run
 // `pnpm --filter @varda/record db:generate` and commit the new migration.
@@ -23,6 +23,14 @@ export type StoredLap = {
   movingTime: number;
   distance: number | null;
   trigger: 'manual' | 'distance' | 'time' | 'other';
+};
+
+type StretchTotal = { movingTime: number; distance: number | null } | null;
+
+/** A run's stretches as stored in `stones.stretches`: each start as an ISO instant. */
+export type StoredStretches = {
+  inOrder: { kind: 'running' | 'walking' | 'standing'; start: string; movingTime: number; distance: number | null }[];
+  totals: { running: StretchTotal; walking: StretchTotal; standing: StretchTotal };
 };
 
 export const stones = record.table(
@@ -47,6 +55,22 @@ export const stones = record.table(
     laps: jsonb('laps').$type<StoredLap[]>().notNull(),
     // `[lat, lon]` pairs in degrees, or null when the watch recorded no GPS.
     trace: jsonb('trace').$type<[number, number][]>(),
+    // 1–10, or null when the athlete gave the watch no rating.
+    effort: integer('effort'),
+    // `{ manufacturer, model }` of the watch that recorded it, or null.
+    device: jsonb('device').$type<{ manufacturer: string; model: string | null }>(),
+    // Garmin's training load and Training Effect, as reference only (ADR 0003); never answered. Or null.
+    garminReference: jsonb('garmin_reference').$type<{
+      trainingLoad: number | null;
+      aerobicTrainingEffect: number | null;
+      anaerobicTrainingEffect: number | null;
+    }>(),
+    // The watch's summary figures; null for stones placed before they were read (ADR 0009).
+    figures: jsonb('figures').$type<Figures>(),
+    // A run's stretches, starts as ISO instants; null for other sports and stones placed before them.
+    stretches: jsonb('stretches').$type<StoredStretches>(),
+    // The athlete's measurements the watch had (kg, m, bpm), or null when it had none.
+    measurements: jsonb('measurements').$type<Measurements>(),
   },
   (table) => [
     // A session is placed as a stone only once (Record glossary).

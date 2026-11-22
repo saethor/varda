@@ -6,7 +6,7 @@ import { placeStone } from '../application/place-stone.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
 import { maxWatchFileBytes, recordContract } from '../contract.ts';
 import { SessionAlreadyPlaced, StoneNotFound, WatchFileTurnedAway } from '../domain/errors.ts';
-import type { ListedStone, PersonId, Stone } from '../domain/stone.ts';
+import type { ListedStone, Measurements, PersonId, Stone } from '../domain/stone.ts';
 
 const os = implement(recordContract).$context<SharedContext>();
 
@@ -34,6 +34,9 @@ function toListedStone({
   elapsedTime,
   laps,
   trace,
+  effort,
+  device,
+  figures,
 }: ListedStone) {
   return {
     id,
@@ -47,16 +50,28 @@ function toListedStone({
     elapsedTime,
     laps,
     trace,
+    effort,
+    device,
+    figures,
   };
 }
 
 /** A stone as the contract shows it opened, to `viewer`: its athlete, or someone coaching them. */
-// biome-ignore lint/correctness/noUnusedFunctionParameters: measurements (#78) leave out what a coach mustn't see.
 function toStoneDetail(stone: Stone, viewer: PersonId) {
   return {
     ...toListedStone(stone),
+    stretches: stone.stretches,
+    measurements: stone.athlete === viewer ? stone.measurements : toCoach(stone.measurements),
     streams: stone.streams,
   };
+}
+
+/** The measurements a coach sees: never weight or height, there being no way yet to share them. */
+function toCoach(measurements: Measurements | null): Measurements | null {
+  if (measurements === null) return null;
+  const { restingHeartRate, maxHeartRate } = measurements;
+  if (restingHeartRate === null && maxHeartRate === null) return null;
+  return { weight: null, height: null, restingHeartRate, maxHeartRate };
 }
 
 // The Record context's part of the API contract (ADR 0006). Each procedure translates the domain

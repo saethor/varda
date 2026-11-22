@@ -1,7 +1,14 @@
 import type { ContractRouterClient } from '@orpc/contract';
 import { safe } from '@orpc/server';
 import type { Contract } from '@varda/contract';
-import { type WatchFileChannel, type WatchFileLap, type WatchFileOptions, watchFile } from '@varda/record/watch-files';
+import {
+  type WatchFileChannel,
+  type WatchFileFigures,
+  type WatchFileLap,
+  type WatchFileOptions,
+  type WatchFileSplit,
+  watchFile,
+} from '@varda/record/watch-files';
 
 /** `count` laps of `distance` metres in `timerTime` seconds, each with 10 s stopped. */
 const laps = (count: number, distance: number, timerTime: number): WatchFileLap[] =>
@@ -14,6 +21,27 @@ const intervals = Array.from({ length: 5 }, () => [...laps(1, 400, 80), ...laps(
 const onABike: WatchFileChannel[] = ['power', 'cadence', 'form'];
 /** What a watch records in the gym: heart rate, nothing else. */
 const heartRateOnly: WatchFileChannel[] = ['altitude', 'power', 'cadence', 'temperature', 'form'];
+
+/**
+ * A long run with walk breaks, as the watch's run/walk detection splits it: 18 minutes running
+ * then a minute walking, five times over, standing at a crossing after the 2nd and 4th walk, and
+ * 4 minutes running to finish. 16 km in 6000 s on the timer, its 4 laps' totals.
+ */
+const runWalk: WatchFileSplit[] = (() => {
+  const splits: WatchFileSplit[] = [];
+  let at = 0;
+  const add = (type: WatchFileSplit['type'], time: number, distance: number) => {
+    splits.push({ type, start: at, time, distance });
+    at += time;
+  };
+  for (let i = 1; i <= 5; i++) {
+    add('rwdRun', 1080, 2990);
+    add('rwdWalk', 60, 80);
+    if (i % 2 === 0) add('rwdStand', 30, 0);
+  }
+  add('rwdRun', 240, 650);
+  return splits;
+})();
 
 /**
  * The stones every dev person gets: how many days before today, a UTC start time, and the watch
@@ -78,7 +106,89 @@ const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
     time: '10:30',
     file: { sport: 'crossCountrySkiing', laps: laps(2, 6000, 1500), perSecond: true, without: onABike },
   },
+  { daysAgo: 27, time: '09:30', file: { laps: laps(4, 4000, 1500), splits: runWalk, perSecond: true } },
 ];
+
+/** The dev watch's model: a Forerunner 255 Music, as the real one. */
+const devWatchModel = 3990;
+
+/**
+ * What the athlete rated on the watch (0–100) and Garmin's verdicts, by dev stone: most runs and
+ * the ride are rated, the rest not, so stones with and without effort can both be seen (#77).
+ */
+const onTheWatch: Partial<Record<number, Pick<WatchFileOptions, 'rpe' | 'garminReference'>>> = {
+  0: { rpe: 30, garminReference: { trainingLoad: 62.5, aerobicTrainingEffect: 2.4, anaerobicTrainingEffect: 0.3 } },
+  1: { rpe: 80, garminReference: { trainingLoad: 180.25, aerobicTrainingEffect: 3.8, anaerobicTrainingEffect: 3.1 } },
+  2: { rpe: 60, garminReference: { trainingLoad: 140.75, aerobicTrainingEffect: 3.4, anaerobicTrainingEffect: 0.8 } },
+  3: { rpe: 50 },
+  8: { rpe: 70, garminReference: { trainingLoad: 210.5, aerobicTrainingEffect: 4.1, anaerobicTrainingEffect: 1.2 } },
+};
+
+/**
+ * The summary figures each dev stone's watch recorded, by its `daysAgo`, as an FR255 writes them:
+ * runs have everything (cadence per leg), rides and skiing no cadence or power, the treadmill no
+ * ascent, strength and yoga only heart rate and calories (yoga with temperature), the swim no
+ * temperature. Stones not here recorded none.
+ */
+const devFigures: Partial<Record<number, WatchFileFigures>> = {
+  1: run(148, 171, 42, 40, 302),
+  3: { ...run(162, 186, 8, 8, 318), maxPower: 520, normalizedPower: 334 },
+  5: { ...run(151, 177, 412, 405, 286), minTemperature: 9, averageTemperature: 12, maxTemperature: 14 },
+  7: { averageHeartRate: 128, maxHeartRate: 154, ascent: 286, descent: 291, calories: 742 },
+  9: { averageHeartRate: 104, maxHeartRate: 141, calories: 312 },
+  11: {
+    averageHeartRate: 118,
+    maxHeartRate: 149,
+    ascent: 640,
+    descent: 636,
+    averageCadence: 52.5,
+    maxCadence: 61,
+    calories: 1180,
+  },
+  13: { averageHeartRate: 131, maxHeartRate: 158, calories: 420 },
+  15: {
+    averageHeartRate: 156,
+    maxHeartRate: 172,
+    averageCadence: 86,
+    maxCadence: 92.5,
+    averagePower: 309,
+    maxPower: 402,
+    normalizedPower: 314,
+    minTemperature: 21,
+    averageTemperature: 23,
+    maxTemperature: 24,
+    calories: 455,
+  },
+  18: run(150, 175, 96, 101, 298),
+  21: {
+    averageHeartRate: 88,
+    maxHeartRate: 112,
+    minTemperature: 22,
+    averageTemperature: 24,
+    maxTemperature: 25,
+    calories: 140,
+  },
+  24: { averageHeartRate: 139, maxHeartRate: 167, ascent: 198, descent: 201, calories: 905 },
+};
+
+/** A run's figures: heart rate, ascent and descent, power, and the rest an FR255 writes with them. */
+function run(averageHeartRate: number, maxHeartRate: number, ascent: number, descent: number, averagePower: number) {
+  return {
+    averageHeartRate,
+    maxHeartRate,
+    ascent,
+    descent,
+    averageCadence: 84.5,
+    maxCadence: 96,
+    averagePower,
+    maxPower: averagePower + 140,
+    normalizedPower: averagePower + 9,
+    minTemperature: 4,
+    averageTemperature: 7,
+    maxTemperature: 9,
+    calories: Math.round(averagePower * 2.4),
+  } satisfies WatchFileFigures;
+}
 
 /**
  * The dev watch every seeded file comes from. A watch file's session key is its watch and when it
@@ -86,6 +196,14 @@ const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
  */
 const devWatch = 1_234_567_890;
 const writtenAt = (entry: number) => new Date(Date.UTC(2026, 0, 1, 0, entry));
+
+/** The measurements the dev watch has of every dev athlete: kilograms, metres, bpm. Made up. */
+const devMeasurements: NonNullable<WatchFileOptions['measurements']> = {
+  weight: 68.5,
+  height: 1.74,
+  restingHeartRate: 52,
+  maxHeartRate: 188,
+};
 
 /** `time` UTC on the day `daysAgo` days before `today`'s UTC date. */
 function startOf(today: Date, daysAgo: number, time: string): Date {
@@ -112,7 +230,17 @@ export async function seedStones({
   for (const athlete of athletes) {
     for (const [entry, { daysAgo, time, file }] of devStones.entries()) {
       const start = startOf(today, daysAgo, time);
-      const bytes = watchFile({ ...file, start, serialNumber: devWatch, timeCreated: writtenAt(entry) });
+      const figures = devFigures[daysAgo];
+      const bytes = watchFile({
+        measurements: devMeasurements,
+        ...file,
+        product: devWatchModel,
+        ...onTheWatch[entry],
+        start,
+        serialNumber: devWatch,
+        timeCreated: writtenAt(entry),
+        ...(figures === undefined ? {} : { figures }),
+      });
       const upload = new File([bytes as Uint8Array<ArrayBuffer>], `seed-${start.toISOString().slice(0, 10)}.fit`);
       const { error, isDefined } = await safe(clientFor(athlete).record.stones.place({ file: upload }));
       if (error === null) result.placed++;

@@ -13,6 +13,27 @@ const LapSchema = z.object({
 });
 
 /**
+ * The watch's own figures, as recorded; each null when it recorded none (never 0). Heart rate in
+ * bpm, ascent and descent in metres, power in W, temperature in °C, calories in kcal. Cadence as
+ * the watch shows it: steps a minute for running, walking and hiking, rpm otherwise.
+ */
+const FiguresSchema = z.object({
+  averageHeartRate: z.number().nullable(),
+  maxHeartRate: z.number().nullable(),
+  ascent: z.number().nullable(),
+  descent: z.number().nullable(),
+  averageCadence: z.number().nullable(),
+  maxCadence: z.number().nullable(),
+  averagePower: z.number().nullable(),
+  maxPower: z.number().nullable(),
+  normalizedPower: z.number().nullable(),
+  minTemperature: z.number().nullable(),
+  averageTemperature: z.number().nullable(),
+  maxTemperature: z.number().nullable(),
+  calories: z.number().nullable(),
+});
+
+/**
  * A stone as the web app sees it, in a list and opened. Times in seconds, distance in metres or
  * none (never 0).
  */
@@ -36,6 +57,46 @@ const StoneSchema = z.object({
   laps: z.array(LapSchema),
   /** The line the stone traced over the ground, `[lat, lon]` pairs in degrees, or none without GPS. */
   trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
+  /** How hard the stone felt, 1–10, from the rating the athlete gave on the watch; none without one. */
+  effort: z.number().int().min(1).max(10).nullable(),
+  /** The watch that recorded the stone, as people call it; its model is none when Varða doesn't know it. */
+  device: z.object({ manufacturer: z.string(), model: z.string().nullable() }).nullable(),
+  /** The watch's summary figures for the whole stone. */
+  figures: FiguresSchema,
+});
+
+const stretchKinds = ['running', 'walking', 'standing'] as const;
+
+/** A part of a run spent running, walking or standing, as the watch detected it. Seconds of timer, metres or none. */
+const StretchSchema = z.object({
+  kind: z.enum(stretchKinds),
+  start: z.date(),
+  movingTime: z.number(),
+  distance: z.number().nullable(),
+});
+
+/** All stretches of one kind, as the watch summed them. */
+const StretchTotalSchema = z.object({ movingTime: z.number(), distance: z.number().nullable() });
+
+/** A run's stretches in order of their start, and a total per kind (none for a kind the watch didn't detect). */
+const StretchesSchema = z.object({
+  inOrder: z.array(StretchSchema),
+  totals: z.object({
+    running: StretchTotalSchema.nullable(),
+    walking: StretchTotalSchema.nullable(),
+    standing: StretchTotalSchema.nullable(),
+  }),
+});
+
+/**
+ * The athlete's measurements as their watch had them on the stone's day: weight in kilograms, height
+ * in metres, resting and max heart rate in bpm. Each none when the watch had none.
+ */
+const MeasurementsSchema = z.object({
+  weight: z.number().nullable(),
+  height: z.number().nullable(),
+  restingHeartRate: z.number().nullable(),
+  maxHeartRate: z.number().nullable(),
 });
 
 /** One value per point of the streams, `null` where the watch missed one; `null` when never recorded. */
@@ -78,6 +139,10 @@ const StreamsSchema = z.object({
 
 /** A stone opened on its own screen: everything a listed stone has, and what only its screen shows. */
 const StoneDetailSchema = StoneSchema.extend({
+  /** A run's stretches and the watch's totals for each kind; none for other sports or when none were detected. */
+  stretches: StretchesSchema.nullable(),
+  /** None when the watch had none. A coach never sees weight or height: both are none for them. */
+  measurements: MeasurementsSchema.nullable(),
   /** None when the watch recorded no points. Never listed. */
   streams: StreamsSchema.nullable(),
 });

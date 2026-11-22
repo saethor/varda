@@ -1,10 +1,27 @@
 import { and, between, desc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Stones } from '../../application/ports.ts';
-import type { ListedStone, Stone } from '../../domain/stone.ts';
+import type { Figures, ListedStone, Stone } from '../../domain/stone.ts';
 import { stoneStreams, stones } from './schema.ts';
 
 type Row = typeof stones.$inferSelect;
+
+/** What a stone placed before its figures were read holds: none of them. */
+const noFigures: Figures = {
+  averageHeartRate: null,
+  maxHeartRate: null,
+  ascent: null,
+  descent: null,
+  averageCadence: null,
+  maxCadence: null,
+  averagePower: null,
+  maxPower: null,
+  normalizedPower: null,
+  minTemperature: null,
+  averageTemperature: null,
+  maxTemperature: null,
+  calories: null,
+};
 
 /** A stone row with its streams, which only `byId` and `withSessionKey` read. */
 const withStreams = { stone: stones, streams: stoneStreams.streams };
@@ -13,12 +30,17 @@ function toOpenedStone({ stone, streams }: { stone: Row; streams: Stone['streams
   return { ...toStone(stone), streams };
 }
 
-function toStone({ laps, sport, ...row }: Row): ListedStone {
+function toStone({ laps, sport, figures, ...row }: Row): ListedStone {
   return {
     ...row,
+    figures: figures ?? noFigures,
     // Only Record writes this column, and only with a Sport.
     sport: sport as Stone['sport'],
     laps: laps.map((lap) => ({ ...lap, start: new Date(lap.start) })),
+    stretches: row.stretches && {
+      ...row.stretches,
+      inOrder: row.stretches.inOrder.map((stretch) => ({ ...stretch, start: new Date(stretch.start) })),
+    },
   };
 }
 
@@ -38,7 +60,14 @@ export function createPostgresStones(db: NodePgDatabase): Stones {
       const added = await db.transaction(async (tx) => {
         const inserted = await tx
           .insert(stones)
-          .values({ ...stone, laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })) })
+          .values({
+            ...stone,
+            laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })),
+            stretches: stone.stretches && {
+              ...stone.stretches,
+              inOrder: stone.stretches.inOrder.map((stretch) => ({ ...stretch, start: stretch.start.toISOString() })),
+            },
+          })
           .onConflictDoNothing({ target: [stones.athlete, stones.sessionKey] })
           .returning({ id: stones.id });
         if (inserted.length > 0 && streams !== null)

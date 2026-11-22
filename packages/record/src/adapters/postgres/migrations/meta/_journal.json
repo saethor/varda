@@ -26,8 +26,36 @@
     {
       "idx": 3,
       "version": "7",
-      "when": 1795373620081,
-      "tag": "0003_add_stone_streams",
+      "when": 1795373502883,
+      "tag": "0003_add_stone_effort_device",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795373911693,
+      "tag": "0004_add_stone_figures",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795373956303,
+      "tag": "0005_add_stone_stretches",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795374052038,
+      "tag": "0006_add_stone_measurements",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795374206730,
+      "tag": "0007_add_stone_streams",
       "breakpoints": true
     }
   ]

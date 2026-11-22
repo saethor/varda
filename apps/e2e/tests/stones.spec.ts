@@ -11,7 +11,7 @@ test('an athlete places a stone from a watch file, opens it and deletes it', asy
   // browser's today in any time zone, and inside the feed's first window of 4 weeks.
   const start = new Date(Math.floor((Date.now() - 36 * 60 * 60 * 1000) / 60_000) * 60_000);
   const fileName = 'e2e-morning-run.fit';
-  const buffer = Buffer.from(watchFile({ serialNumber: 68_068_068, start }));
+  const buffer = Buffer.from(watchFile({ serialNumber: 68_068_068, start, rpe: 40 }));
 
   await page.goto('/');
   await page.getByLabel('Dev menu: signed in as').selectOption({ label: 'Anna Jónsdóttir · Athlete' });
@@ -23,9 +23,11 @@ test('an athlete places a stone from a watch file, opens it and deletes it', asy
     .locator('input[type=file]')
     .setInputFiles({ name: fileName, mimeType: 'application/octet-stream', buffer });
 
-  // The new stone opens on its own screen, saying it joined its week, with the file as provenance.
+  // The new stone opens on its own screen, saying it joined its week, with its watch and file as
+  // provenance and the effort rated on the watch.
   await expect(page.getByRole('status')).toContainText(/^Placed\. Your \d+\w* stone/);
-  await expect(page.getByText(`From your watch · ${fileName}`)).toBeVisible();
+  await expect(page.getByText(`From your Forerunner 255 · ${fileName}`)).toBeVisible();
+  await expect(page.getByText('4 of 10')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1, name: 'Road running' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Laps' })).toBeVisible();
   const stonePath = new URL(page.url()).pathname;

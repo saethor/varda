@@ -8,11 +8,15 @@ import {
   type RecordMesg,
   type SessionMesg,
   Stream,
+  type UserProfileMesg,
+  type ZonesTargetMesg,
 } from '@garmin/fitsdk';
 import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
+import { readFigures } from './read-figures.ts';
 import { streamsOf } from './read-streams.ts';
-import type { Lap, LapTrigger, Session, SessionKey, Trace } from './stone.ts';
+import { readStretches } from './read-stretches.ts';
+import type { Device, GarminReference, Lap, LapTrigger, Measurements, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
 
 /** Reads the session a watch file recorded. Throws `WatchFileTurnedAway` for a file that can't be placed. */
@@ -46,6 +50,12 @@ export function readWatchFile(bytes: Uint8Array): Session {
     elapsedTime: session.totalElapsedTime ?? 0,
     laps,
     trace: traceOf(positionsOf(messages.recordMesgs ?? [])),
+    effort: effortOf(session),
+    device: deviceOf(fileId),
+    garminReference: garminReferenceOf(session),
+    figures: readFigures(session, sportOf(session)),
+    stretches: readStretches(sportOf(session), messages, dateOf),
+    measurements: measurementsOf(messages.userProfileMesgs?.[0], messages.zonesTargetMesgs?.[0]),
     streams: streamsOf(messages, { start, sport: sportOf(session), session }),
   };
 }
@@ -154,4 +164,60 @@ function dateOf(value: unknown): Date {
   if (value instanceof Date) return value;
   if (typeof value === 'number') return new Date((value + fitEpoch) * 1000);
   throw new WatchFileTurnedAway('broken');
+}
+
+/** The watch keeps the athlete's rating 0–100; effort is 1–10. No rating (or 0) is no effort. */
+function effortOf({ workoutRpe }: SessionMesg): number | null {
+  if (typeof workoutRpe !== 'number' || workoutRpe <= 0) return null;
+  return Math.min(10, Math.max(1, Math.round(workoutRpe / 10)));
+}
+
+// Makers and models by the names FIT gives them, as people call them. Headphones, sensors and
+// batteries the file also lists are not read: only the watch that wrote it.
+const manufacturers: Partial<Record<string, string>> = {
+  garmin: 'Garmin',
+  suunto: 'Suunto',
+  polarElectro: 'Polar',
+  coros: 'COROS',
+  wahooFitness: 'Wahoo',
+};
+
+const garminModels: Partial<Record<string, string>> = {
+  fr255: 'Forerunner 255',
+  fr255Music: 'Forerunner 255 Music',
+  fr255Small: 'Forerunner 255S',
+  fr255SmallMusic: 'Forerunner 255S Music',
+};
+
+/** The watch that wrote the file, or none when its maker isn't one Record knows. */
+function deviceOf({ manufacturer, garminProduct }: FileIdMesg): Device | null {
+  const maker = manufacturers[String(manufacturer)];
+  if (maker === undefined) return null;
+  return { manufacturer: maker, model: (manufacturer === 'garmin' && garminModels[String(garminProduct)]) || null };
+}
+
+/** Garmin's verdicts, kept as reference (ADR 0003). None when the watch wrote none of them. */
+function garminReferenceOf(session: SessionMesg): GarminReference | null {
+  const reference = {
+    trainingLoad: numberOrNull(session.trainingLoadPeak),
+    aerobicTrainingEffect: numberOrNull(session.totalTrainingEffect),
+    anaerobicTrainingEffect: numberOrNull(session.totalAnaerobicTrainingEffect),
+  };
+  return Object.values(reference).every((value) => value === null) ? null : reference;
+}
+
+const numberOrNull = (value: unknown) => (typeof value === 'number' ? value : null);
+/**
+ * The athlete's measurements from the watch's profile of them and its zone settings: max heart rate
+ * is only ever in the latter. Nothing else of either is read (no name, sex, threshold, FTP or zones).
+ * A value the watch didn't have (missing or 0) is none; none of them at all is no measurements.
+ */
+function measurementsOf(profile: UserProfileMesg | undefined, zones: ZonesTargetMesg | undefined): Measurements | null {
+  const measurements = {
+    weight: profile?.weight || null,
+    height: profile?.height || null,
+    restingHeartRate: profile?.restingHeartRate || null,
+    maxHeartRate: zones?.maxHeartRate || null,
+  };
+  return Object.values(measurements).some((value) => value !== null) ? measurements : null;
 }

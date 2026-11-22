@@ -10,6 +10,10 @@ import {
   type Mesg,
   type RecordMesg,
   type SessionMesg,
+  type SplitMesg,
+  type SplitSummaryMesg,
+  type UserProfileMesg,
+  type ZonesTargetMesg,
 } from '@garmin/fitsdk';
 import { fitEpoch } from '../domain/read-watch-file.ts';
 
@@ -60,6 +64,45 @@ export type WatchFileOptions = {
   without?: WatchFileChannel[];
   /** Write no records at all, as a session entered on the watch by hand. */
   noRecords?: true;
+  /** The athlete's rating of the session on the watch, 0–100. None by default. */
+  rpe?: number;
+  /** The Garmin product code of the watch. Default 3992, a Forerunner 255. */
+  product?: number;
+  /** Garmin's training load and Training Effect for the session. None by default. */
+  garminReference?: { trainingLoad: number; aerobicTrainingEffect: number; anaerobicTrainingEffect: number };
+  /** The session's summary figures. Each left out is one the watch didn't record; by default none. */
+  figures?: WatchFileFigures;
+  /**
+   * The split records the watch wrote, in the order given: run/walk detection (`rwdRun`, `rwdWalk`,
+   * `rwdStand`) or Garmin's interval types. With a split summary per type. None by default.
+   */
+  splits?: WatchFileSplit[];
+  /**
+   * The athlete's measurements the watch had: kilograms, metres, bpm. Each one given is written;
+   * by default the watch had none.
+   */
+  measurements?: Partial<Record<'weight' | 'height' | 'restingHeartRate' | 'maxHeartRate', number>>;
+};
+
+/**
+ * A session's summary figures as the watch writes them: heart rate in bpm, ascent and descent in
+ * metres, power in W, temperature in °C, calories in kcal. Cadence per leg for running, walking and
+ * hiking (strides a minute, half the steps), rpm otherwise; a fraction of it is written apart.
+ */
+export type WatchFileFigures = {
+  averageHeartRate?: number;
+  maxHeartRate?: number;
+  ascent?: number;
+  descent?: number;
+  averageCadence?: number;
+  maxCadence?: number;
+  averagePower?: number;
+  maxPower?: number;
+  normalizedPower?: number;
+  minTemperature?: number;
+  averageTemperature?: number;
+  maxTemperature?: number;
+  calories?: number;
 };
 
 /** The channels `perSecond` writes that a watch may lack (running form is all or nothing). */
@@ -68,6 +111,14 @@ export type WatchFileChannel = 'heartRate' | 'altitude' | 'power' | 'cadence' | 
 /** A lap: metres, and seconds of timer and of elapsed time. */
 export type WatchFileLap = { distance: number; timerTime: number; elapsedTime: number };
 
+/** A split record: its FIT split type, seconds from the session's start, seconds of timer, metres. */
+export type WatchFileSplit = {
+  type: 'rwdRun' | 'rwdWalk' | 'rwdStand' | 'intervalActive' | 'intervalRest';
+  start: number;
+  time: number;
+  distance: number;
+};
+
 // Global FIT message numbers (FIT profile).
 const fileIdMesg = 0;
 const sessionMesg = 18;
@@ -75,6 +126,10 @@ const lapMesg = 19;
 const recordMesg = 20;
 const eventMesg = 21;
 const activityMesg = 34;
+const splitMesg = 312;
+const splitSummaryMesg = 313;
+const profileMesg = 3;
+const zonesTargetMesg = 7;
 
 const garmin = 1;
 const forerunner255 = 3992;
@@ -132,6 +187,12 @@ export function watchFile({
   perSecond = false,
   without = [],
   noRecords,
+  rpe,
+  product = forerunner255,
+  garminReference,
+  figures = {},
+  splits = [],
+  measurements = {},
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
   const total = (key: keyof WatchFileLap) => sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
@@ -146,42 +207,24 @@ export function watchFile({
     mesgNum: fileIdMesg,
     type: fileType,
     manufacturer: garmin,
-    product: forerunner255,
+    product,
     serialNumber,
     timeCreated: timeCreated ?? end,
   });
 
-  if (perSecond) {
-    const timeline = perSecondTimeline(laps.length > 0 ? laps : roadRunLaps);
-    const positions = positionsAlongRoute(timeline.points.length, false);
-    for (const { at: seconds, type } of timeline.timer) {
-      write<EventMesg>({ mesgNum: eventMesg, timestamp: at(seconds), event: 'timer', eventType: type });
-    }
-    timeline.points.forEach((point, i) => {
-      write<RecordMesg>({
-        mesgNum: recordMesg,
-        timestamp: at(point.at),
-        ...recordedAt(point, {
-          sport,
-          distance: distance !== false,
-          position: gps ? positions[i] : undefined,
-          without,
-        }),
-      });
-    });
-  }
+  // The watch's profile of the athlete, and its zone settings, which alone hold the max heart rate.
+  const { maxHeartRate, ...profile } = measurements;
+  if (Object.keys(profile).length > 0) write<UserProfileMesg>({ mesgNum: profileMesg, ...profile });
+  if (maxHeartRate !== undefined) write<ZonesTargetMesg>({ mesgNum: zonesTargetMesg, maxHeartRate });
 
-  // Before the watch finds GPS, its records have no position.
-  if (!perSecond && !noRecords) write<RecordMesg>({ mesgNum: recordMesg, timestamp: start, distance: 0 });
-
-  const positions = gps && !perSecond && !noRecords ? positionsAlongRoute(gpsPoints) : [];
-  positions.forEach(([lat, lon], i) => {
-    write<RecordMesg>({
-      mesgNum: recordMesg,
-      timestamp: at((elapsedTime * i) / (positions.length - 1)),
-      positionLat: semicircles(lat),
-      positionLong: semicircles(lon),
-    });
+  writeRecords(write, at, {
+    records: noRecords ? 'none' : perSecond ? 'per-second' : 'gps',
+    laps: laps.length > 0 ? laps : roadRunLaps,
+    elapsedTime,
+    sport,
+    distance: distance !== false,
+    gpsPoints: gps ? gpsPoints : 0,
+    without,
   });
 
   let lapStart = 0;
@@ -212,6 +255,15 @@ export function watchFile({
     ...metres(total('distance')),
     firstLapIndex: 0,
     numLaps: laps.length,
+    ...(rpe === undefined ? {} : { workoutRpe: rpe }),
+    ...(garminReference === undefined
+      ? {}
+      : {
+          trainingLoadPeak: garminReference.trainingLoad,
+          totalTrainingEffect: garminReference.aerobicTrainingEffect,
+          totalAnaerobicTrainingEffect: garminReference.anaerobicTrainingEffect,
+        }),
+    ...sessionFigures(figures),
   });
 
   // A brick: the run, a transition, then a ride with no laps of its own.
@@ -251,13 +303,118 @@ export function watchFile({
     totalTimerTime: total('timerTime'),
   });
 
+  splits.forEach((split, i) => {
+    write<SplitMesg>({
+      mesgNum: splitMesg,
+      messageIndex: i,
+      // The encoder takes the type's name, as the decoder gives it back.
+      splitType: split.type as unknown as number,
+      startTime: at(split.start),
+      endTime: at(split.start + split.time),
+      totalTimerTime: split.time,
+      totalElapsedTime: split.time,
+      totalDistance: split.distance,
+    });
+  });
+  [...new Set(splits.map((split) => split.type))].forEach((type, i) => {
+    const ofType = splits.filter((split) => split.type === type);
+    write<SplitSummaryMesg>({
+      mesgNum: splitSummaryMesg,
+      messageIndex: i,
+      splitType: type as unknown as number,
+      numSplits: ofType.length,
+      totalTimerTime: sum(ofType.map((split) => split.time)),
+      totalDistance: sum(ofType.map((split) => split.distance)),
+    });
+  });
+
   const bytes = encoder.close();
   // The file's CRC is its last two bytes.
   if (brokenCrc) bytes[bytes.length - 1] = (bytes[bytes.length - 1] ?? 0) ^ 0xff;
   return bytes;
 }
 
+/** The figures as session fields, leaving out those not given; a cadence's fraction goes in its own field. */
+function sessionFigures(figures: WatchFileFigures): Partial<SessionMesg> {
+  const fields: { [Field in keyof SessionMesg]?: number | undefined } = {
+    avgHeartRate: figures.averageHeartRate,
+    maxHeartRate: figures.maxHeartRate,
+    totalAscent: figures.ascent,
+    totalDescent: figures.descent,
+    avgPower: figures.averagePower,
+    maxPower: figures.maxPower,
+    normalizedPower: figures.normalizedPower,
+    minTemperature: figures.minTemperature,
+    avgTemperature: figures.averageTemperature,
+    maxTemperature: figures.maxTemperature,
+    totalCalories: figures.calories,
+  };
+  if (figures.averageCadence !== undefined) {
+    fields.avgCadence = Math.floor(figures.averageCadence);
+    fields.avgFractionalCadence = figures.averageCadence % 1;
+  }
+  if (figures.maxCadence !== undefined) {
+    fields.maxCadence = Math.floor(figures.maxCadence);
+    fields.maxFractionalCadence = figures.maxCadence % 1;
+  }
+  return Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as Partial<SessionMesg>;
+}
+
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
+
+/**
+ * The records the watch wrote: none; a record at the start and `gpsPoints` positions spread over
+ * the session (no GPS with 0); or one every second the timer ran, with its timer events.
+ */
+function writeRecords(
+  write: <M extends Mesg>(mesg: Encodable<M>) => void,
+  at: (seconds: number) => Date,
+  {
+    records,
+    laps,
+    elapsedTime,
+    sport,
+    distance,
+    gpsPoints,
+    without,
+  }: {
+    records: 'none' | 'gps' | 'per-second';
+    laps: WatchFileLap[];
+    elapsedTime: number;
+    sport: SessionMesg['sport'];
+    distance: boolean;
+    gpsPoints: number;
+    without: WatchFileChannel[];
+  },
+): void {
+  if (records === 'none') return;
+  if (records === 'per-second') {
+    const timeline = perSecondTimeline(laps);
+    const positions = gpsPoints > 0 ? positionsAlongRoute(timeline.points.length, false) : [];
+    for (const { at: seconds, type } of timeline.timer) {
+      write<EventMesg>({ mesgNum: eventMesg, timestamp: at(seconds), event: 'timer', eventType: type });
+    }
+    timeline.points.forEach((point, i) => {
+      write<RecordMesg>({
+        mesgNum: recordMesg,
+        timestamp: at(point.at),
+        ...recordedAt(point, { sport, distance, position: positions[i], without }),
+      });
+    });
+    return;
+  }
+  // Before the watch finds GPS, its records have no position.
+  write<RecordMesg>({ mesgNum: recordMesg, timestamp: at(0), distance: 0 });
+  const positions = gpsPoints > 0 ? positionsAlongRoute(gpsPoints) : [];
+  positions.forEach(([lat, lon], i) => {
+    write<RecordMesg>({
+      mesgNum: recordMesg,
+      timestamp: at((elapsedTime * i) / (positions.length - 1)),
+      positionLat: semicircles(lat),
+      positionLong: semicircles(lon),
+    });
+  });
+}
 
 /** A point a per-second watch writes: seconds from the start, metres from the start, and whether it ends a pause. */
 type TimelinePoint = { at: number; metres: number; moving: number; restart: boolean };

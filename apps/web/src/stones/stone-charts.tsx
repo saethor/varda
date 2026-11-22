@@ -1,23 +1,23 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { formatDistance, formatDuration, formatMeasure, formatPace, formatSpeed } from '@varda/ui/lib/format';
+import {
+  formatCadence,
+  formatDistance,
+  formatDuration,
+  formatElevation,
+  formatHeartRate,
+  formatPace,
+  formatPower,
+  formatSpeed,
+} from '@varda/ui/lib/format';
 import type { ReactNode } from 'react';
 import type { StoneDetail } from '../lib/stones.ts';
 import { chartDomain, chartPath } from './chart-line.ts';
 import type { ChartAxis } from './chart-series.ts';
 import { type ChartKind, type StoneChart, stoneCharts } from './chart-set.ts';
+import { steppingSports } from './figures-shown.ts';
 
 /** The drawing box of every chart: as wide as the most points a chart draws, stretched to the column. */
 const box = { width: 1000, height: 100 };
-
-// Sports whose cadence is steps; the others' is revolutions (the Record contract's cadence).
-const onFoot: ReadonlySet<string> = new Set([
-  'road-running',
-  'trail-running',
-  'track-running',
-  'treadmill-running',
-  'walking',
-  'hiking',
-]);
 
 /**
  * The stone over its course, from every point the watch recorded: heart rate, pace or speed,
@@ -29,7 +29,7 @@ export function StoneCharts({ stone }: { stone: Pick<StoneDetail, 'sport' | 'str
   const { i18n } = useLingui();
   const set = stoneCharts(stone);
   if (set === null) return null;
-  const steps = onFoot.has(stone.sport.sport);
+  const steps = steppingSports.includes(stone.sport.sport);
 
   return (
     <section aria-labelledby="charts" className="flex flex-col gap-3">
@@ -93,18 +93,18 @@ function Chart({ chart, end, steps }: { chart: StoneChart; end: number; steps: b
 function shownValue(chart: StoneChart, value: number, steps: boolean, locale: string): string {
   switch (chart.kind) {
     case 'heart-rate':
-      return formatMeasure(value, 'bpm', locale);
+      return formatHeartRate(value, locale);
     case 'pace':
       return formatPace(chart.per ?? 1000, value, chart.per ?? 1000);
     case 'speed':
       // The chart holds km/h: as metres over seconds, that is the value in metres per 3.6 s.
       return formatSpeed(value, 3.6, locale);
     case 'elevation':
-      return formatMeasure(value, 'm', locale);
+      return formatElevation(value, locale);
     case 'power':
-      return formatMeasure(value, 'W', locale);
+      return formatPower(value, locale);
     case 'cadence':
-      return formatMeasure(value, steps ? 'spm' : 'rpm', locale);
+      return formatCadence(value, steps ? 'steps' : 'revolutions', locale);
   }
 }
 

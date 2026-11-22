@@ -3,7 +3,7 @@ import type { SharedContext } from '@varda/shared';
 import { createFakeCoachingAccess } from '@varda/shared/testing';
 import { describe, expect, it } from 'vitest';
 import { createRecordFakes } from '../testing/index.ts';
-import { type WatchFileSplit, watchFile } from '../watch-files/index.ts';
+import { type WatchFileLap, type WatchFileSplit, watchFile } from '../watch-files/index.ts';
 import { createRecordRouter } from './rpc.ts';
 
 const guðrún = '00000000-0000-7000-8000-0000000000a1';
@@ -605,5 +605,125 @@ describe('stretches', () => {
     const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
 
     expect(listed).not.toHaveProperty('stretches');
+  });
+});
+
+describe('richer laps (#81)', () => {
+  // An interval run: a warm-up, a hard kilometre, a recovery jog and a cool-down.
+  const intervals: WatchFileLap[] = [
+    {
+      distance: 1500,
+      timerTime: 540,
+      elapsedTime: 540,
+      intensity: 'warmup',
+      figures: { averageHeartRate: 128, maxHeartRate: 141, averagePower: 240, ascent: 6, descent: 2 },
+    },
+    {
+      distance: 1000,
+      timerTime: 220,
+      elapsedTime: 220,
+      intensity: 'active',
+      workoutStep: 1,
+      figures: {
+        averageHeartRate: 171,
+        maxHeartRate: 182,
+        averagePower: 365,
+        maxPower: 430,
+        normalizedPower: 371,
+        ascent: 4,
+        descent: 9,
+        averageCadence: 91.5,
+        maxCadence: 96,
+        minTemperature: 11,
+        averageTemperature: 12,
+        maxTemperature: 13,
+        calories: 81,
+      },
+    },
+    { distance: 400, timerTime: 180, elapsedTime: 200, intensity: 'recovery', figures: { averageHeartRate: 139 } },
+    { distance: 1200, timerTime: 480, elapsedTime: 480, intensity: 'cooldown', figures: {} },
+  ];
+
+  it('keeps each lap with the figures and intensity the watch recorded for it', async () => {
+    const client = clientFor({ person: guðrún });
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ laps: intervals })) });
+
+    const { laps } = await client.stones.get({ stoneId });
+
+    expect(laps.map((lap) => lap.intensity)).toEqual(['warm-up', 'active', 'recovery', 'cool-down']);
+    expect(laps[1]?.figures).toEqual({
+      averageHeartRate: 171,
+      maxHeartRate: 182,
+      ascent: 4,
+      descent: 9,
+      // Per leg on the watch: 91.5 strides a minute are 183 steps.
+      averageCadence: 183,
+      maxCadence: 192,
+      averagePower: 365,
+      maxPower: 430,
+      normalizedPower: 371,
+      minTemperature: 11,
+      averageTemperature: 12,
+      maxTemperature: 13,
+      calories: 81,
+    });
+    expect(laps[0]?.figures).toMatchObject({ averageHeartRate: 128, maxHeartRate: 141, averagePower: 240, ascent: 6 });
+  });
+
+  it("leaves out every lap figure and intensity the watch didn't record, never 0", async () => {
+    const client = clientFor({ person: guðrún });
+    const laps: WatchFileLap[] = [
+      { distance: 1000, timerTime: 300, elapsedTime: 300, figures: { averageHeartRate: 150, ascent: 0 } },
+      { distance: 1000, timerTime: 300, elapsedTime: 300, intensity: 'other' },
+    ];
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ laps })) });
+
+    const stone = await client.stones.get({ stoneId });
+
+    const none = {
+      averageHeartRate: null,
+      maxHeartRate: null,
+      ascent: null,
+      descent: null,
+      averageCadence: null,
+      maxCadence: null,
+      averagePower: null,
+      maxPower: null,
+      normalizedPower: null,
+      minTemperature: null,
+      averageTemperature: null,
+      maxTemperature: null,
+      calories: null,
+    };
+    expect(stone.laps.map(({ figures, intensity }) => ({ figures, intensity }))).toEqual([
+      { figures: { ...none, averageHeartRate: 150, ascent: 0 }, intensity: null },
+      { figures: none, intensity: null },
+    ]);
+  });
+
+  it('keeps the workout step each lap was on, and never answers it', async () => {
+    const adapters = createRecordFakes();
+    const client = clientFor({ person: guðrún }, adapters);
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ laps: intervals })) });
+
+    const opened = await client.stones.get({ stoneId });
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect((await adapters.stones.byId(stoneId))?.laps.map((lap) => lap.workoutStep)).toEqual([null, 1, null, null]);
+    for (const lap of [...opened.laps, ...(listed?.laps ?? [])]) expect(lap).not.toHaveProperty('workoutStep');
+  });
+
+  it('lists stones with their richer laps', async () => {
+    const client = clientFor({ person: guðrún });
+    await client.stones.place({ file: fitFile(watchFile({ laps: intervals })) });
+
+    const [listed] = await client.stones.list({ from: '2026-11-02', to: '2026-11-02' });
+
+    expect(listed?.laps.map((lap) => [lap.intensity, lap.figures.averageHeartRate])).toEqual([
+      ['warm-up', 128],
+      ['active', 171],
+      ['recovery', 139],
+      ['cool-down', null],
+    ]);
   });
 });

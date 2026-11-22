@@ -86,8 +86,18 @@ export type WatchFileFigures = {
   calories?: number;
 };
 
-/** A lap: metres, and seconds of timer and of elapsed time. */
-export type WatchFileLap = { distance: number; timerTime: number; elapsedTime: number };
+/**
+ * A lap: metres, and seconds of timer and of elapsed time. Its figures, intensity and workout step
+ * (from 0) are left out unless given, as by a watch that recorded none.
+ */
+export type WatchFileLap = {
+  distance: number;
+  timerTime: number;
+  elapsedTime: number;
+  figures?: WatchFileFigures;
+  intensity?: 'active' | 'rest' | 'warmup' | 'cooldown' | 'recovery' | 'interval' | 'other';
+  workoutStep?: number;
+};
 
 /** A split record: its FIT split type, seconds from the session's start, seconds of timer, metres. */
 export type WatchFileSplit = {
@@ -166,7 +176,8 @@ export function watchFile({
   splits = [],
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
-  const total = (key: keyof WatchFileLap) => sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
+  const total = (key: 'distance' | 'timerTime' | 'elapsedTime') =>
+    sum((laps.length > 0 ? laps : roadRunLaps).map((lap) => lap[key]));
   // Spread into a message: a field the watch didn't record is left out, never written as 0.
   const metres = (value: number) => (distance === false ? {} : { totalDistance: value });
   const elapsedTime = total('elapsedTime');
@@ -208,6 +219,9 @@ export function watchFile({
       ...metres(lap.distance),
       lapTrigger: 'distance',
       sport,
+      ...(lap.intensity === undefined ? {} : { intensity: lap.intensity }),
+      ...(lap.workoutStep === undefined ? {} : { wktStepIndex: lap.workoutStep }),
+      ...figureFields(lap.figures ?? {}),
     });
     lapStart += lap.elapsedTime;
   });
@@ -232,7 +246,7 @@ export function watchFile({
           totalTrainingEffect: garminReference.aerobicTrainingEffect,
           totalAnaerobicTrainingEffect: garminReference.anaerobicTrainingEffect,
         }),
-    ...sessionFigures(figures),
+    ...figureFields(figures),
   });
 
   // A brick: the run, a transition, then a ride with no laps of its own.
@@ -303,9 +317,9 @@ export function watchFile({
   return bytes;
 }
 
-/** The figures as session fields, leaving out those not given; a cadence's fraction goes in its own field. */
-function sessionFigures(figures: WatchFileFigures): Partial<SessionMesg> {
-  const fields: { [Field in keyof SessionMesg]?: number | undefined } = {
+/** The figures as session or lap fields, leaving out those not given; a cadence's fraction goes in its own field. */
+function figureFields(figures: WatchFileFigures): Partial<SessionMesg & LapMesg> {
+  const fields: { [Field in keyof (SessionMesg & LapMesg)]?: number | undefined } = {
     avgHeartRate: figures.averageHeartRate,
     maxHeartRate: figures.maxHeartRate,
     totalAscent: figures.ascent,
@@ -326,7 +340,9 @@ function sessionFigures(figures: WatchFileFigures): Partial<SessionMesg> {
     fields.maxCadence = Math.floor(figures.maxCadence);
     fields.maxFractionalCadence = figures.maxCadence % 1;
   }
-  return Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as Partial<SessionMesg>;
+  return Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as Partial<
+    SessionMesg & LapMesg
+  >;
 }
 
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);

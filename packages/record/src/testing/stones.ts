@@ -24,13 +24,25 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
     movingTime: 900,
     elapsedTime: 930,
     laps: [
-      { start, elapsedTime: 310, movingTime: 300, distance: 1000, trigger: 'distance' },
+      {
+        start,
+        elapsedTime: 310,
+        movingTime: 300,
+        distance: 1000,
+        trigger: 'distance',
+        figures: noFigures,
+        intensity: null,
+        workoutStep: null,
+      },
       {
         start: new Date(start.getTime() + 310_000),
         elapsedTime: 620,
         movingTime: 600,
         distance: null,
         trigger: 'manual',
+        figures: noFigures,
+        intensity: null,
+        workoutStep: null,
       },
     ],
     trace: [
@@ -162,6 +174,19 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       expect((await stones.ofAthlete(athlete, { from: '2026-11-02', to: '2026-11-03' })).map((s) => s.figures)).toEqual(
         [noFigures, figures],
       );
+    });
+
+    it("keeps each lap's figures, intensity and workout step", async () => {
+      const { stones, ids } = await setup();
+      const run = stone(ids, ids.next(), '2026-11-02');
+      const [warmUp, interval] = run.laps as [Stone['laps'][number], Stone['laps'][number]];
+      const laps = [
+        { ...warmUp, intensity: 'warm-up' as const, figures: { ...noFigures, averageHeartRate: 131, ascent: 0 } },
+        { ...interval, intensity: 'active' as const, workoutStep: 3, figures: { ...noFigures, averagePower: 362 } },
+      ];
+      await stones.add({ ...run, laps });
+
+      expect((await stones.byId(run.id))?.laps).toEqual(laps);
     });
   });
 }

@@ -16,7 +16,19 @@ export type Lap = {
   movingTime: number;
   distance: number | null;
   trigger: LapTrigger;
+  /** The watch's own figures for the lap, as recorded. */
+  figures: Figures;
+  /** What part of the session the lap was; none when the watch wrote none it tells apart. */
+  intensity: LapIntensity | null;
+  /**
+   * The index of the workout step the watch was on during the lap, from 0; none outside a structured
+   * workout. Kept to match laps to workout steps later; never answered.
+   */
+  workoutStep: number | null;
 };
+
+/** What part of a session a lap was, as the watch marked it. `active` is the work: an interval, or an unstructured lap. */
+export type LapIntensity = 'warm-up' | 'active' | 'recovery' | 'rest' | 'cool-down';
 
 /**
  * The line a stone traced over the ground (Record glossary): `[lat, lon]` pairs in degrees,

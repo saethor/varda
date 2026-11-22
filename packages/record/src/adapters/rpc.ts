@@ -48,7 +48,8 @@ function toListedStone({
     distance,
     movingTime,
     elapsedTime,
-    laps,
+    // A lap's workout step is kept to match it to its workout later, never answered.
+    laps: laps.map(({ workoutStep: _, ...lap }) => lap),
     trace,
     effort,
     device,

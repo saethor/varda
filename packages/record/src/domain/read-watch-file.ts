@@ -13,7 +13,7 @@ import type { Sport } from '@varda/shared';
 import { WatchFileTurnedAway } from './errors.ts';
 import { readFigures } from './read-figures.ts';
 import { readStretches } from './read-stretches.ts';
-import type { Device, GarminReference, Lap, LapTrigger, Session, SessionKey, Trace } from './stone.ts';
+import type { Device, GarminReference, Lap, LapIntensity, LapTrigger, Session, SessionKey, Trace } from './stone.ts';
 import { traceOf } from './trace.ts';
 
 /** Reads the session a watch file recorded. Throws `WatchFileTurnedAway` for a file that can't be placed. */
@@ -35,7 +35,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
 
   const start = dateOf(session.startTime);
   const localOffset = localOffsetOf(messages.activityMesgs?.[0]);
-  const laps = lapsOf(session, messages.lapMesgs ?? []);
+  const laps = lapsOf(session, messages.lapMesgs ?? [], sportOf(session));
   return {
     sessionKey: sessionKeyOf(fileId, start),
     start,
@@ -95,7 +95,7 @@ function localOffsetOf(activity: ActivityMesg | undefined): number {
 }
 
 /** The session's laps, picked by its lap index and ordered by start. */
-function lapsOf(session: SessionMesg, lapMesgs: LapMesg[]): Lap[] {
+function lapsOf(session: SessionMesg, lapMesgs: LapMesg[], sport: Sport): Lap[] {
   const first = session.firstLapIndex ?? 0;
   return lapMesgs
     .slice(first, first + (session.numLaps ?? lapMesgs.length))
@@ -105,6 +105,9 @@ function lapsOf(session: SessionMesg, lapMesgs: LapMesg[]): Lap[] {
       movingTime: lap.totalTimerTime ?? 0,
       distance: lap.totalDistance || null,
       trigger: triggerOf(lap.lapTrigger),
+      figures: readFigures(lap, sport),
+      intensity: intensityOf(lap.intensity),
+      workoutStep: typeof lap.wktStepIndex === 'number' ? lap.wktStepIndex : null,
     }))
     .sort((a, b) => a.start.getTime() - b.start.getTime());
 }
@@ -114,6 +117,20 @@ const triggers: Partial<Record<string, LapTrigger>> = { manual: 'manual', distan
 
 function triggerOf(trigger: LapMesg['lapTrigger']): LapTrigger {
   return triggers[String(trigger)] ?? 'other';
+}
+
+// The FIT lap intensities Record tells apart: an interval is active work. "Other" tells nothing.
+const intensities: Partial<Record<string, LapIntensity>> = {
+  warmup: 'warm-up',
+  active: 'active',
+  interval: 'active',
+  recovery: 'recovery',
+  rest: 'rest',
+  cooldown: 'cool-down',
+};
+
+function intensityOf(intensity: LapMesg['intensity']): LapIntensity | null {
+  return intensities[String(intensity)] ?? null;
 }
 
 // Spec #60's sport table. The FIT `sport` decides; `sub_sport` only splits running, so a new

@@ -12,6 +12,7 @@ import { StoneForm } from '../../stones/stone-form.tsx';
 import { StoneLaps } from '../../stones/stone-laps.tsx';
 import { StoneMeasurements } from '../../stones/stone-measurements.tsx';
 import { StonePlate } from '../../stones/stone-plate.tsx';
+import { StoneSplits } from '../../stones/stone-splits.tsx';
 import { StoneStretches } from '../../stones/stone-stretches.tsx';
 import { placeInWeek } from '../../stones/stone-week.ts';
 import { WeekWalk } from '../../stones/stone-week-view.tsx';
@@ -92,7 +93,7 @@ function StoneScreen() {
       {/* What the stone shows (spec #74), one section per ticket, each its own component that renders nothing without data. */}
       <StoneFigures stone={stone} />
       <StoneCharts stone={stone} />
-      {/* Splits (#83) */}
+      <StoneSplits stone={stone} />
       <StoneLaps stone={stone} />
       {/* Stretches (#80) */}
       <StoneStretches stone={stone} />

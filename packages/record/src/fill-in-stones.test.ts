@@ -74,6 +74,9 @@ describe('filling in stones placed before the richer stone screen', () => {
     expect(before.streams).toBeNull();
     expect(after.streams?.offset.length).toBeGreaterThan(0);
     expect(after.streams?.heartRate?.some((beat) => beat !== null)).toBe(true);
+    // Its kilometre splits are worked out from them as it is filled in.
+    expect(before.splits).toEqual([]);
+    expect(after.splits.map((split) => split.distance)).toEqual([1000, 1000, 1000]);
   });
 
   it('changes nothing more when run again', async () => {

@@ -155,6 +155,8 @@ export type Session = {
   streams: Streams | null;
   /** Running only: the stone's form averages; none for other sports, or when the watch recorded none. */
   form: Form | null;
+  /** Each whole kilometre in order, then the remainder; none without distance, or for a swim. */
+  splits: Split[];
 };
 
 /**
@@ -231,3 +233,21 @@ export type Stretches = {
 
 /** A stone as a list holds it: everything but its streams, which only opening it reads. */
 export type ListedStone = Omit<Stone, 'streams'>;
+
+/**
+ * A whole kilometre of a stone, or the remainder after the last one (Record glossary: Split), worked
+ * out by Varða from its streams at placing. Distance in metres (1000, but for the remainder), moving
+ * time in seconds with pauses left out, heart rate in bpm averaged over that moving time, ascent and
+ * descent in metres; each none when the watch didn't record it.
+ *
+ * Kept as recorded (ADR 0002): a later distance correction scales each split's `distance` (and with
+ * it its pace) by its factor when the stone is read, as it does laps and the distance stream; the
+ * kilometres themselves stay where the watch measured them.
+ */
+export type Split = {
+  distance: number;
+  movingTime: number;
+  averageHeartRate: number | null;
+  ascent: number | null;
+  descent: number | null;
+};

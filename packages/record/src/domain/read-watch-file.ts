@@ -17,6 +17,7 @@ import { readFigures } from './read-figures.ts';
 import { readForm } from './read-form.ts';
 import { streamsOf } from './read-streams.ts';
 import { readStretches } from './read-stretches.ts';
+import { splitsOf } from './splits.ts';
 import type {
   Device,
   GarminReference,
@@ -50,6 +51,7 @@ export function readWatchFile(bytes: Uint8Array): Session {
   const start = dateOf(session.startTime);
   const localOffset = localOffsetOf(messages.activityMesgs?.[0]);
   const laps = lapsOf(session, messages.lapMesgs ?? [], sportOf(session));
+  const streams = streamsOf(messages, { start, sport: sportOf(session), session });
   return {
     sessionKey: sessionKeyOf(fileId, start),
     start,
@@ -67,8 +69,9 @@ export function readWatchFile(bytes: Uint8Array): Session {
     figures: readFigures(session, sportOf(session)),
     stretches: readStretches(sportOf(session), messages, dateOf),
     measurements: measurementsOf(messages.userProfileMesgs?.[0], messages.zonesTargetMesgs?.[0]),
-    streams: streamsOf(messages, { start, sport: sportOf(session), session }),
+    streams,
     form: readForm(session, sportOf(session)),
+    splits: splitsOf(streams, sportOf(session)),
   };
 }
 

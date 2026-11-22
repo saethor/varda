@@ -76,6 +76,22 @@ it('records the stones every second, with pauses, keeping only the channels each
   expect(await streamsOf('strength')).toMatchObject({ distance: null, heartRate: expect.any(Array) });
 });
 
+it('splits every seeded stone with distance into kilometres, but a swim', async () => {
+  const { clientFor, stonesOf } = devApp();
+
+  await seedStones({ clientFor, athletes: [anna.id], today });
+  const opened = await Promise.all(
+    (await stonesOf(anna.id)).map((stone) => clientFor(anna.id).record.stones.get({ stoneId: stone.id })),
+  );
+
+  const run = opened.find((stone) => stone.sport.sport === 'road-running');
+  expect(run?.splits.length).toBeGreaterThan(1);
+  expect(run?.splits[0]).toMatchObject({ distance: 1000, averageHeartRate: expect.any(Number) });
+  for (const stone of opened.filter((s) => s.distance === null || s.sport.sport === 'swimming')) {
+    expect(stone.splits).toEqual([]);
+  }
+});
+
 it.each([
   ['the same day', today],
   ['a later week', new Date('2026-12-02T09:00:00Z')],

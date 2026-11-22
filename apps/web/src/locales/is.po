@@ -7,6 +7,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: is\n"
 
+#. placeholder {0}: splits.length
+#: src/stones/stone-splits.tsx:35
+msgid "{0, plural, one {# split} other {# splits}}"
+msgstr "{0, plural, one {# millitími} other {# millitímar}}"
+
 #. placeholder {0}: totals.stones
 #: src/stones/stone-route.tsx:136
 #: src/stones/stones-calendar.tsx:185
@@ -91,6 +96,7 @@ msgid "As the watch had them that day"
 msgstr "Eins og úrið hafði þær þann dag"
 
 #: src/stones/stone-figures.tsx:44
+#: src/stones/stone-splits.tsx:64
 msgid "Ascent"
 msgstr "Hækkun"
 
@@ -156,6 +162,7 @@ msgid "Delete this stone?"
 msgstr "Eyða þessum steini?"
 
 #: src/stones/stone-figures.tsx:46
+#: src/stones/stone-splits.tsx:68
 msgid "Descent"
 msgstr "Lækkun"
 
@@ -224,6 +231,7 @@ msgid "Ground contact time"
 msgstr "Snertitími við jörð"
 
 #: src/stones/stone-charts.tsx:133
+#: src/stones/stone-splits.tsx:57
 msgid "Heart rate"
 msgstr "Púls"
 
@@ -246,6 +254,10 @@ msgstr "Forsíða"
 #: src/stones/stone-laps.tsx:155
 msgid "Intensity"
 msgstr "Ákefð"
+
+#: src/stones/stone-splits.tsx:44
+msgid "Kilometre"
+msgstr "Kílómetri"
 
 #: src/stones/stone-form.tsx:67
 #: src/stones/stone-laps.tsx:151
@@ -303,6 +315,7 @@ msgstr "Minnsti hiti"
 #: src/stones/stone-laps.tsx:163
 #: src/stones/stone-numbers.tsx:21
 #: src/stones/stone-plate.tsx:43
+#: src/stones/stone-splits.tsx:47
 #: src/stones/stone-stretches.tsx:67
 msgid "Moving time"
 msgstr "Hreyfitími"
@@ -366,6 +379,7 @@ msgstr "Annað"
 #: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
+#: src/stones/stone-splits.tsx:51
 msgid "Pace"
 msgstr "Tempó"
 
@@ -498,8 +512,13 @@ msgstr "Eitthvað fór úrskeiðis, reyndu aftur."
 #: src/stones/stone-laps.tsx:167
 #: src/stones/stone-numbers.tsx:25
 #: src/stones/stone-plate.tsx:47
+#: src/stones/stone-splits.tsx:51
 msgid "Speed"
 msgstr "Hraði"
+
+#: src/stones/stone-splits.tsx:32
+msgid "Splits"
+msgstr "Millitímar"
 
 #: src/stones/stone-stretches.tsx:105
 msgid "Standing"
@@ -522,12 +541,12 @@ msgstr "Skreflengd"
 msgid "Stone deleted. You can place it again from {fileName}."
 msgstr "Steini eytt. Þú getur lagt hann aftur úr {fileName}."
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:61
+#: src/routes/_signed-in/stones_.$stoneId.tsx:62
 msgid "Stone not found"
 msgstr "Steinn fannst ekki"
 
 #: src/routes/_signed-in.tsx:42
-#: src/routes/_signed-in/stones_.$stoneId.tsx:51
+#: src/routes/_signed-in/stones_.$stoneId.tsx:52
 #: src/stones/stitch-weeks.tsx:56
 #: src/stones/stones-calendar.tsx:18
 msgid "Stones"
@@ -578,7 +597,7 @@ msgstr "Úrið skráði enga hringi: þessi steinn geymir aðeins heildartölur.
 msgid "The week of {0}"
 msgstr "Vikan frá {0}"
 
-#: src/routes/_signed-in/stones_.$stoneId.tsx:64
+#: src/routes/_signed-in/stones_.$stoneId.tsx:65
 msgid "There's no such stone. It may have been deleted, or the link may be wrong."
 msgstr "Þessi steinn er ekki til. Honum gæti hafa verið eytt, eða hlekkurinn er rangur."
 

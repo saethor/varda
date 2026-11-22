@@ -30,10 +30,11 @@ function toOpenedStone({ stone, streams }: { stone: Row; streams: Stone['streams
   return { ...toStone(stone), streams };
 }
 
-function toStone({ laps, sport, figures, ...row }: Row): ListedStone {
+function toStone({ laps, sport, figures, splits, ...row }: Row): ListedStone {
   return {
     ...row,
     figures: figures ?? noFigures,
+    splits: splits ?? [],
     // Only Record writes this column, and only with a Sport.
     sport: sport as Stone['sport'],
     laps: laps.map(({ figures: lapFigures, intensity, workoutStep, form, ...lap }) => ({

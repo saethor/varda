@@ -1,7 +1,7 @@
 import { and, between, desc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { Stones } from '../../application/ports.ts';
-import type { Figures, Stone } from '../../domain/stone.ts';
+import type { Figures, Reading, Stone } from '../../domain/stone.ts';
 import { stones } from './schema.ts';
 
 type Row = typeof stones.$inferSelect;
@@ -37,6 +37,21 @@ function toStone({ laps, sport, figures, ...row }: Row): Stone {
   };
 }
 
+/**
+ * A stone, or only its reading, as stored: every field is its own column, laps and stretches with
+ * their dates as ISO strings. A field a later reader learns becomes a column of the same name.
+ */
+function toStored<T extends Reading>({ laps, stretches, ...rest }: T) {
+  return {
+    ...rest,
+    laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })),
+    stretches: stretches && {
+      ...stretches,
+      inOrder: stretches.inOrder.map((stretch) => ({ ...stretch, start: stretch.start.toISOString() })),
+    },
+  };
+}
+
 export function createPostgresStones(db: NodePgDatabase): Stones {
   const withSessionKey: Stones['withSessionKey'] = async (athlete, sessionKey) => {
     const [found] = await db
@@ -47,18 +62,11 @@ export function createPostgresStones(db: NodePgDatabase): Stones {
   };
 
   return {
-    async add({ laps, ...stone }) {
+    async add(stone) {
       // The unique (athlete, session key) constraint decides a race; the loser adds nothing.
       const added = await db
         .insert(stones)
-        .values({
-          ...stone,
-          laps: laps.map((lap) => ({ ...lap, start: lap.start.toISOString() })),
-          stretches: stone.stretches && {
-            ...stone.stretches,
-            inOrder: stone.stretches.inOrder.map((stretch) => ({ ...stretch, start: stretch.start.toISOString() })),
-          },
-        })
+        .values(toStored(stone))
         .onConflictDoNothing({ target: [stones.athlete, stones.sessionKey] })
         .returning({ id: stones.id });
       if (added.length > 0) return 'added';
@@ -81,6 +89,14 @@ export function createPostgresStones(db: NodePgDatabase): Stones {
     withSessionKey,
     async remove(id) {
       await db.delete(stones).where(eq(stones.id, id));
+    },
+    async everyId() {
+      const rows = await db.select({ id: stones.id }).from(stones);
+      return rows.map(({ id }) => id);
+    },
+    async replaceReading(id, reading) {
+      // Only the reading's columns: the stone's ID, athlete, file name, session and dates stay.
+      await db.update(stones).set(toStored(reading)).where(eq(stones.id, id));
     },
   };
 }

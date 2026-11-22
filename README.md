@@ -49,6 +49,7 @@ cp .env.example .env
 pnpm db:up        # Postgres (docker-compose.yml): varda for dev, varda_test for the test suites
 pnpm db:migrate   # every context's migrations; safe to re-run
 pnpm db:seed      # optional: five dev persons on localhost, password VARDA_DEV_PASSWORD; safe to re-run
+pnpm db:fill-in-stones # one-off: re-reads every stone's recording and keeps what today's reader reads; safe to re-run
 pnpm dev          # api on :4000, web on :5173 (proxies /rpc to the api)
 pnpm check        # lint, "user" check, boundaries, typecheck, tests; never touches Postgres
 pnpm test:adapters # ports' behaviour suites against varda_test, which they migrate (CI runs it too)

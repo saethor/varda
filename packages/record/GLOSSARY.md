@@ -48,6 +48,10 @@ _Avoid_: Total time, duration (unqualified)
 The line a stone traced over the ground, simplified from its recording's GPS. A stone without GPS (treadmill, pool, strength) has no trace.
 _Avoid_: Track (that is track running), route (planned), GPS track, map
 
+**Stream**:
+Every point the watch recorded over a stone, as recorded and never thinned: for each moment its distance, speed, heart rate, altitude, power, cadence, temperature, position and running form, whichever the watch measured, and whether the timer was running. Splits and charts are drawn from the streams. A distance correction scales the distance stream on top of what was recorded.
+_Avoid_: Records, samples, time series, data points
+
 **Training load**:
 Varða's own measure of how much strain a stone put on the athlete, calculated the same way whatever its source.
 _Avoid_: TSS, training stress, Garmin load

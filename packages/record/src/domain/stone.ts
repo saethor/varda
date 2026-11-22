@@ -33,6 +33,52 @@ export type SessionKey = string;
 /** Why a watch file's content is turned away. Nothing of a turned-away file is kept. */
 export type TurnedAwayReason = 'not-a-fit-file' | 'broken' | 'not-a-session' | 'multisport';
 
+/**
+ * Every point the watch recorded over a stone (Record glossary: Stream), as recorded, never thinned
+ * (ADR 0009): about one a second, or every few seconds from a watch that records smartly. Channels
+ * are parallel arrays, one value per point; a channel the watch didn't record at all is `null`, and a
+ * point it missed in a channel it did record (a heart-rate drop-out, no GPS fix yet) is `null`.
+ *
+ * Kept as recorded (ADR 0002): a later distance correction scales `distance` (and `speed`) by its
+ * factor when the stone is read, and never rewrites what is stored here.
+ */
+export type Streams = {
+  /** Seconds from the stone's start, rising. */
+  offset: number[];
+  /**
+   * Whether the timer ran from the previous point up to this one: `false` for the first point after
+   * a pause, `true` for the first point. Leave out the interval ending at a `false` point.
+   */
+  timerRunning: boolean[];
+  /** Metres from the start. */
+  distance: StreamChannel;
+  /** Metres per second. */
+  speed: StreamChannel;
+  /** Beats per minute. */
+  heartRate: StreamChannel;
+  /** Metres above sea level. */
+  altitude: StreamChannel;
+  /** Watts. */
+  power: StreamChannel;
+  /** Steps per minute on foot (running, walking, hiking); revolutions per minute otherwise. */
+  cadence: StreamChannel;
+  /** Degrees Celsius. */
+  temperature: StreamChannel;
+  /** `[lat, lon]` in degrees. */
+  position: ([lat: number, lon: number] | null)[] | null;
+  /** Metres. */
+  stepLength: StreamChannel;
+  /** Metres. */
+  verticalOscillation: StreamChannel;
+  /** Percent: vertical oscillation over step length. */
+  verticalRatio: StreamChannel;
+  /** Seconds a foot stays on the ground each step. */
+  groundContactTime: StreamChannel;
+};
+
+/** One value per point of its streams, `null` at a point the watch missed; `null` when never recorded. */
+export type StreamChannel = (number | null)[] | null;
+
 /** A session read from a watch file, ready to be placed as a stone. */
 export type Session = {
   sessionKey: SessionKey;
@@ -55,6 +101,8 @@ export type Session = {
   laps: Lap[];
   /** None when the watch recorded fewer than 2 positions (indoors, in a pool, in the gym). */
   trace: Trace | null;
+  /** None when the watch recorded no points. Only an opened stone has them; a listed one never does. */
+  streams: Streams | null;
 };
 
 /** A training session the athlete actually did (Record glossary). */
@@ -64,3 +112,6 @@ export type Stone = Session & {
   /** The name of the watch file the stone was placed from. */
   fileName: string;
 };
+
+/** A stone as a list holds it: everything but its streams, which only opening it reads. */
+export type ListedStone = Omit<Stone, 'streams'>;

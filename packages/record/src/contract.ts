@@ -38,8 +38,49 @@ const StoneSchema = z.object({
   trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
 });
 
+/** One value per point of the streams, `null` where the watch missed one; `null` when never recorded. */
+const StreamChannelSchema = z.array(z.number().nullable()).nullable();
+
+/**
+ * Every point the watch recorded over the stone, as recorded (about one a second), as parallel
+ * arrays. A distance correction will scale `distance` and `speed` on top of these, never in them.
+ */
+const StreamsSchema = z.object({
+  /** Seconds from the stone's start, rising. */
+  offset: z.array(z.number()),
+  /** Whether the timer ran from the previous point up to this one: `false` ends a pause. */
+  timerRunning: z.array(z.boolean()),
+  /** Metres from the start. */
+  distance: StreamChannelSchema,
+  /** Metres per second. */
+  speed: StreamChannelSchema,
+  /** Beats per minute. */
+  heartRate: StreamChannelSchema,
+  /** Metres above sea level. */
+  altitude: StreamChannelSchema,
+  /** Watts. */
+  power: StreamChannelSchema,
+  /** Steps per minute on foot (running, walking, hiking), as the watch shows it; revolutions per minute otherwise. */
+  cadence: StreamChannelSchema,
+  /** Degrees Celsius. */
+  temperature: StreamChannelSchema,
+  /** `[lat, lon]` in degrees. */
+  position: z.array(z.tuple([z.number(), z.number()]).nullable()).nullable(),
+  /** Metres. */
+  stepLength: StreamChannelSchema,
+  /** Metres. */
+  verticalOscillation: StreamChannelSchema,
+  /** Percent. */
+  verticalRatio: StreamChannelSchema,
+  /** Seconds. */
+  groundContactTime: StreamChannelSchema,
+});
+
 /** A stone opened on its own screen: everything a listed stone has, and what only its screen shows. */
-const StoneDetailSchema = StoneSchema.extend({});
+const StoneDetailSchema = StoneSchema.extend({
+  /** None when the watch recorded no points. Never listed. */
+  streams: StreamsSchema.nullable(),
+});
 
 /** The largest watch file a stone is placed from: 25 MB. The web app checks it before sending, too. */
 export const maxWatchFileBytes = 25_000_000;

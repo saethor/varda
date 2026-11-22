@@ -6,7 +6,7 @@ import { placeStone } from '../application/place-stone.ts';
 import type { RecordAdapters } from '../application/record-adapters.ts';
 import { maxWatchFileBytes, recordContract } from '../contract.ts';
 import { SessionAlreadyPlaced, StoneNotFound, WatchFileTurnedAway } from '../domain/errors.ts';
-import type { PersonId, Stone } from '../domain/stone.ts';
+import type { ListedStone, PersonId, Stone } from '../domain/stone.ts';
 
 const os = implement(recordContract).$context<SharedContext>();
 
@@ -34,7 +34,7 @@ function toListedStone({
   elapsedTime,
   laps,
   trace,
-}: Stone) {
+}: ListedStone) {
   return {
     id,
     localDate,
@@ -55,6 +55,7 @@ function toListedStone({
 function toStoneDetail(stone: Stone, viewer: PersonId) {
   return {
     ...toListedStone(stone),
+    streams: stone.streams,
   };
 }
 

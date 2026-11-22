@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Ids, Stones } from '../application/ports.ts';
-import type { LocalDate, PersonId, Stone } from '../domain/stone.ts';
+import type { LocalDate, PersonId, Stone, Streams } from '../domain/stone.ts';
 
 export type StonesSetup = {
   stones: Stones;
@@ -38,8 +38,27 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
       [64.14522, -21.93911],
       [64.14384, -21.94467],
     ],
+    streams,
   };
 }
+
+/** Four points a second apart, the last after a pause; GPS found at the second; no power or form. */
+const streams: Streams = {
+  offset: [0, 1, 2, 12],
+  timerRunning: [true, true, true, false],
+  distance: [0, 3.2, 6.5, 6.5],
+  speed: [0, 3.2, 3.3, 0],
+  heartRate: [96, 101, null, 104],
+  altitude: [21.4, 21.6, 21.8, 21.8],
+  power: null,
+  cadence: [0, 168, 171.5, 0],
+  temperature: [8, 8, 8, 9],
+  position: [null, [64.14661, -21.94264], [64.14663, -21.94259], [64.14663, -21.94259]],
+  stepLength: null,
+  verticalOscillation: null,
+  verticalRatio: null,
+  groundContactTime: null,
+};
 
 /**
  * The behaviour every `Stones` adapter shares: run against the in-memory fake in `pnpm test`
@@ -47,10 +66,15 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
  */
 export function describeStones(name: string, setup: () => Promise<StonesSetup>): void {
   describe(`Stones (${name})`, () => {
-    it('finds an added stone by its ID, with its laps, trace and local offset, or none', async () => {
+    it('finds an added stone by its ID, with its laps, trace, local offset and streams, or none', async () => {
       const { stones, ids } = await setup();
       const added = stone(ids, ids.next(), '2026-11-02');
-      const indoorsAbroad = { ...stone(ids, ids.next(), '2026-11-03'), trace: null, localOffset: -5 * 3600 };
+      const indoorsAbroad = {
+        ...stone(ids, ids.next(), '2026-11-03'),
+        trace: null,
+        localOffset: -5 * 3600,
+        streams: null,
+      };
 
       await stones.add(added);
       await stones.add(indoorsAbroad);
@@ -74,6 +98,15 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       const listed = await stones.ofAthlete(athlete, { from: '2026-11-01', to: '2026-11-07' });
 
       expect(listed.map(({ id }) => id)).toEqual([last.id, evening.id, morning.id, first.id]);
+    });
+
+    it('lists stones without their streams', async () => {
+      const { stones, ids } = await setup();
+      const athlete = ids.next();
+      const { streams: _streams, ...withoutStreams } = stone(ids, athlete, '2026-11-02');
+      await stones.add({ ...withoutStreams, streams });
+
+      expect(await stones.ofAthlete(athlete, { from: '2026-11-02', to: '2026-11-02' })).toEqual([withoutStreams]);
     });
 
     it("finds the athlete's stone placed from a session, or none", async () => {
@@ -107,6 +140,18 @@ export function describeStones(name: string, setup: () => Promise<StonesSetup>):
       await stones.remove(added.id);
 
       expect(await stones.byId(added.id)).toBeNull();
+    });
+
+    it('removes its streams with a stone, so none are left behind', async () => {
+      const { stones, ids } = await setup();
+      const added = stone(ids, ids.next(), '2026-11-02');
+      await stones.add(added);
+
+      await stones.remove(added.id);
+      // A stone with no streams under the same ID would show any left behind.
+      await stones.add({ ...added, streams: null });
+
+      expect((await stones.byId(added.id))?.streams).toBeNull();
     });
   });
 }

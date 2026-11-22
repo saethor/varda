@@ -17,6 +17,56 @@ const laps = (count: number, distance: number, timerTime: number): WatchFileLap[
 const intervals = Array.from({ length: 5 }, () => [...laps(1, 400, 80), ...laps(1, 200, 75)]).flat();
 
 /**
+ * The track intervals as a structured workout writes them: a warm-up, the 400s as active work and
+ * the 200s as recovery, each with its workout step, then a cool-down. Each lap carries its own
+ * figures, heart rate climbing rep by rep; the recoveries have no power (#81).
+ */
+const intervalLaps: WatchFileLap[] = [
+  {
+    distance: 2000,
+    timerTime: 660,
+    elapsedTime: 660,
+    intensity: 'warmup',
+    workoutStep: 0,
+    figures: { averageHeartRate: 132, maxHeartRate: 146, ascent: 2, descent: 2, averageCadence: 81, averagePower: 251 },
+  },
+  ...intervals.map((lap, i): WatchFileLap => {
+    const rep = Math.floor(i / 2);
+    return i % 2 === 0
+      ? {
+          ...lap,
+          intensity: 'active',
+          workoutStep: 1,
+          figures: {
+            averageHeartRate: 168 + rep * 2,
+            maxHeartRate: 176 + rep * 2,
+            ascent: 1,
+            descent: 1,
+            averageCadence: 93.5,
+            averagePower: 372 + rep,
+            maxPower: 431 + rep * 3,
+            normalizedPower: 375 + rep,
+            calories: 24,
+          },
+        }
+      : {
+          ...lap,
+          intensity: 'recovery',
+          workoutStep: 2,
+          figures: { averageHeartRate: 146 + rep * 2, maxHeartRate: 170 + rep * 2, averageCadence: 79, calories: 15 },
+        };
+  }),
+  {
+    distance: 1500,
+    timerTime: 540,
+    elapsedTime: 540,
+    intensity: 'cooldown',
+    workoutStep: 3,
+    figures: { averageHeartRate: 138, maxHeartRate: 151, ascent: 1, descent: 1, averageCadence: 80, averagePower: 236 },
+  },
+];
+
+/**
  * A long run with walk breaks, as the watch's run/walk detection splits it: 18 minutes running
  * then a minute walking, five times over, standing at a crossing after the 2nd and 4th walk, and
  * 4 minutes running to finish. 16 km in 6000 s on the timer, its 4 laps' totals.
@@ -44,7 +94,7 @@ const runWalk: WatchFileSplit[] = (() => {
  */
 const devStones: { daysAgo: number; time: string; file: WatchFileOptions }[] = [
   { daysAgo: 1, time: '06:40', file: {} },
-  { daysAgo: 3, time: '17:15', file: { subSport: 'track', laps: intervals } },
+  { daysAgo: 3, time: '17:15', file: { subSport: 'track', laps: intervalLaps } },
   { daysAgo: 5, time: '09:00', file: { subSport: 'trail', laps: laps(2, 5000, 1800) } },
   { daysAgo: 7, time: '17:30', file: { sport: 'cycling', subSport: 'road', laps: laps(2, 15_000, 1800) } },
   {

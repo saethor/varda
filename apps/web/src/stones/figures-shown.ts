@@ -28,7 +28,7 @@ const order: FigureKey[] = [
 ];
 
 // Sports whose cadence counts steps (the contract gives them in steps a minute); the rest count revolutions.
-const steppingSports: Sport[] = [
+export const steppingSports: Sport[] = [
   'road-running',
   'trail-running',
   'track-running',

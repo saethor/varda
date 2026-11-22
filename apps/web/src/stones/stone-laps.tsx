@@ -1,11 +1,13 @@
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { formatDistance, formatDuration } from '@varda/ui/lib/format';
 import { cn } from '@varda/ui/lib/utils';
-import { type PointerEvent, useState } from 'react';
+import { type PointerEvent, type ReactNode, useState } from 'react';
 import type { Stone } from '../lib/stones.ts';
+import { lapFigures, showsIntensity } from './lap-figures.ts';
 import { lapEvery, lapStrip } from './lap-strip.ts';
 import { paceOrSpeed } from './pace-or-speed.ts';
 import { dyeFill, dyeOf } from './sport-dye.ts';
+import { FigureLabel } from './stone-figures.tsx';
 
 /**
  * The stone's laps: a profile across the full width, a block per lap (width by distance, height by
@@ -129,10 +131,15 @@ function LapTable({
   );
   // Every lap shares the stone's sport, so the column is pace or speed throughout, or not there at all.
   const measured = paces.find((pace) => pace !== null) ?? null;
+  // The watch's own figures for each lap: a column for each some lap recorded, and its intensity
+  // when that tells the laps apart.
+  const figures = lapFigures(stone.laps, stone.sport.sport, i18n.locale);
+  const intensity = showsIntensity(stone.laps);
   // Units sit in the headers so the cells hold bare values that never wrap. On a phone the cells
   // tighten, and the last column shown (elapsed time is hidden) keeps the panel's inset.
   const cell = 'whitespace-nowrap px-2 py-2.5 first:pl-4 sm:px-4';
   const lastOnPhone = 'max-sm:pr-4';
+  const paceLast = figures.length === 0 && lastOnPhone;
 
   return (
     <div className="overflow-x-auto rounded-xs border bg-card">
@@ -143,19 +150,34 @@ function LapTable({
             <th scope="col" className={cn(cell, 'font-medium')}>
               <Trans>Lap</Trans>
             </th>
+            {intensity && (
+              <th scope="col" className={cn(cell, 'font-medium')}>
+                <Trans>Intensity</Trans>
+              </th>
+            )}
             <th scope="col" className={cn(cell, 'text-right font-medium')}>
               <Trans>Distance</Trans>
               <Unit>km</Unit>
             </th>
-            <th scope="col" className={cn(cell, 'text-right font-medium', measured === null && lastOnPhone)}>
+            <th scope="col" className={cn(cell, 'text-right font-medium', measured === null && paceLast)}>
               <Trans>Moving time</Trans>
             </th>
             {measured !== null && (
-              <th scope="col" className={cn(cell, 'text-right font-medium', lastOnPhone)}>
+              <th scope="col" className={cn(cell, 'text-right font-medium', paceLast)}>
                 {measured.measure === 'pace' ? <Trans>Pace</Trans> : <Trans>Speed</Trans>}
                 <Unit>{measured.unit}</Unit>
               </th>
             )}
+            {figures.map((column, c) => (
+              <th
+                key={column.key}
+                scope="col"
+                className={cn(cell, 'text-right font-medium', c === figures.length - 1 && lastOnPhone)}
+              >
+                <FigureLabel figure={column.key} />
+                <Unit>{column.unit}</Unit>
+              </th>
+            ))}
             <th scope="col" className={cn(cell, 'text-right font-medium max-sm:hidden')}>
               <Trans>Elapsed time</Trans>
             </th>
@@ -180,13 +202,21 @@ function LapTable({
               <th scope="row" className={cn(cell, 'text-left', active === i ? 'font-semibold' : 'font-normal')}>
                 {i + 1}
               </th>
+              {intensity && (
+                <td className={cell}>{lap.intensity === null ? '–' : <IntensityName intensity={lap.intensity} />}</td>
+              )}
               <td className={cn(cell, 'text-right')}>
                 {lap.distance === null ? '–' : formatDistance(lap.distance, i18n.locale, bare)}
               </td>
-              <td className={cn(cell, 'text-right', measured === null && lastOnPhone)}>
+              <td className={cn(cell, 'text-right', measured === null && paceLast)}>
                 {formatDuration(lap.movingTime)}
               </td>
-              {measured !== null && <td className={cn(cell, 'text-right', lastOnPhone)}>{paces[i]?.value ?? '–'}</td>}
+              {measured !== null && <td className={cn(cell, 'text-right', paceLast)}>{paces[i]?.value ?? '–'}</td>}
+              {figures.map((column, c) => (
+                <td key={column.key} className={cn(cell, 'text-right', c === figures.length - 1 && lastOnPhone)}>
+                  {column.values[i] ?? '–'}
+                </td>
+              ))}
               <td className={cn(cell, 'text-right max-sm:hidden')}>{formatDuration(lap.elapsedTime)}</td>
             </tr>
           ))}
@@ -199,4 +229,20 @@ function LapTable({
 /** A column's unit, under its name, so the cells below can hold bare values. */
 function Unit({ children }: { children: string }) {
   return <span className="block font-normal">{children}</span>;
+}
+
+/** What part of the stone a lap was, as the watch marked it. */
+function IntensityName({ intensity }: { intensity: NonNullable<Stone['laps'][number]['intensity']> }): ReactNode {
+  switch (intensity) {
+    case 'warm-up':
+      return <Trans>Warm-up</Trans>;
+    case 'active':
+      return <Trans>Active</Trans>;
+    case 'recovery':
+      return <Trans>Recovery</Trans>;
+    case 'rest':
+      return <Trans>Rest</Trans>;
+    case 'cool-down':
+      return <Trans>Cool-down</Trans>;
+  }
 }

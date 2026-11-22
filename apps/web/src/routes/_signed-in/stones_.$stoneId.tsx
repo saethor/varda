@@ -5,6 +5,7 @@ import { createFileRoute, Link, notFound, useRouterState } from '@tanstack/react
 import { type StoneDetail, stoneQuery, weekAroundQuery } from '../../lib/stones.ts';
 import { DeleteStone } from '../../stones/delete-stone.tsx';
 import { todayHere } from '../../stones/feed-window.ts';
+import { FromTheWatch, StoneEffort } from '../../stones/from-the-watch.tsx';
 import { StoneLaps } from '../../stones/stone-laps.tsx';
 import { StoneMeasurements } from '../../stones/stone-measurements.tsx';
 import { StonePlate } from '../../stones/stone-plate.tsx';
@@ -74,7 +75,6 @@ function StoneScreen() {
   const justPlaced = useRouterState({ select: (state) => state.location.state.placed === true });
   const today = todayHere(new Date());
   const place = placeInWeek(stone, around);
-  const fileName = stone.fileName;
 
   return (
     <section className="flex flex-col gap-8">
@@ -99,11 +99,12 @@ function StoneScreen() {
       <footer className="flex flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-y py-2 text-sm">
           <p className="min-w-0 break-all text-muted-foreground">
-            <Trans>From your watch · {fileName}</Trans>
+            <FromTheWatch stone={stone} />
           </p>
           <DeleteStone stone={stone} className="-ml-3 sm:ml-0 sm:-mr-3" />
         </div>
         {/* Effort and device (#77) */}
+        <StoneEffort stone={stone} />
         <WeekWalk stone={stone} place={place} today={today} />
       </footer>
     </section>

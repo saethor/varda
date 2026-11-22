@@ -38,6 +38,9 @@ function stone(ids: Ids, athlete: PersonId, localDate: LocalDate, time = '07:30'
       [64.14522, -21.93911],
       [64.14384, -21.94467],
     ],
+    effort: 6,
+    device: { manufacturer: 'Garmin', model: 'Forerunner 255 Music' },
+    garminReference: { trainingLoad: 105.87, aerobicTrainingEffect: 3.2, anaerobicTrainingEffect: null },
     measurements: { weight: 71.3, height: 1.83, restingHeartRate: null, maxHeartRate: 193 },
   };
 }

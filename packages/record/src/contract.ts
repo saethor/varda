@@ -36,6 +36,10 @@ const StoneSchema = z.object({
   laps: z.array(LapSchema),
   /** The line the stone traced over the ground, `[lat, lon]` pairs in degrees, or none without GPS. */
   trace: z.array(z.tuple([z.number(), z.number()])).nullable(),
+  /** How hard the stone felt, 1–10, from the rating the athlete gave on the watch; none without one. */
+  effort: z.number().int().min(1).max(10).nullable(),
+  /** The watch that recorded the stone, as people call it; its model is none when Varða doesn't know it. */
+  device: z.object({ manufacturer: z.string(), model: z.string().nullable() }).nullable(),
 });
 
 /**

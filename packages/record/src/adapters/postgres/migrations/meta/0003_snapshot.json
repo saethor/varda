@@ -1,5 +1,5 @@
 {
-  "id": "f824eb73-2bf1-411f-88d0-c829e3c59af1",
+  "id": "7d0efb80-7203-4884-828d-a4a19cbcf710",
   "prevId": "cd782e36-ffa1-4b19-a37f-619505104989",
   "version": "7",
   "dialect": "postgresql",
@@ -87,8 +87,20 @@
           "primaryKey": false,
           "notNull": false
         },
-        "measurements": {
-          "name": "measurements",
+        "effort": {
+          "name": "effort",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "device": {
+          "name": "device",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "garmin_reference": {
+          "name": "garmin_reference",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false

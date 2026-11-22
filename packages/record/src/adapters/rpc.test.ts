@@ -460,3 +460,63 @@ describe("the athlete's measurements", () => {
     expect(words).not.toMatch(anyMeasurement);
   });
 });
+
+describe('effort, the watch and Garmin reference data (#77)', () => {
+  it("takes the stone's effort from the rating the athlete gave on the watch", async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ rpe: 20 })) });
+
+    expect((await client.stones.get({ stoneId })).effort).toBe(2);
+  });
+
+  it('gives a stone the athlete did not rate on the watch no effort', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile()) });
+
+    expect((await client.stones.get({ stoneId })).effort).toBeNull();
+  });
+
+  it('keeps which watch recorded the stone, by its maker and model', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ product: 3990 })) });
+
+    expect((await client.stones.get({ stoneId })).device).toEqual({
+      manufacturer: 'Garmin',
+      model: 'Forerunner 255 Music',
+    });
+  });
+
+  it('names only the maker of a watch whose model it does not know', async () => {
+    const client = clientFor({ person: guðrún });
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ product: 65_000 })) });
+
+    expect((await client.stones.get({ stoneId })).device).toEqual({ manufacturer: 'Garmin', model: null });
+  });
+
+  it("keeps Garmin's training load and Training Effect with the stone, and never answers them", async () => {
+    const adapters = createRecordFakes();
+    const client = clientFor({ person: guðrún }, adapters);
+    const garminReference = { trainingLoad: 105.5, aerobicTrainingEffect: 3.2, anaerobicTrainingEffect: 1.4 };
+
+    const { stoneId } = await client.stones.place({ file: fitFile(watchFile({ garminReference })) });
+    const answers = JSON.stringify([
+      await client.stones.get({ stoneId }),
+      await client.stones.list({ from: '2026-11-02', to: '2026-11-02' }),
+    ]);
+
+    expect((await adapters.stones.byId(stoneId))?.garminReference).toEqual(garminReference);
+    expect(answers).not.toMatch(/garmin.?reference|training.?load|training.?effect|105\.5|3\.2|1\.4/i);
+  });
+
+  it('keeps no Garmin reference data from a file without it', async () => {
+    const adapters = createRecordFakes();
+
+    const { stoneId } = await clientFor({ person: guðrún }, adapters).stones.place({ file: fitFile(watchFile()) });
+
+    expect((await adapters.stones.byId(stoneId))?.garminReference).toBeNull();
+  });
+});

@@ -50,6 +50,12 @@ export type WatchFileOptions = {
   localOffset?: number | null;
   /** Leave out when the session started, as a file damaged in a way its CRC doesn't catch. */
   missingStartTime?: true;
+  /** The athlete's rating of the session on the watch, 0–100. None by default. */
+  rpe?: number;
+  /** The Garmin product code of the watch. Default 3992, a Forerunner 255. */
+  product?: number;
+  /** Garmin's training load and Training Effect for the session. None by default. */
+  garminReference?: { trainingLoad: number; aerobicTrainingEffect: number; anaerobicTrainingEffect: number };
   /**
    * The athlete's measurements the watch had: kilograms, metres, bpm. Each one given is written;
    * by default the watch had none.
@@ -122,6 +128,9 @@ export function watchFile({
   distance,
   localOffset = 0,
   missingStartTime,
+  rpe,
+  product = forerunner255,
+  garminReference,
   measurements = {},
 }: WatchFileOptions = {}): Uint8Array {
   const at = (seconds: number) => new Date(start.getTime() + seconds * 1000);
@@ -137,7 +146,7 @@ export function watchFile({
     mesgNum: fileIdMesg,
     type: fileType,
     manufacturer: garmin,
-    product: forerunner255,
+    product,
     serialNumber,
     timeCreated: timeCreated ?? end,
   });
@@ -188,6 +197,14 @@ export function watchFile({
     ...metres(total('distance')),
     firstLapIndex: 0,
     numLaps: laps.length,
+    ...(rpe === undefined ? {} : { workoutRpe: rpe }),
+    ...(garminReference === undefined
+      ? {}
+      : {
+          trainingLoadPeak: garminReference.trainingLoad,
+          totalTrainingEffect: garminReference.aerobicTrainingEffect,
+          totalAnaerobicTrainingEffect: garminReference.anaerobicTrainingEffect,
+        }),
   });
 
   // A brick: the run, a transition, then a ride with no laps of its own.

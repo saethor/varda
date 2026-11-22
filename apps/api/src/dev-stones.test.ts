@@ -80,3 +80,14 @@ it("keeps the athlete's measurements on every stone, as the dev watch had them",
     expect(stone.measurements).toEqual({ weight: 68.5, height: 1.74, restingHeartRate: 52, maxHeartRate: 188 });
   }
 });
+
+it('rates some stones on the watch and not others, all from the same watch', async () => {
+  const { clientFor, stonesOf } = devApp();
+
+  await seedStones({ clientFor, athletes: [anna.id], today });
+  const stones = await stonesOf(anna.id);
+
+  expect(stones.some((stone) => stone.effort !== null)).toBe(true);
+  expect(stones.some((stone) => stone.effort === null)).toBe(true);
+  expect(new Set(stones.map((stone) => stone.device?.model))).toEqual(new Set(['Forerunner 255 Music']));
+});
